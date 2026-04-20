@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADF PTI — Rehabilitation Program Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --olive: #4a5240; --olive-light: #6b7260; --olive-pale: #e8ead4;
+    --tan: #c9b99a; --tan-dark: #a0926e; --cream: #f5f2eb; --sand: #ede8dc;
+    --charcoal: #2a2d26; --text: #1e211b; --text-muted: #5a5f52;
+    --border: #c8c9b8; --accent: #7d8c3a; --accent-dark: #5a6628;
+    --white: #ffffff; --radius: 4px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+  header { background: var(--charcoal); color: var(--white); padding: 0 2rem; display: flex; align-items: stretch; border-bottom: 3px solid var(--accent); }
+  .header-flag { background: var(--accent); width: 6px; margin-right: 1.5rem; }
+  .header-content { padding: 1.25rem 0; }
+  .header-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--tan); font-weight: 600; margin-bottom: 4px; }
+  header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; line-height: 1; }
+  header h1 span { color: var(--accent); }
+  .header-sub { font-size: 12px; color: var(--tan); margin-top: 4px; font-weight: 300; }
+  .header-badge { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .badge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius); padding: 4px 10px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--tan); font-weight: 600; }
+  .home-link { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 4px 12px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--tan); font-weight: 600; text-decoration: none; transition: background 0.15s; }
+  .home-link:hover { background: rgba(255,255,255,0.12); }
+  .app-layout { display: grid; grid-template-columns: 420px 1fr; min-height: calc(100vh - 72px); }
+  .sidebar { background: var(--sand); border-right: 1px solid var(--border); padding: 1.5rem; overflow-y: auto; }
+  .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--olive-light); font-weight: 600; margin-bottom: 1rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--olive); }
+  input, select, textarea { font-family: 'Barlow', sans-serif; font-size: 14px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; color: var(--text); transition: border-color 0.15s; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(125,140,58,0.15); }
+  textarea { resize: vertical; min-height: 70px; }
+  .injury-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .injury-tag { display: flex; align-items: center; gap: 5px; background: var(--olive-pale); border: 1px solid var(--accent); border-radius: var(--radius); padding: 4px 8px; font-size: 12px; color: var(--accent-dark); font-weight: 500; }
+  .injury-tag button { background: none; border: none; color: var(--accent-dark); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; width: auto; opacity: 0.7; }
+  .injury-tag button:hover { opacity: 1; }
+  .add-row { display: flex; gap: 6px; margin-bottom: 6px; }
+  .add-row input, .add-row select { flex: 1; }
+  .btn-add { background: var(--olive); color: var(--white); border: none; border-radius: var(--radius); padding: 8px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: 'Barlow', sans-serif; transition: background 0.15s; }
+  .btn-add:hover { background: var(--accent-dark); }
+  .range-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .range-row input[type=range] { flex: 1; accent-color: var(--accent); }
+  .range-val { font-size: 13px; font-weight: 600; color: var(--accent-dark); min-width: 20px; text-align: right; }
+  .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 5px; }
+  .check-item { display: flex; align-items: center; gap: 7px; font-size: 13px; cursor: pointer; padding: 5px 6px; border-radius: var(--radius); border: 1px solid transparent; }
+  .check-item:hover { background: var(--olive-pale); border-color: var(--border); }
+  .check-item input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--accent); flex-shrink: 0; }
+  .btn-generate { width: 100%; background: var(--charcoal); color: var(--white); border: none; border-radius: var(--radius); padding: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.15s; margin-top: 1rem; }
+  .btn-generate:hover { background: var(--accent-dark); }
+  .output-panel { padding: 2rem; overflow-y: auto; }
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; text-align: center; opacity: 0.5; }
+  .empty-icon { width: 64px; height: 64px; border: 2px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 28px; }
+  .empty-state h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; color: var(--text-muted); }
+  .report-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--charcoal); }
+  .report-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; line-height: 1.1; }
+  .report-title span { color: var(--accent); }
+  .report-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .btn-secondary { background: var(--white); color: var(--charcoal); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; }
+  .btn-secondary:hover { background: var(--sand); }
+  .member-card { background: var(--charcoal); color: var(--white); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .member-stat label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--tan); display: block; margin-bottom: 3px; }
+  .member-stat .val { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 600; }
+  .card-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--charcoal); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .card-title::before { content: ''; display: inline-block; width: 4px; height: 14px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
+  .phase-block { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1.25rem; overflow: hidden; }
+  .phase-header { background: var(--charcoal); color: var(--white); padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+  .phase-num { background: var(--accent); color: var(--white); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; padding: 2px 8px; border-radius: 2px; letter-spacing: 1px; }
+  .phase-title { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .phase-weeks { margin-left: auto; font-size: 12px; color: var(--tan); white-space: nowrap; }
+  .phase-body { padding: 1rem 1.25rem; }
+  .phase-obj { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-style: italic; }
+  .sub-heading { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--olive); margin: 12px 0 7px; padding-bottom: 3px; border-bottom: 1px solid var(--olive-pale); }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 13px; }
+  th { background: var(--olive-pale); color: var(--accent-dark); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 7px 10px; text-align: left; font-weight: 600; }
+  td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fafaf6; }
+  .crit-list { list-style: none; padding: 0; }
+  .crit-list li { padding: 5px 0 5px 22px; position: relative; font-size: 13.5px; border-bottom: 1px solid var(--olive-pale); }
+  .crit-list li:last-child { border-bottom: none; }
+  .crit-list li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+  .check-list { list-style: none; padding: 0; }
+  .check-list li { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; font-size: 13.5px; border-bottom: 1px solid var(--olive-pale); }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list li::before { content: '☐'; color: var(--accent); font-size: 16px; flex-shrink: 0; line-height: 1.2; }
+  .info-box { background: var(--olive-pale); border-left: 4px solid var(--accent); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 12px; font-size: 13.5px; }
+  .warn-box { background: #fdf5ec; border-left: 4px solid #c97c2a; padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 12px; font-size: 13.5px; }
+  .warn-box b { color: #8a5010; display: block; margin-bottom: 3px; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .info-box b { color: var(--accent-dark); display: block; margin-bottom: 3px; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .disclaimer { background: var(--sand); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-top: 2rem; font-size: 12px; color: var(--text-muted); font-style: italic; }
+  @media print { .sidebar, .report-actions, .header-badge, .home-link { display: none !important; } .app-layout { display: block; } .output-panel { padding: 1rem; } .phase-header, .member-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+  @media (max-width: 900px) { .app-layout { grid-template-columns: 1fr; } .sidebar { border-right: none; border-bottom: 1px solid var(--border); } .member-card { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { header { padding: 0 1rem; } .output-panel, .sidebar { padding: 1rem; } .form-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-flag"></div>
+  <div class="header-content">
+    <div class="header-eyebrow">Australian Defence Force</div>
+    <h1>PTI <span>Rehab</span> Planner</h1>
+    <div class="header-sub">Physical Training Instructor — Rehabilitation Program Generator</div>
+  </div>
+  <div class="header-badge">
+    <a class="home-link" href="index.html">← Back to Tools</a>
+    <div class="badge">Free &amp; Offline</div>
+  </div>
+</header>
+
+<div class="app-layout">
+  <div class="sidebar">
+    <div class="section-label">Member Details</div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Full Name</label><input type="text" id="name" placeholder="e.g. CPL Smith, J."></div>
+      <div class="form-group"><label>Service Number</label><input type="text" id="svc" placeholder="e.g. 8123456"></div>
+      <div class="form-group"><label>Rank</label>
+        <select id="rank">
+          <option value="">— Select —</option>
+          <optgroup label="Army"><option>Private</option><option>Lance Corporal</option><option>Corporal</option><option>Sergeant</option><option>Staff Sergeant</option><option>Warrant Officer Class 2</option><option>Warrant Officer Class 1</option><option>2nd Lieutenant</option><option>Lieutenant</option><option>Captain</option><option>Major</option></optgroup>
+          <optgroup label="Navy"><option>Seaman</option><option>Able Seaman</option><option>Leading Seaman</option><option>Petty Officer</option><option>Chief Petty Officer</option><option>Warrant Officer (RAN)</option><option>Sub Lieutenant</option><option>Lieutenant (RAN)</option><option>Lieutenant Commander</option><option>Commander</option></optgroup>
+          <optgroup label="Air Force"><option>Aircraftman</option><option>Leading Aircraftman</option><option>Corporal (RAAF)</option><option>Sergeant (RAAF)</option><option>Flight Sergeant</option><option>Warrant Officer (RAAF)</option><option>Flying Officer</option><option>Flight Lieutenant</option><option>Squadron Leader</option></optgroup>
+        </select>
+      </div>
+      <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="e.g. 28" min="17" max="65"></div>
+      <div class="form-group"><label>Sex</label>
+        <select id="sex"><option value="">— Select —</option><option>Male</option><option>Female</option></select>
+      </div>
+      <div class="form-group"><label>Corps / Mustering</label><input type="text" id="corps" placeholder="e.g. Infantry, Pilot"></div>
+    </div>
+
+    <div class="section-label">Injury Details</div>
+    <div style="margin-bottom:1.5rem;">
+      <div class="form-group" style="margin-bottom:10px;">
+        <label>Injuries / Conditions</label>
+        <div class="injury-tags" id="injuryTags"></div>
+        <div class="add-row">
+          <select id="injurySelect">
+            <option value="">— Select common injury —</option>
+            <optgroup label="Knee"><option>ACL tear (right knee)</option><option>ACL tear (left knee)</option><option>Meniscus tear (right)</option><option>Meniscus tear (left)</option><option>Patellofemoral pain syndrome</option><option>Patellar tendinopathy</option><option>IT band syndrome</option><option>PCL injury</option></optgroup>
+            <optgroup label="Ankle &amp; Foot"><option>Lateral ankle sprain (right)</option><option>Lateral ankle sprain (left)</option><option>Achilles tendinopathy</option><option>Achilles tendon rupture</option><option>Plantar fasciitis</option><option>Stress fracture (foot)</option></optgroup>
+            <optgroup label="Lower Back &amp; Hip"><option>Lower back pain (non-specific)</option><option>Lumbar disc herniation</option><option>Sacroiliac joint dysfunction</option><option>Hip flexor strain</option><option>Gluteal tendinopathy</option></optgroup>
+            <optgroup label="Shoulder"><option>Rotator cuff tear (right)</option><option>Rotator cuff tear (left)</option><option>Shoulder impingement</option><option>AC joint sprain</option><option>Shoulder dislocation / instability</option><option>Bicep tendinopathy</option></optgroup>
+            <optgroup label="Shin &amp; Leg"><option>Medial tibial stress syndrome (shin splints)</option><option>Tibial stress fracture (right)</option><option>Tibial stress fracture (left)</option><option>Calf strain (right)</option><option>Calf strain (left)</option><option>Hamstring strain (right)</option><option>Hamstring strain (left)</option><option>Quadriceps strain</option></optgroup>
+            <optgroup label="Upper Body"><option>Wrist sprain</option><option>Elbow tendinopathy</option><option>Neck strain / whiplash</option><option>Rib stress fracture</option></optgroup>
+            <optgroup label="Post-Surgical"><option>Post-op ACL reconstruction</option><option>Post-op meniscus repair</option><option>Post-op shoulder stabilisation</option><option>Post-op rotator cuff repair</option><option>Post-op ankle reconstruction</option></optgroup>
+          </select>
+          <button class="btn-add" onclick="addFromSelect()">+ Add</button>
+        </div>
+        <div class="add-row">
+          <input type="text" id="injuryCustom" placeholder="Or type a custom injury and press Add">
+          <button class="btn-add" onclick="addCustom()">+ Add</button>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Onset</label>
+          <select id="onset">
+            <option value="">— Select —</option>
+            <option value="acute">Acute (&lt; 6 weeks)</option>
+            <option value="subacute">Sub-acute (6–12 weeks)</option>
+            <option value="chronic">Chronic (&gt; 12 weeks)</option>
+            <option value="postop">Post-surgical</option>
+            <option value="recurring">Recurring</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Pain Level (0–10)</label>
+          <div class="range-row"><input type="range" id="pain" min="0" max="10" value="4" step="1" oninput="document.getElementById('painVal').textContent=this.value"><span class="range-val" id="painVal">4</span></div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:10px;"><label>Medical / Physio Clearance Notes</label>
+        <textarea id="medNotes" placeholder="e.g. Cleared for upper body and pool. No running until 8 weeks post-op."></textarea>
+      </div>
+    </div>
+
+    <div class="section-label">Fitness &amp; Restrictions</div>
+    <div style="margin-bottom:1.5rem;">
+      <div class="form-grid">
+        <div class="form-group"><label>Pre-injury Fitness</label>
+          <select id="fitness"><option value="high">High (exceeds standards)</option><option value="mod">Moderate (meets standards)</option><option value="low">Below standard</option></select>
+        </div>
+        <div class="form-group"><label>Program Duration</label>
+          <select id="duration"><option value="4">4 weeks</option><option value="6">6 weeks</option><option value="8" selected>8 weeks</option><option value="12">12 weeks</option><option value="16">16 weeks</option></select>
+        </div>
+        <div class="form-group"><label>Sessions / Week</label>
+          <select id="sessions"><option value="3">3 per week</option><option value="4">4 per week</option><option value="5">5 per week</option></select>
+        </div>
+        <div class="form-group"><label>Equipment Access</label>
+          <select id="equipment"><option value="full">Full gym + pool</option><option value="gym">Full gym only</option><option value="minimal">Minimal (bands/BW)</option><option value="field">Field environment</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Movement Restrictions</label>
+        <div class="check-grid" id="restrictions">
+          <label class="check-item"><input type="checkbox" value="norun"> No running</label>
+          <label class="check-item"><input type="checkbox" value="nojump"> No jumping</label>
+          <label class="check-item"><input type="checkbox" value="nonwb"> Non-weight-bearing</label>
+          <label class="check-item"><input type="checkbox" value="nooverhead"> No overhead lifting</label>
+          <label class="check-item"><input type="checkbox" value="nospine"> No spinal loading</label>
+          <label class="check-item"><input type="checkbox" value="notwist"> No twisting</label>
+          <label class="check-item"><input type="checkbox" value="nopushpull"> No push/pull</label>
+          <label class="check-item"><input type="checkbox" value="poolonly"> Pool only</label>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:10px;"><label>RTD Goal / Special Notes</label>
+        <textarea id="goalNotes" placeholder="e.g. Must be RTD for Ex TALISMAN SABRE in 10 weeks."></textarea>
+      </div>
+    </div>
+
+    <button class="btn-generate" onclick="generate()">Generate Rehab Program</button>
+  </div>
+
+  <div class="output-panel">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">+</div>
+      <h2>No Program Generated</h2>
+      <p>Fill in the member's details and injury information,<br>then press Generate Rehab Program.</p>
+    </div>
+    <div id="reportArea" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+const injuries = [];
+function addFromSelect() {
+  const s = document.getElementById('injurySelect');
+  if (s.value && !injuries.includes(s.value)) { injuries.push(s.value); renderTags(); }
+  s.value = '';
+}
+function addCustom() {
+  const inp = document.getElementById('injuryCustom');
+  const v = inp.value.trim();
+  if (v && !injuries.includes(v)) { injuries.push(v); renderTags(); }
+  inp.value = '';
+}
+document.getElementById('injuryCustom').addEventListener('keydown', e => { if (e.key === 'Enter') addCustom(); });
+function removeInjury(i) { injuries.splice(i, 1); renderTags(); }
+function renderTags() {
+  document.getElementById('injuryTags').innerHTML = injuries.map((inj, i) =>
+    `<div class="injury-tag">${inj}<button onclick="removeInjury(${i})">×</button></div>`).join('');
+}
+function getChecked() { return [...document.querySelectorAll('#restrictions input:checked')].map(c => c.value); }
+
+const EX = {
+  knee1:[['Quad sets (isometric)','3','10 × 10s hold','Knee fully extended, towel under knee'],['Straight leg raise','3','15','Lock knee, slow and controlled'],['Ankle pumps','3','20','Promote circulation, reduce swelling'],['Short arc quads (0–30°)','3','15','Bolster under knee, full extension'],['Heel slides (supine)','3','15','Gentle ROM recovery'],['Seated hamstring curls (minimal load)','3','15','Pain-free range only']],
+  knee2:[['Mini squat (0–45°)','3','15','Controlled descent, knees track toes'],['Step-ups (low box, 10–15 cm)','3','12 each','Lead with affected leg'],['Terminal knee extension – band','3','15','Full extension, 2s hold'],['Wall sit (30–60°)','3','30–45 s','No pain above 3/10'],['Seated leg press (light)','3','15','90–45° range, control return'],['Double-leg calf raises','3','20','Full range, 3s eccentric'],['Side-lying hip abduction','3','15','Glute med activation'],['Core: dead bug','3','10 each side','Lower back flat throughout']],
+  knee3:[['Bulgarian split squat','3','10 each','Rear foot elevated, control descent'],['Romanian deadlift','3','12','Hip hinge, neutral spine'],['Step-ups (high box, 20–30 cm)','3','12 each','Progress height gradually'],['Lateral band walks','3','15 each direction','Band above knees'],['Single-leg press','3','12','Compare limb symmetry'],['Nordic hamstring curls','3','6–8','Eccentric focus, slow descent'],['Single-leg calf raises','3','15','3s eccentric lowering'],['Plank','3','45 s','Neutral spine']],
+  knee4:[['Back squat','4','8','Build from 60% load, full depth when cleared'],['Deadlift','4','6','Neutral spine, progressive loading'],['Box jumps','3','8','Land soft, absorb through hips and knees'],['Lateral hurdle hops','3','10 each','Controlled landing mechanics'],['Change of direction drills','3','6 reps','45° then 90° cuts, progress speed'],['Loaded step-ups','3','10','Weighted vest or barbell']],
+  ankle1:[['Ankle ROM – alphabet tracing','3','Full alphabet','Non-weight-bearing seated'],['Ankle pumps','3','20','Seated, reduce swelling'],['Inversion / eversion – light band','3','15 each','Minimal resistance'],['Towel toe scrunches','3','20','Intrinsic foot muscle activation']],
+  ankle2:[['Double-leg calf raises','3','20','Full range, 3s eccentric'],['Single-leg stance – eyes open','3','30s each','Progress to eyes closed then foam pad'],['Resistance band eversion','3','15','Target peroneals'],['Heel-toe walking','3','20m','Controlled weight transfer'],['Balance board','3','45s','Double then single leg']],
+  ankle3:[['Single-leg calf raise','3','15','3s eccentric lowering'],['Single-leg forward hop','3','8 each','Stick landing, hold 2s'],['Lateral hops','3','10 each','Build distance gradually'],['Figure-8 jogging','3','3 laps','Start slow, increase speed'],['Agility ladder','3','4 runs','Increase complexity and speed']],
+  back1:[['Pelvic tilts (supine)','3','15','Flatten lower back to floor, hold 5s'],['Knee-to-chest stretch','3','30s each','Gentle, no overpressure'],['Cat-cow mobility','3','10','Slow rhythmic motion'],['Supine hip flexor stretch','3','30s each','Keep lower back neutral'],['Walking (flat surface)','1','10–20 min','Pain-free pace']],
+  back2:[['Bird-dog','3','10 each side','Neutral spine, avoid rotation'],['Glute bridge','3','15','Drive through heels, 2s hold at top'],['Dead bug','3','10 each side','Lower back flat throughout'],['Side plank','3','20–30s each','Progress to full side plank'],['McGill curl-up','3','8','One knee bent, elbows on floor'],['Prone hip extension','3','12 each','Squeeze glute, small lift']],
+  back3:[['Romanian deadlift','3','12','Hip hinge, neutral spine'],['Goblet squat','3','12','Upright torso'],['Pallof press','3','12 each','Anti-rotation core stability'],['Single-arm cable/DB row','3','12 each','Brace core throughout'],['Plank','3','45–60s','Neutral spine'],['Hip thrust','3','12','Full hip extension at top']],
+  shoulder1:[["Pendulum swings (Codman's)",'3','20 circles each','Gravity-assisted, relax arm'],['Active-assisted forward flexion – stick','3','15','Pain-free range only'],['Passive external rotation – stick','3','15','Elbow at 90°, no pain'],['Scapular retractions','3','15','Squeeze shoulder blades, hold 3s'],['Posterior capsule stretch','3','30s each','Gentle overpressure']],
+  shoulder2:[['External rotation – band','3','15','Towel roll under arm, control return'],['Internal rotation – band','3','15','Full range'],['Side-lying external rotation – DB','3','12','Slow, full ROM'],['Prone Y-T-W – light DB','3','10 each','Lower trap and rotator cuff'],['Wall slides','3','15','Scapular upward rotation'],['Seated low row','3','12','Retract scapula at end range']],
+  shoulder3:[['Seated DB shoulder press','3','12','If cleared for overhead'],['Lat pulldown (front)','3','12','Avoid shrug'],['Push-up (incline to flat)','3','10–15','Progress over weeks'],['Face pulls – cable','3','15','External rotation at end range'],['Single-arm cable row','3','12 each','Retract and depress scapula'],['Rotator cuff PREs','3','15','Progressive resistance']],
+  hamstring1:[['Prone knee flexion','3','15','Pain-free range'],['Isometric hamstring – heel into wall','3','10 × 5s','Gentle push only'],['Glute bridge','3','15','Low load'],['Gentle hamstring stretch','3','30s','No aggressive pulling in acute phase']],
+  hamstring2:[['Nordic hamstring curl (assisted)','3','6','Slow descent 3–4s'],['Romanian deadlift (light)','3','12','Hip hinge, neutral spine'],['Single-leg glute bridge','3','12 each','Control descent'],['Hamstring curl – machine','3','12','Full range, 3s eccentric'],['Walking lunges','3','12 each','Long stride']],
+  shins1:[['Calf stretch – gastrocnemius','3','45s each','Wall or step, hold not bounce'],['Calf stretch – soleus (bent knee)','3','45s each','Heel on floor'],['Seated calf raises','3','20','3s eccentric lowering'],['Towel toe scrunches','3','20','Intrinsic foot strength'],['Pool running (deep water, belt)','1','20 min','Non-impact cardio'],['Stationary cycling','1','20–30 min','Low resistance']],
+  shins2:[['Progressive walking – flat surface','1','15–30 min','Add 5 min per session'],['Single-leg calf raise','3','15','3s eccentric lowering'],['Hip strengthening – glute med','3','15 each','Clamshells, band walks'],['Walk/jog intervals','1','20 min total','Only once walking is pain-free']],
+  upper_general:[['Seated DB shoulder press','3','12','For non-WB members'],['Seated cable rows','3','12','Neutral spine'],['DB bicep curls','3','15','Controlled tempo'],['Tricep pushdowns – cable','3','15','Full extension'],['Seated chest press – machine','3','12','Avoid if shoulder restriction']],
+  core:[['Plank (forearm)','3','30–45s','Neutral spine'],['Side plank','3','20–30s each','Hip stacked'],['Dead bug','3','10 each side','Lower back flat'],['Bird-dog','3','10 each side','Avoid rotation'],['Pallof press','3','12 each','Anti-rotation']],
+  cardio_pool:[['Deep water running (belt)','1','20–30 min','Maintain running mechanics, RPE 6–7'],['Pool laps – freestyle','1','20 min','Moderate pace']],
+  cardio_ube:[['Upper body ergometer (UBE)','1','20–30 min','Moderate intensity, RPE 6–7'],['Seated arm cycling','1','15–20 min','Gradual intensity increase']],
+  cardio_bike:[['Stationary bike','1','20–30 min','Low resistance, adjust seat height'],['Cycling – flat terrain','1','30–45 min','Progress distance 10% per week']],
+  cardio_run:[['Walk/jog intervals (1:1)','1','20 min total','1 min jog, 1 min walk'],['Continuous jog – easy pace','1','20–30 min','Conversational pace, RPE 5–6'],['Tempo run','1','20 min','RPE 7–8'],['BEEP test preparation','1','Progressive levels','Build to minimum level']]
+};
+
+function tbl(rows) {
+  return `<table><thead><tr><th>Exercise</th><th>Sets</th><th>Reps / Duration</th><th>Notes</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table>`;
+}
+
+function detect(injList) {
+  const s = injList.join(' ').toLowerCase();
+  if (/knee|acl|mcl|pcl|meniscus|patell|it band/.test(s)) return 'knee';
+  if (/ankle|achilles|plantar|foot/.test(s)) return 'ankle';
+  if (/back|lumbar|disc|sacro|spine/.test(s)) return 'back';
+  if (/shoulder|rotator|cuff|ac joint|labrum/.test(s)) return 'shoulder';
+  if (/hamstring/.test(s)) return 'hamstring';
+  if (/shin|tibia/.test(s)) return 'shins';
+  return 'general';
+}
+
+function generate() {
+  if (injuries.length === 0) { alert('Please add at least one injury before generating.'); return; }
+  const restr = getChecked();
+  const norun = restr.includes('norun'), nojump = restr.includes('nojump'), nonwb = restr.includes('nonwb'), nooverhead = restr.includes('nooverhead'), poolonly = restr.includes('poolonly');
+  const equip = document.getElementById('equipment').value;
+  const hasPool = equip === 'full' || poolonly;
+  const dur = parseInt(document.getElementById('duration').value);
+  const cat = detect(injuries);
+  let cardio1, cardio2, cardio3, cardio4;
+  if (nonwb || poolonly) { cardio1 = hasPool ? EX.cardio_pool : EX.cardio_ube; cardio2 = cardio1; cardio3 = hasPool ? [...EX.cardio_pool,...EX.cardio_ube] : EX.cardio_ube; cardio4 = cardio3; }
+  else if (norun) { cardio1 = hasPool ? EX.cardio_pool : EX.cardio_bike; cardio2 = hasPool ? [...EX.cardio_pool,...EX.cardio_bike] : EX.cardio_bike; cardio3 = cardio2; cardio4 = cardio2; }
+  else { cardio1 = hasPool ? EX.cardio_pool : EX.cardio_bike; cardio2 = EX.cardio_run.slice(0,2); cardio3 = EX.cardio_run; cardio4 = [...EX.cardio_run,['Progressive run program','1','Build to 5 km continuous','Add 10% weekly volume'],['Load carry / rucking','1','20–30 min','Start 10 kg, build to operational load']]; }
+  let s1, s2, s3, s4;
+  if (cat==='knee') { s1 = nonwb ? [...EX.knee1.slice(0,3),...EX.upper_general.slice(0,3)] : EX.knee1; s2=[...EX.knee2,...EX.core.slice(0,2)]; s3=[...EX.knee3]; s4=nojump?EX.knee4.filter(r=>!/box jump|hurdle hop/.test(r[0].toLowerCase())):EX.knee4; }
+  else if (cat==='ankle') { s1=EX.ankle1; s2=[...EX.ankle2,...EX.core.slice(0,2)]; s3=[...EX.ankle3]; s4=EX.knee4.filter(r=>nojump?!/box jump|hurdle/.test(r[0].toLowerCase()):true); }
+  else if (cat==='back') { s1=EX.back1; s2=[...EX.back2]; s3=EX.back3; s4=EX.back3; }
+  else if (cat==='shoulder') { s1=EX.shoulder1; s2=[...EX.shoulder2]; s3=nooverhead?EX.shoulder3.filter(r=>!/press|overhead/.test(r[0].toLowerCase())):EX.shoulder3; s4=EX.shoulder3; }
+  else if (cat==='hamstring') { s1=EX.hamstring1; s2=[...EX.hamstring2,...EX.core.slice(0,2)]; s3=[...EX.hamstring2]; s4=EX.knee4.filter(r=>nojump?!/box jump/.test(r[0].toLowerCase()):true); }
+  else if (cat==='shins') { s1=EX.shins1; s2=[...EX.shins2,...EX.core.slice(0,2)]; s3=EX.ankle3; s4=EX.knee4.filter(r=>nojump?!/box jump/.test(r[0].toLowerCase()):true); }
+  else { s1=[...EX.back1,...EX.core.slice(0,2)]; s2=[...EX.back2,...EX.core]; s3=EX.back3; s4=EX.knee4.filter(r=>nojump?!/box jump|hurdle/.test(r[0].toLowerCase()):true); }
+  let pd;
+  if (dur<=4) pd=[1,1,1,1]; else if(dur<=6) pd=[2,2,1,1]; else if(dur<=8) pd=[2,2,2,2]; else if(dur<=12) pd=[3,3,3,3]; else pd=[4,4,4,4];
+  const w=(a,b)=>`Weeks ${a}–${b}`;
+  const phases=[
+    {num:1,label:'Protection &amp; Acute Management',weeks:w(1,pd[0]),obj:'Reduce pain and swelling, protect healing tissue, maintain upper body and cardiovascular condition, restore gentle mobility.',s:s1,c:cardio1.slice(0,2),crit:['Pain at rest ≤ 2/10','Visible swelling/inflammation reduced','Full ROM maintained in unaffected joints','Member tolerates Phase 1 exercises without pain spike above 3/10']},
+    {num:2,label:'Repair &amp; Early Loading',weeks:w(pd[0]+1,pd[0]+pd[1]),obj:'Begin progressive loading of injured area, rebuild muscular endurance, maintain cardiovascular fitness, introduce controlled weight-bearing as cleared.',s:s2,c:cardio2,crit:['Pain during exercise ≤ 3/10, returns to baseline within 1 hour','Tolerates 3 consecutive sessions without adverse reaction','Adequate strength base in injured area','Medical / physio clearance to progress loading']},
+    {num:3,label:'Functional Restoration',weeks:w(pd[0]+pd[1]+1,pd[0]+pd[1]+pd[2]),obj:'Restore functional strength, neuromuscular control and movement patterns specific to military duties. Begin duty-specific conditioning.',s:s3,c:cardio3,crit:['Fully pain-free through functional ROM','Limb symmetry index ≥ 80%',norun?'Low-impact cardio sustained 20+ min at RPE 6':'Able to jog 2 km continuously without pain','Completes all Phase 3 exercises without compensation']},
+    {num:4,label:(!nojump&&!norun)?'Military Conditioning &amp; RTD':'Strength Consolidation &amp; Modified RTD',weeks:w(pd[0]+pd[1]+pd[2]+1,dur),obj:(!nojump&&!norun)?'Restore full military fitness. Prepare for ADF fitness assessment standards. Return to unrestricted duty.':'Maximise strength and fitness within restrictions. Prepare modified assessment where applicable.',s:s4,c:cardio4,crit:(!nojump&&!norun)?['Fully pain-free with all military activities','Achieves minimum BEEP test score for age/sex','Push-up and sit-up scores meet minimum standard','Completes 2.4 km run within acceptable time','Signed medical clearance for unrestricted duties']:['Upper body strength meets or exceeds pre-injury baseline','Core stability: plank 60s, side plank 45s','Cardiovascular fitness maintained within restriction parameters','Reviewed by MO for modified duties if applicable']}
+  ];
+  const pain=parseInt(document.getElementById('pain').value);
+  const name=document.getElementById('name').value.trim()||'Unknown Member';
+  const rank=document.getElementById('rank').value||'';
+  const svc=document.getElementById('svc').value.trim()||'N/A';
+  const age=document.getElementById('age').value||'N/A';
+  const sex=document.getElementById('sex').value||'N/A';
+  const corps=document.getElementById('corps').value.trim()||'N/A';
+  const medNotes=document.getElementById('medNotes').value.trim()||'None provided';
+  const goalNotes=document.getElementById('goalNotes').value.trim()||'None';
+  const onsetEl=document.getElementById('onset'); const onsetText=onsetEl.options[onsetEl.selectedIndex]?.text||'Not specified';
+  const equipEl=document.getElementById('equipment'); const equipText=equipEl.options[equipEl.selectedIndex]?.text||'';
+  const fitEl=document.getElementById('fitness'); const fitText=fitEl.options[fitEl.selectedIndex]?.text||'';
+  const rLabels={norun:'No running',nojump:'No jumping',nonwb:'Non-weight-bearing',nooverhead:'No overhead lifting',nospine:'No spinal loading',notwist:'No twisting',nopushpull:'No push/pull',poolonly:'Pool only'};
+  const restrText=restr.length?restr.map(r=>rLabels[r]).join(', '):'None indicated';
+  const now=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const end=new Date(); end.setDate(end.getDate()+dur*7); const endStr=end.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const phasesHTML=phases.map(ph=>`
+    <div class="phase-block">
+      <div class="phase-header"><span class="phase-num">PHASE ${ph.num}</span><span class="phase-title">${ph.label}</span><span class="phase-weeks">${ph.weeks}</span></div>
+      <div class="phase-body">
+        <div class="phase-obj">${ph.obj}</div>
+        <div class="sub-heading">Strength &amp; Rehabilitation Exercises</div>${tbl(ph.s)}
+        <div class="sub-heading">Cardiovascular / Cross-Training</div>${tbl(ph.c)}
+        <div class="sub-heading">Progression Criteria to Advance</div>
+        <ul class="crit-list">${ph.crit.map(c=>`<li>${c}</li>`).join('')}</ul>
+      </div>
+    </div>`).join('');
+  const html=`
+    <div class="report-header">
+      <div><div class="report-title">Rehabilitation <span>Program</span></div><div class="report-meta">Generated ${now} — ADF PTI Rehab Planner — Program end: ${endStr}</div></div>
+      <div class="report-actions"><button class="btn-secondary" onclick="window.print()">Print / Save PDF</button></div>
+    </div>
+    <div class="member-card">
+      <div class="member-stat"><label>Member</label><div class="val">${rank} ${name}</div></div>
+      <div class="member-stat"><label>Svc No.</label><div class="val">${svc}</div></div>
+      <div class="member-stat"><label>Age / Sex</label><div class="val">${age} / ${sex.charAt(0)||'—'}</div></div>
+      <div class="member-stat"><label>Corps</label><div class="val">${corps}</div></div>
+    </div>
+    ${pain>=7?`<div class="warn-box"><b>High Pain Level Noted (${pain}/10)</b>Ensure medical clearance before commencing Phase 1. Escalate to MO if pain does not reduce within 2 weeks.</div>`:''}
+    <div class="card-section">
+      <div class="card-title">Program Overview</div>
+      <table><tbody>
+        <tr><td style="width:160px;font-weight:600;">Injury / Condition</td><td>${injuries.join(', ')}</td></tr>
+        <tr><td style="font-weight:600;">Onset</td><td>${onsetText}</td></tr>
+        <tr><td style="font-weight:600;">Pain Level</td><td>${pain}/10</td></tr>
+        <tr><td style="font-weight:600;">Duration</td><td>${dur} weeks (${document.getElementById('sessions').value} sessions/week)</td></tr>
+        <tr><td style="font-weight:600;">Equipment</td><td>${equipText}</td></tr>
+        <tr><td style="font-weight:600;">Restrictions</td><td>${restrText}</td></tr>
+        <tr><td style="font-weight:600;">Pre-injury Fitness</td><td>${fitText}</td></tr>
+        <tr><td style="font-weight:600;">Clearance Notes</td><td>${medNotes}</td></tr>
+        <tr><td style="font-weight:600;">RTD Goal</td><td>${goalNotes}</td></tr>
+      </tbody></table>
+    </div>
+    ${phasesHTML}
+    <div class="card-section">
+      <div class="card-title">Pain &amp; Load Management Guidelines</div>
+      <div class="info-box"><b>Traffic Light System</b>
+        <strong>GREEN — Continue:</strong> Pain ≤ 3/10, returns to baseline within 1 hour.<br>
+        <strong>AMBER — Modify:</strong> Pain 4–5/10 — reduce load/reps by 20–30%, monitor closely.<br>
+        <strong>RED — Stop &amp; Review:</strong> Pain ≥ 6/10, persists &gt;24 hrs, new swelling — cease session, refer to MO/Physio.
+      </div>
+      <ul class="crit-list">
+        <li>Do not progress load if pain exceeds 3/10 during exercise</li>
+        <li>DOMS is expected and acceptable — sharp, joint or nerve pain is not</li>
+        <li>Minimum 48 hours rest between sessions targeting the same muscle group</li>
+        <li>Ice injured area 15–20 min post-session if swelling is present (acute phase)</li>
+        <li>Apply the 10% Rule — do not increase total weekly load by more than 10%</li>
+        <li>Document pain scores and adverse reactions in the member's rehab log each session</li>
+      </ul>
+    </div>
+    <div class="card-section">
+      <div class="card-title">Return to Duty (RTD) Criteria</div>
+      <div class="info-box"><b>ADF Fitness Standards Reference</b>Member must meet minimum BEEP test level, push-up and sit-up standards for their age and sex before unrestricted RTD. Refer to current ADFPB for standards.</div>
+      <ul class="crit-list">
+        <li>Full pain-free range of motion in injured area</li>
+        <li>Limb symmetry index ≥ 90% on strength and functional testing</li>
+        <li>Passes ADF BEEP test at minimum level for age/sex</li>
+        <li>Push-up and sit-up scores meet minimum standard</li>
+        <li>Completes 2.4 km run within acceptable time for age/sex</li>
+        <li>Successfully completes duty-specific functional tasks</li>
+        <li>Signed medical / physiotherapy clearance from MO or Defence Physio</li>
+        <li>7–10 day graded return-to-full-duties period with PTI monitoring</li>
+      </ul>
+    </div>
+    <div class="card-section">
+      <div class="card-title">PTI Weekly Monitoring Checklist</div>
+      <ul class="check-list">
+        <li>Record pain score (0–10) at start and end of each session</li>
+        <li>Observe and document movement quality and compensation patterns</li>
+        <li>Check for swelling, redness or heat around the injury site</li>
+        <li>Confirm member is tolerating load appropriately</li>
+        <li>Review exercise technique — correct form before adding load</li>
+        <li>Assess if progression criteria are met before advancing phase</li>
+        <li>Update rehab log and communicate with MO/Physio if amber or red flags present</li>
+        <li>Check in on sleep, nutrition and member psychological wellbeing</li>
+        <li>Adjust program if operational tempo or duty requirements change</li>
+        <li>Complete monthly progress report for chain of command if required</li>
+      </ul>
+    </div>
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This rehabilitation program is a planning aid for qualified ADF Physical Training Instructors. It does not replace the clinical judgment of a physiotherapist or Medical Officer. All programs should be reviewed by appropriate medical personnel before implementation. If a member's condition deteriorates or new symptoms arise, cease exercise and refer to the MO immediately.
+    </div>`;
+  document.getElementById('emptyState').style.display='none';
+  const ra=document.getElementById('reportArea'); ra.style.display='block'; ra.innerHTML=html;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
