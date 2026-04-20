@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADF PTI Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c09;
+  --bg2: #111410;
+  --bg3: #181c14;
+  --panel: #1a1f15;
+  --border: #2a3022;
+  --border2: #3a4530;
+  --accent: #c8d84a;
+  --accent2: #a0b030;
+  --accent3: #6a7820;
+  --text: #e8eade;
+  --text2: #8a9478;
+  --text3: #4a5240;
+  --red: #c84a3a;
+  --tan: #c8a878;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+
+/* HEADER */
+header{position:relative;z-index:10;background:var(--bg2);border-bottom:1px solid var(--border);}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:stretch;}
+.header-stripe{width:5px;background:var(--accent);flex-shrink:0;margin-right:1.5rem;}
+.header-text{padding:1.5rem 0;}
+.header-sup{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px;}
+.header-logo{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:3px;color:var(--text);line-height:1;}
+.header-logo span{color:var(--accent);}
+.header-sub{font-size:12px;color:var(--text2);margin-top:5px;font-weight:300;letter-spacing:0.5px;}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hbadge{border:1px solid var(--border2);border-radius:3px;padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;}
+
+/* HERO */
+.hero{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:5rem 2rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.hero-eyebrow{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before{content:'';display:inline-block;width:30px;height:1px;background:var(--accent2);}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,88px);letter-spacing:2px;line-height:0.92;color:var(--text);margin-bottom:1.5rem;}
+.hero-title span{color:var(--accent);}
+.hero-desc{font-size:15px;color:var(--text2);line-height:1.8;max-width:480px;margin-bottom:2rem;font-weight:300;}
+.hero-stats{display:flex;gap:2rem;padding-top:1.5rem;border-top:1px solid var(--border);}
+.hero-stat-val{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);letter-spacing:1px;line-height:1;}
+.hero-stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-top:3px;}
+.hero-right{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hero-tile{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1.25rem;display:flex;flex-direction:column;gap:6px;}
+.hero-tile:first-child{grid-column:1/-1;border-color:var(--accent3);background:rgba(200,216,74,0.04);}
+.tile-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);font-weight:700;}
+.tile-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);letter-spacing:1px;line-height:1;}
+.tile-desc{font-size:12px;color:var(--text2);line-height:1.5;}
+
+/* DIVIDER */
+.divider{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:0 2rem;}
+.divider-line{height:1px;background:var(--border);display:flex;align-items:center;justify-content:center;}
+.divider-label{background:var(--bg);padding:0 1rem;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--text3);font-weight:700;white-space:nowrap;}
+
+/* TOOLS */
+.tools{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:4rem 2rem 5rem;}
+.tools-header{margin-bottom:2.5rem;}
+.tools-title{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--text);line-height:1;margin-bottom:6px;}
+.tools-title span{color:var(--accent);}
+.tools-sub{font-size:13px;color:var(--text2);font-weight:300;}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+
+/* TOOL CARD */
+.tool-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;transition:border-color 0.2s,transform 0.2s;text-decoration:none;}
+.tool-card:hover{border-color:var(--accent2);transform:translateY(-3px);}
+.tool-card-top{padding:1.75rem 1.5rem 1.25rem;flex:1;}
+.tool-number{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;color:var(--text3);margin-bottom:1rem;}
+.tool-icon{width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;font-size:22px;}
+.tool-icon.green{background:rgba(200,216,74,0.12);}
+.tool-icon.red{background:rgba(200,74,58,0.12);}
+.tool-icon.tan{background:rgba(200,168,120,0.12);}
+.tool-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--text);line-height:1;margin-bottom:8px;}
+.tool-desc{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300;margin-bottom:1.25rem;}
+.tool-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:2px;}
+.tag-green{background:rgba(200,216,74,0.1);color:var(--accent2);}
+.tag-red{background:rgba(200,74,58,0.1);color:var(--red);}
+.tag-tan{background:rgba(200,168,120,0.1);color:var(--tan);}
+.tag-muted{background:rgba(255,255,255,0.05);color:var(--text3);}
+.tool-card-bottom{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.tool-cta{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;}
+.tool-arrow{width:28px;height:28px;border:1px solid var(--border2);border-radius:3px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:14px;transition:background 0.15s;}
+.tool-card:hover .tool-arrow{background:var(--accent);color:var(--bg);}
+
+/* HOW IT WORKS */
+.how{position:relative;z-index:5;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.how-inner{max-width:1200px;margin:0 auto;padding:4rem 2rem;}
+.how-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--text);margin-bottom:2.5rem;}
+.how-title span{color:var(--accent);}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.how-step{background:var(--bg2);padding:1.5rem;}
+.step-num{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--accent3);letter-spacing:1px;line-height:1;margin-bottom:0.75rem;}
+.step-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:0.5px;}
+.step-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+
+/* DISCLAIMER */
+.disclaimer{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:2.5rem 2rem;}
+.disclaimer-inner{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1.25rem 1.5rem;display:flex;gap:1rem;align-items:flex-start;}
+.disclaimer-icon{font-size:18px;flex-shrink:0;margin-top:2px;color:var(--accent3);}
+.disclaimer-text{font-size:12px;color:var(--text3);line-height:1.7;font-style:italic;}
+.disclaimer-text strong{color:var(--text2);font-style:normal;}
+
+/* FOOTER */
+footer{position:relative;z-index:5;background:var(--bg2);border-top:1px solid var(--border);}
+.footer-inner{max-width:1200px;margin:0 auto;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--text3);}
+.footer-logo span{color:var(--accent3);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-link{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);text-decoration:none;transition:color 0.15s;}
+.footer-link:hover{color:var(--accent);}
+.footer-copy{font-size:11px;color:var(--text3);}
+
+@media(max-width:1000px){
+  .hero{grid-template-columns:1fr;gap:2rem;}
+  .hero-right{display:none;}
+  .tools-grid{grid-template-columns:1fr;}
+  .how-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:600px){
+  .header-inner{padding:0 1rem;}
+  .hero{padding:3rem 1rem 2.5rem;}
+  .tools{padding:3rem 1rem;}
+  .how-grid{grid-template-columns:1fr;}
+  .footer-inner{flex-direction:column;align-items:flex-start;}
+  .hero-stats{gap:1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-stripe"></div>
+    <div class="header-text">
+      <div class="header-sup">Australian Defence Force</div>
+      <div class="header-logo">ADF <span>PTI</span> Tools</div>
+      <div class="header-sub">Physical Training Instructor Resource Platform</div>
+    </div>
+    <div class="header-right">
+      <div class="hbadge">Free</div>
+      <div class="hbadge">Offline</div>
+      <div class="hbadge">No Login</div>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">PTI Resource Platform</div>
+    <h1 class="hero-title">Built For<br>Those Who<br><span>Lead PT</span></h1>
+    <p class="hero-desc">
+      Three professional planning tools for ADF Physical Training Instructors. Generate rehabilitation programs, specialty selection preparation plans and individual strength and conditioning programs — all free, offline and built to ADF standards.
+    </p>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">3</div>
+        <div class="hero-stat-label">Planning Tools</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">11</div>
+        <div class="hero-stat-label">Selection Tests</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">$0</div>
+        <div class="hero-stat-label">Cost to Use</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-tile">
+      <div class="tile-label">Platform Status</div>
+      <div class="tile-val">Operational</div>
+      <div class="tile-desc">All tools running. No internet connection required after page load. Works on desktop, tablet and mobile.</div>
+    </div>
+    <div class="hero-tile">
+      <div class="tile-label">Designed For</div>
+      <div class="tile-val">ADF PTIs</div>
+      <div class="tile-desc">Built to ADF standards</div>
+    </div>
+    <div class="hero-tile">
+      <div class="tile-label">Data Privacy</div>
+      <div class="tile-val">Local Only</div>
+      <div class="tile-desc">Nothing stored or transmitted</div>
+    </div>
+    <div class="hero-tile">
+      <div class="tile-label">Licence</div>
+      <div class="tile-val">MIT</div>
+      <div class="tile-desc">Free to share and adapt</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider">
+  <div class="divider-line">
+    <span class="divider-label">Select a Tool</span>
+  </div>
+</div>
+
+<section class="tools">
+  <div class="tools-header">
+    <div class="tools-title">The <span>Three Tools</span></div>
+    <div class="tools-sub">Click any tool to open it. Each one runs entirely in your browser — no accounts, no data collection, no cost.</div>
+  </div>
+
+  <div class="tools-grid">
+
+    <a class="tool-card" href="rehab.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 01 / 03</div>
+        <div class="tool-icon green">+</div>
+        <div class="tool-name">Rehabilitation Program Generator</div>
+        <div class="tool-desc">Input a member's injury, restrictions, physio clearance and fitness level. Instantly generates a phased rehabilitation program with exercise tables, cardiovascular maintenance, RTD criteria and a PTI monitoring checklist.</div>
+        <div class="tool-tags">
+          <span class="tag tag-green">Injury-Specific</span>
+          <span class="tag tag-green">Phase Program</span>
+          <span class="tag tag-muted">RTD Criteria</span>
+          <span class="tag tag-muted">PTI Checklist</span>
+          <span class="tag tag-muted">Print Ready</span>
+        </div>
+      </div>
+      <div class="tool-card-bottom">
+        <span class="tool-cta">Open Rehab Planner</span>
+        <div class="tool-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="tool-card" href="selection-prep.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 02 / 03</div>
+        <div class="tool-icon red">◎</div>
+        <div class="tool-name">Selection Prep Planner</div>
+        <div class="tool-desc">Choose from 11 ADF specialty selections — SASR, Commando, Clearance Diver, PTI, CDG, SOER and more. Input current scores, identify weaknesses and generate a periodised training program up to 12 months long, tailored to that specific test's verified 2026 standards.</div>
+        <div class="tool-tags">
+          <span class="tag tag-red">11 Selections</span>
+          <span class="tag tag-red">Gap Analysis</span>
+          <span class="tag tag-muted">Up to 12 Months</span>
+          <span class="tag tag-muted">Week-by-Week</span>
+          <span class="tag tag-muted">2026 Standards</span>
+        </div>
+      </div>
+      <div class="tool-card-bottom">
+        <span class="tool-cta">Open Selection Prep</span>
+        <div class="tool-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="tool-card" href="strength.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 03 / 03</div>
+        <div class="tool-icon tan">▲</div>
+        <div class="tool-name">Strength Program Builder</div>
+        <div class="tool-desc">Build a personalised strength and conditioning program for any individual. Select goal, experience level, training days, equipment access and focus areas. Generates a complete periodised program with exercise splits, nutrition targets and supplement guidance.</div>
+        <div class="tool-tags">
+          <span class="tag tag-tan">5 Goals</span>
+          <span class="tag tag-tan">Nutrition Plan</span>
+          <span class="tag tag-muted">3–6 Days/Week</span>
+          <span class="tag tag-muted">8–16 Weeks</span>
+          <span class="tag tag-muted">Equipment Adaptive</span>
+        </div>
+      </div>
+      <div class="tool-card-bottom">
+        <span class="tool-cta">Open Strength Builder</span>
+        <div class="tool-arrow">→</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<section class="how">
+  <div class="how-inner">
+    <div class="how-title">How It <span>Works</span></div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="step-num">01</div>
+        <div class="step-title">Select a Tool</div>
+        <div class="step-desc">Choose the tool that fits what you need — rehab, selection prep or strength programming.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">02</div>
+        <div class="step-title">Input Details</div>
+        <div class="step-desc">Enter the relevant information — injury, test target, current scores, goals or restrictions.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">03</div>
+        <div class="step-title">Generate Program</div>
+        <div class="step-desc">The tool instantly builds a tailored program — no waiting, no internet required.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">04</div>
+        <div class="step-title">Print or Save</div>
+        <div class="step-desc">Use the print button on any tool to save as PDF or print directly for the member's file.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <div class="disclaimer-inner">
+    <div class="disclaimer-icon">⚠</div>
+    <div class="disclaimer-text">
+      <strong>Disclaimer:</strong> These tools are planning aids designed to assist qualified ADF Physical Training Instructors. They do not replace the clinical judgment of a physiotherapist, Medical Officer or qualified exercise professional. Rehabilitation programs should be reviewed by appropriate medical personnel before implementation. Selection test standards may change — always verify current requirements with the relevant selection authority. If a member's condition deteriorates or new symptoms arise, cease exercise and refer to the MO immediately.
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">ADF <span>PTI</span> Tools</div>
+    <div class="footer-links">
+      <a class="footer-link" href="rehab.html">Rehab Planner</a>
+      <a class="footer-link" href="selection-prep.html">Selection Prep</a>
+      <a class="footer-link" href="strength.html">Strength Builder</a>
+    </div>
+    <div class="footer-copy">MIT Licence · Free to use and share</div>
+  </div>
+</footer>
+
+</body>
+</html>
