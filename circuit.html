@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADF PTI — Circuit Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a1a;--paper:#f4f1ec;--sand:#e8e2d8;--card:#ffffff;
+  --accent:#c8392b;--accent2:#e8a020;--accent3:#2b6cb0;
+  --teal:#1a7a8a;--olive:#4a5240;
+  --border:#d0c8b8;--muted:#888;--text:#1a1a1a;--text2:#555;
+  --radius:4px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--paper);color:var(--text);min-height:100vh;}
+
+header{background:var(--ink);color:#fff;padding:0 2rem;display:flex;align-items:stretch;border-bottom:3px solid var(--accent);}
+.hflag{background:var(--accent);width:6px;margin-right:1.5rem;}
+.htext{padding:1.25rem 0;}
+.heyebrow{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:4px;}
+header h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+header h1 span{color:var(--accent);}
+.hsub{font-size:12px;color:#aaa;margin-top:4px;font-weight:300;}
+.hright{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hbadge{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:700;}
+.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;transition:background 0.15s;}
+.hlink:hover{background:rgba(255,255,255,0.12);}
+
+.layout{display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - 72px);}
+
+/* SIDEBAR */
+.sidebar{background:var(--sand);border-right:1px solid var(--border);padding:1.5rem;overflow-y:auto;}
+.slabel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.75rem;}
+.fg label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--olive);}
+input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;transition:border-color .15s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,57,43,.1);}
+textarea{resize:vertical;min-height:60px;}
+.fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:.75rem;}
+
+/* PURPOSE TOGGLE */
+.purpose-row{display:flex;gap:0;margin-bottom:1rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.purpose-btn{flex:1;padding:9px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:none;background:var(--card);color:var(--muted);transition:all .15s;}
+.purpose-btn.active{background:var(--ink);color:#fff;}
+
+/* METHOD CHIPS */
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:1rem;}
+.method-chip{border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 10px;cursor:pointer;background:var(--card);transition:all .15s;}
+.method-chip:hover{border-color:var(--accent);}
+.method-chip.selected{border-color:var(--accent);background:#fdf0ee;}
+.mc-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin-bottom:2px;}
+.method-chip.selected .mc-name{color:var(--accent);}
+.mc-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+
+/* EQUIPMENT CHIPS */
+.equip-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem;}
+.eq-chip{border:1px solid var(--border);border-radius:var(--radius);padding:5px 10px;font-size:12px;cursor:pointer;background:var(--card);color:var(--text2);transition:all .15s;user-select:none;}
+.eq-chip:hover{border-color:var(--accent);}
+.eq-chip.selected{border-color:var(--accent);background:#fdf0ee;color:var(--accent);font-weight:600;}
+
+/* RESTRICTION CHIPS */
+.restr-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem;}
+.rx-chip{border:1px solid var(--border);border-radius:var(--radius);padding:5px 10px;font-size:12px;cursor:pointer;background:var(--card);color:var(--text2);transition:all .15s;}
+.rx-chip:hover{border-color:var(--accent2);}
+.rx-chip.selected{border-color:var(--accent2);background:#fdf5e0;color:#8a5010;font-weight:600;}
+
+/* GOAL CHIPS */
+.goal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:1rem;}
+.goal-chip{border:1.5px solid var(--border);border-radius:var(--radius);padding:7px 8px;cursor:pointer;background:var(--card);text-align:center;transition:all .15s;}
+.goal-chip:hover{border-color:var(--accent3);}
+.goal-chip.selected{border-color:var(--accent3);background:#eef4fc;}
+.gc-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);}
+.goal-chip.selected .gc-name{color:var(--accent3);}
+
+.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:.75rem;}
+.btn-gen:hover{background:var(--accent);}
+
+/* OUTPUT */
+.output{padding:2rem;overflow-y:auto;}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;opacity:.45;}
+.empty-icon{width:64px;height:64px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:28px;}
+.empty h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.empty p{font-size:13px;color:var(--muted);}
+
+/* REPORT */
+.rpt-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--ink);}
+.rpt-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1.1;}
+.rpt-title span{color:var(--accent);}
+.rpt-meta{font-size:12px;color:var(--muted);margin-top:4px;}
+.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;}
+.btn-sec:hover{background:var(--sand);}
+
+/* SESSION HEADER CARD */
+.session-card{background:var(--ink);color:#fff;border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;}
+.sc-item label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:3px;}
+.sc-item .scv{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--accent2);letter-spacing:1px;}
+
+/* METHOD BANNER */
+.method-banner{border-left:5px solid var(--accent);background:#fdf0ee;padding:12px 16px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:1.25rem;}
+.mb-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}
+.mb-rules{font-size:13px;color:#555;line-height:1.6;}
+
+/* PHASES */
+.phase-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.25rem;overflow:hidden;}
+.ph-head{background:var(--ink);color:#fff;padding:9px 16px;display:flex;align-items:center;gap:10px;}
+.ph-badge{background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;padding:2px 8px;border-radius:2px;letter-spacing:1px;}
+.ph-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.ph-dur{margin-left:auto;font-size:11px;color:#aaa;}
+.ph-body{padding:1rem 1.25rem;}
+
+/* STATION TABLE */
+table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:13px;}
+th{background:#f0ebe0;color:var(--olive);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 10px;text-align:left;font-weight:700;}
+td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:nth-child(even) td{background:#fafaf6;}
+.stn-num{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--accent);width:36px;}
+.stn-mod{display:inline-block;font-size:10px;background:#fdf5e0;color:#8a5010;border:1px solid #e8c870;border-radius:2px;padding:1px 6px;margin-left:6px;font-weight:600;}
+.stn-rx{display:inline-block;font-size:10px;background:#eef4fc;color:#2b6cb0;border:1px solid #90bce8;border-radius:2px;padding:1px 6px;margin-left:4px;font-weight:600;}
+
+/* NOTES BOXES */
+.note-box{background:#f0ebe0;border-left:4px solid var(--olive);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-top:10px;font-size:12.5px;color:#3a3a3a;}
+.note-box b{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--olive);margin-bottom:3px;}
+.warn-box{background:#fdf5e0;border-left:4px solid var(--accent2);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px;font-size:13px;}
+.warn-box b{color:#8a5010;display:block;margin-bottom:3px;font-size:10px;letter-spacing:.5px;text-transform:uppercase;}
+.info-box{background:#eef4fc;border-left:4px solid var(--accent3);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px;font-size:13px;}
+.info-box b{color:#1a4a8a;display:block;margin-bottom:3px;font-size:10px;letter-spacing:.5px;text-transform:uppercase;}
+
+/* GROUP LOGISTICS */
+.logistics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem;}
+.lg-card{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
+.lg-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.lg-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--ink);letter-spacing:1px;}
+.lg-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+.card-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.cs-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.cs-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--accent);border-radius:2px;flex-shrink:0;}
+
+.crit-list{list-style:none;padding:0;}
+.crit-list li{padding:5px 0 5px 20px;position:relative;font-size:13px;border-bottom:1px solid #f0ebe0;}
+.crit-list li:last-child{border-bottom:none;}
+.crit-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.disclaimer{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-top:2rem;font-size:12px;color:var(--muted);font-style:italic;}
+
+@media print{
+  .sidebar,.hright{display:none!important;}
+  .layout{display:block;}
+  .output{padding:1rem;}
+  .ph-head,.session-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}.session-card{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:480px){header{padding:0 1rem;}.output,.sidebar{padding:1rem;}.fgrid2,.fgrid3{grid-template-columns:1fr;}.goal-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hflag"></div>
+  <div class="htext">
+    <div class="heyebrow">Australian Defence Force</div>
+    <h1>PTI <span>Circuit</span> Generator</h1>
+    <div class="hsub">Group &amp; Individual Circuit Training Program Builder</div>
+  </div>
+  <div class="hright">
+    <a class="hlink" href="index.html">← Back to Tools</a>
+    <div class="hbadge">Free &amp; Offline</div>
+  </div>
+</header>
+
+<div class="layout">
+<div class="sidebar">
+
+  <!-- PURPOSE -->
+  <div class="slabel">Session Purpose</div>
+  <div class="purpose-row" style="margin-bottom:1rem;">
+    <button class="purpose-btn active" id="pb_group" onclick="setPurpose('group')">Group PT</button>
+    <button class="purpose-btn" id="pb_individual" onclick="setPurpose('individual')">Individual</button>
+    <button class="purpose-btn" id="pb_both" onclick="setPurpose('both')">Both</button>
+  </div>
+
+  <!-- GROUP SIZE (hidden for individual) -->
+  <div id="groupSizeBlock">
+    <div class="slabel">Group Size</div>
+    <div class="fgrid2">
+      <div class="fg"><label>Number of Personnel</label><input type="number" id="groupSize" value="20" min="1" max="300" oninput="updateGroupHints()"></div>
+      <div class="fg"><label>PTIs / Supervisors</label><input type="number" id="numPTI" value="2" min="1" max="20"></div>
+    </div>
+    <div id="groupHint" style="font-size:12px;color:var(--muted);margin-bottom:.75rem;padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);"></div>
+  </div>
+
+  <!-- SESSION DETAILS -->
+  <div class="slabel">Session Details</div>
+  <div class="fgrid2">
+    <div class="fg"><label>Total Duration (min)</label>
+      <select id="totalDur">
+        <option value="30">30 minutes</option>
+        <option value="45" selected>45 minutes</option>
+        <option value="60">60 minutes</option>
+        <option value="75">75 minutes</option>
+        <option value="90">90 minutes</option>
+      </select>
+    </div>
+    <div class="fg"><label>Fitness Level</label>
+      <select id="fitnessLevel">
+        <option value="beginner">Beginner / Mixed</option>
+        <option value="intermediate" selected>Intermediate (ADF standard)</option>
+        <option value="advanced">Advanced / High performers</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- GOAL -->
+  <div class="slabel">Training Goal</div>
+  <div class="goal-grid" id="goalGrid">
+    <div class="goal-chip selected" id="gc_conditioning" onclick="selectGoal('conditioning')"><div class="gc-name">Conditioning</div></div>
+    <div class="goal-chip" id="gc_strength" onclick="selectGoal('strength')"><div class="gc-name">Strength</div></div>
+    <div class="goal-chip" id="gc_cardio" onclick="selectGoal('cardio')"><div class="gc-name">Cardio Base</div></div>
+    <div class="goal-chip" id="gc_fullbody" onclick="selectGoal('fullbody')"><div class="gc-name">Full Body</div></div>
+    <div class="goal-chip" id="gc_upper" onclick="selectGoal('upper')"><div class="gc-name">Upper Body</div></div>
+    <div class="goal-chip" id="gc_lower" onclick="selectGoal('lower')"><div class="gc-name">Lower Body</div></div>
+    <div class="goal-chip" id="gc_combat" onclick="selectGoal('combat')"><div class="gc-name">Combat Fit</div></div>
+    <div class="goal-chip" id="gc_power" onclick="selectGoal('power')"><div class="gc-name">Power</div></div>
+    <div class="goal-chip" id="gc_adf" onclick="selectGoal('adf')"><div class="gc-name">ADF PFA Prep</div></div>
+  </div>
+
+  <!-- METHOD -->
+  <div class="slabel">Training Method</div>
+  <div class="method-grid" id="methodGrid">
+    <div class="method-chip selected" id="mc_amrap" onclick="selectMethod('amrap')"><div class="mc-name">AMRAP</div><div class="mc-desc">As Many Rounds As Possible in set time</div></div>
+    <div class="method-chip" id="mc_fortime" onclick="selectMethod('fortime')"><div class="mc-name">For Time</div><div class="mc-desc">Complete all work as fast as possible</div></div>
+    <div class="method-chip" id="mc_emom" onclick="selectMethod('emom')"><div class="mc-name">EMOM</div><div class="mc-desc">Every Minute On the Minute</div></div>
+    <div class="method-chip" id="mc_tabata" onclick="selectMethod('tabata')"><div class="mc-name">Tabata</div><div class="mc-desc">20s on / 10s off × 8 rounds</div></div>
+    <div class="method-chip" id="mc_station" onclick="selectMethod('station')"><div class="mc-name">Station Rotation</div><div class="mc-desc">Timed stations, rotate on whistle</div></div>
+    <div class="method-chip" id="mc_ladder" onclick="selectMethod('ladder')"><div class="mc-name">Ladder</div><div class="mc-desc">Ascending / descending rep scheme</div></div>
+    <div class="method-chip" id="mc_chipper" onclick="selectMethod('chipper')"><div class="mc-name">Chipper</div><div class="mc-desc">One long list, work through in order</div></div>
+    <div class="method-chip" id="mc_pyramid" onclick="selectMethod('pyramid')"><div class="mc-name">Pyramid</div><div class="mc-desc">Reps increase then decrease</div></div>
+    <div class="method-chip" id="mc_deathby" onclick="selectMethod('deathby')"><div class="mc-name">Death By</div><div class="mc-desc">+1 rep each minute until failure</div></div>
+    <div class="method-chip" id="mc_partner" onclick="selectMethod('partner')"><div class="mc-name">Partner Work</div><div class="mc-desc">Buddy-based work/rest or shared reps</div></div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="slabel">Available Equipment</div>
+  <div class="equip-grid" id="equipGrid">
+    <div class="eq-chip selected" onclick="toggleEquip(this,'bodyweight')">Bodyweight</div>
+    <div class="eq-chip selected" onclick="toggleEquip(this,'dumbbell')">Dumbbells</div>
+    <div class="eq-chip selected" onclick="toggleEquip(this,'barbell')">Barbell + Plates</div>
+    <div class="eq-chip selected" onclick="toggleEquip(this,'kettlebell')">Kettlebells</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'band')">Resistance Bands</div>
+    <div class="eq-chip selected" onclick="toggleEquip(this,'pullup')">Pull-up Bar</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'box')">Box / Step</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'battlerope')">Battle Ropes</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'sandbag')">Sandbags / Jerry Cans</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'sled')">Sled / Prowler</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'trx')">TRX / Suspension</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'rope')">Climbing Rope</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'medball')">Medicine / Wall Ball</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'bench')">Bench</div>
+    <div class="eq-chip selected" onclick="toggleEquip(this,'cones')">Cones / Markers</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'tyre')">Tyres</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'assaultbike')">Assault Bike</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'skierg')">Ski Erg</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'bikeerg')">Bike Erg</div>
+    <div class="eq-chip" onclick="toggleEquip(this,'rower')">Rower</div>
+  </div>
+
+  <!-- RESTRICTIONS -->
+  <div class="slabel">Group Restrictions (if any members have)</div>
+  <div class="restr-grid" id="restrGrid">
+    <div class="rx-chip" onclick="toggleRestr(this,'norun')">No Running</div>
+    <div class="rx-chip" onclick="toggleRestr(this,'nojump')">No Jumping</div>
+    <div class="rx-chip" onclick="toggleRestr(this,'nooverhead')">No Overhead</div>
+    <div class="rx-chip" onclick="toggleRestr(this,'nospine')">No Spinal Load</div>
+    <div class="rx-chip" onclick="toggleRestr(this,'nonwb')">Non-Weight-Bearing</div>
+    <div class="rx-chip" onclick="toggleRestr(this,'nopushpull')">No Push/Pull</div>
+    <div class="rx-chip" onclick="toggleRestr(this,'noheavylift')">No Heavy Lifting</div>
+    <div class="rx-chip" onclick="toggleRestr(this,'upperonly')">Upper Body Only</div>
+    <div class="rx-chip" onclick="toggleRestr(this,'loweronly')">Lower Body Only</div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="slabel">Additional Notes</div>
+  <div class="fg" style="margin-bottom:.75rem;"><label>Location / Specific Requirements</label>
+    <textarea id="sessionNotes" placeholder="e.g. Session on parade ground. No barbell — use sandbags instead. Half the group recovering from shin splints."></textarea>
+  </div>
+
+  <button class="btn-gen" onclick="generate()">Generate Circuit</button>
+</div>
+
+<!-- OUTPUT -->
+<div class="output">
+  <div class="empty" id="emptyState">
+    <div class="empty-icon">⚡</div>
+    <h2>No Circuit Generated</h2>
+    <p>Configure your session settings on the left<br>then press Generate Circuit.</p>
+  </div>
+  <div id="reportArea" style="display:none;"></div>
+</div>
+</div>
+
+<script>
+// ── STATE ──
+let purpose = 'group';
+let selectedGoal = 'conditioning';
+let selectedMethod = 'amrap';
+let selectedEquip = new Set(['bodyweight','dumbbell','barbell','kettlebell','pullup','cones']);
+let selectedRestr = new Set();
+
+function setPurpose(p) {
+  purpose = p;
+  ['group','individual','both'].forEach(x => document.getElementById('pb_'+x).classList.remove('active'));
+  document.getElementById('pb_'+p).classList.add('active');
+  document.getElementById('groupSizeBlock').style.display = p === 'individual' ? 'none' : 'block';
+}
+
+function selectGoal(g) {
+  selectedGoal = g;
+  document.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('gc_'+g).classList.add('selected');
+}
+
+function selectMethod(m) {
+  selectedMethod = m;
+  document.querySelectorAll('.method-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('mc_'+m).classList.add('selected');
+}
+
+function toggleEquip(el, key) {
+  if (selectedEquip.has(key)) { selectedEquip.delete(key); el.classList.remove('selected'); }
+  else { selectedEquip.add(key); el.classList.add('selected'); }
+}
+
+function toggleRestr(el, key) {
+  if (selectedRestr.has(key)) { selectedRestr.delete(key); el.classList.remove('selected'); }
+  else { selectedRestr.add(key); el.classList.add('selected'); }
+}
+
+function updateGroupHints() {
+  const n = parseInt(document.getElementById('groupSize').value) || 0;
+  let hint = '';
+  if (n <= 10) hint = `Small group — 1 PTI suitable. Can use 4–6 stations with 1–2 per station.`;
+  else if (n <= 30) hint = `Medium group — recommend 6–8 stations, ${Math.ceil(n/6)}–${Math.ceil(n/5)} per station.`;
+  else if (n <= 60) hint = `Large group — recommend 8–10 stations, rotate every 45–60s. Split into ${Math.ceil(n/8)} sub-groups.`;
+  else if (n <= 120) hint = `Very large group — recommend 12+ stations or run 2 parallel circuits. ${Math.ceil(n/10)} per station.`;
+  else hint = `Mass PT (${n} pax) — recommend 3–4 simultaneous identical circuits. Appoint sub-circuit leaders. Clear start/stop signals essential.`;
+  document.getElementById('groupHint').textContent = hint;
+}
+
+// ── EXERCISE DATABASE ──
+// Format: [name, equipment_required, muscle_group, load_type, rx_safe (restrictions it's OK for), modification]
+const EXDB = {
+  // BODYWEIGHT — UPPER
+  pushup:       {n:'Push-ups',eq:'bodyweight',mg:'chest/triceps',mod:'Knee push-ups',rx:['nospine','nonwb','loweronly'],rxalt:'Wall push-up'},
+  tricep_dip:   {n:'Tricep Dips (bench/box)',eq:'bench',mg:'triceps',mod:'Feet on ground',rx:['nonwb','loweronly'],rxalt:'Band tricep pushdown'},
+  diamond_pu:   {n:'Diamond Push-ups',eq:'bodyweight',mg:'triceps/chest',mod:'Knee diamond push-up',rx:['nospine','loweronly'],rxalt:'Band tricep ext.'},
+  wide_pu:      {n:'Wide Push-ups',eq:'bodyweight',mg:'chest/shoulders',mod:'Incline push-up on box',rx:['nospine','loweronly'],rxalt:'Band chest press'},
+  pullup:       {n:'Pull-ups',eq:'pullup',mg:'back/biceps',mod:'Jumping pull-up',rx:['nonwb','loweronly'],rxalt:'Band lat pulldown'},
+  chinup:       {n:'Chin-ups',eq:'pullup',mg:'biceps/back',mod:'Band-assisted',rx:['nonwb','loweronly'],rxalt:'DB curl'},
+  invrow:       {n:'Inverted Rows',eq:'pullup',mg:'back',mod:'Bent knees',rx:['nonwb','loweronly'],rxalt:'Band row'},
+  // BODYWEIGHT — LOWER
+  squat_bw:     {n:'Bodyweight Squats',eq:'bodyweight',mg:'quads/glutes',mod:'Partial squat',rx:['upperonly','noheavylift'],rxalt:'Seated leg extension (band)'},
+  lunge_bw:     {n:'Walking Lunges',eq:'bodyweight',mg:'quads/glutes',mod:'Stationary lunge',rx:['norun','upperonly'],rxalt:'Step-up (low box)'},
+  glute_bridge: {n:'Glute Bridge',eq:'bodyweight',mg:'glutes/hamstrings',mod:'Double leg',rx:['upperonly','nonwb','norun'],rxalt:'Band hip abduction'},
+  calf_raise:   {n:'Calf Raises',eq:'bodyweight',mg:'calves',mod:'Bilateral seated',rx:['upperonly'],rxalt:'Seated calf raise'},
+  stepup_bw:    {n:'Step-ups (bodyweight)',eq:'box',mg:'quads/glutes',mod:'Low box',rx:['nojump','upperonly'],rxalt:'Seated leg press (band)'},
+  wallsit:      {n:'Wall Sit',eq:'bodyweight',mg:'quads',mod:'Shorter duration',rx:['upperonly','nonwb'],rxalt:'Seated leg extension'},
+  // BODYWEIGHT — FULL BODY / CORE
+  burpee:       {n:'Burpees',eq:'bodyweight',mg:'full body',mod:'Step-back burpee (no jump)',rx:['nojump','norun','nospine'],rxalt:'Mountain climbers (slow)'},
+  mtn_climb:    {n:'Mountain Climbers',eq:'bodyweight',mg:'core/hip flexors',mod:'Slow alternating',rx:['nospine','nonwb'],rxalt:'Seated knee drives'},
+  plank:        {n:'Plank Hold',eq:'bodyweight',mg:'core',mod:'Knee plank',rx:['nospine'],rxalt:'Seated dead bug'},
+  side_plank:   {n:'Side Plank',eq:'bodyweight',mg:'obliques',mod:'Knee side plank',rx:['nospine'],rxalt:'Pallof press (band)'},
+  hollow_hold:  {n:'Hollow Body Hold',eq:'bodyweight',mg:'core',mod:'Tuck hollow',rx:['nospine'],rxalt:'Dead bug'},
+  dead_bug:     {n:'Dead Bug',eq:'bodyweight',mg:'core',mod:'Single arm/leg',rx:[],rxalt:''},
+  situp:        {n:'Sit-ups',eq:'bodyweight',mg:'core/abs',mod:'Partial crunch',rx:['nospine'],rxalt:'Dead bug'},
+  flutter_kick: {n:'Flutter Kicks',eq:'bodyweight',mg:'hip flexors/core',mod:'Bent knee',rx:['nospine'],rxalt:'Seated leg raise'},
+  v_up:         {n:'V-Ups',eq:'bodyweight',mg:'core',mod:'Tuck V-up',rx:['nospine'],rxalt:'Hollow hold'},
+  superman:     {n:'Superman Hold',eq:'bodyweight',mg:'lower back/glutes',mod:'Alternating arm/leg',rx:[],rxalt:''},
+  // RUNNING / CARDIO BW
+  run_shuttle:  {n:'Shuttle Runs (10m)',eq:'cones',mg:'cardio',mod:'Walk shuttles',rx:['nojump'],rxalt:'Side steps'},
+  high_knees:   {n:'High Knees',eq:'bodyweight',mg:'cardio/hip flexors',mod:'Marching in place',rx:['nojump','norun'],rxalt:'Seated knee drives'},
+  butt_kicks:   {n:'Butt Kicks',eq:'bodyweight',mg:'cardio/hamstrings',mod:'Walking butt kicks',rx:['nojump','norun'],rxalt:'Prone hamstring curl (band)'},
+  lateral_hop:  {n:'Lateral Hops',eq:'cones',mg:'cardio/glutes',mod:'Lateral step-overs',rx:['nojump','nonwb'],rxalt:'Side steps over cone'},
+  box_jump:     {n:'Box Jumps',eq:'box',mg:'power/legs',mod:'Step-up instead',rx:['nojump','nonwb'],rxalt:'Bodyweight squat'},
+  broad_jump:   {n:'Broad Jumps',eq:'cones',mg:'power/legs',mod:'Squat to stand',rx:['nojump','nonwb'],rxalt:'Squat hold'},
+  sprint_20:    {n:'Sprint 20m',eq:'cones',mg:'cardio/speed',mod:'Jog 20m',rx:['norun'],rxalt:'Bike erg sprint 10s'},
+  // DUMBBELL
+  db_thruster:  {n:'DB Thrusters',eq:'dumbbell',mg:'full body',mod:'Lighter weight',rx:['nooverhead','nospine'],rxalt:'DB front squat only'},
+  db_row:       {n:'DB Bent-Over Row',eq:'dumbbell',mg:'back/biceps',mod:'Lighter weight',rx:['nospine','loweronly'],rxalt:'Seated DB row'},
+  db_curl:      {n:'DB Bicep Curls',eq:'dumbbell',mg:'biceps',mod:'Lighter, seated',rx:['loweronly'],rxalt:'Band curl'},
+  db_press:     {n:'DB Shoulder Press',eq:'dumbbell',mg:'shoulders',mod:'Seated',rx:['nooverhead','loweronly'],rxalt:'DB lateral raise'},
+  db_squat:     {n:'DB Goblet Squat',eq:'dumbbell',mg:'quads/glutes',mod:'Lighter, partial depth',rx:['noheavylift','upperonly'],rxalt:'BW squat'},
+  db_rdl:       {n:'DB Romanian Deadlift',eq:'dumbbell',mg:'hamstrings/glutes',mod:'Lighter, limited ROM',rx:['nospine','noheavylift'],rxalt:'Glute bridge'},
+  db_lateral:   {n:'DB Lateral Raises',eq:'dumbbell',mg:'shoulders',mod:'Lighter, seated',rx:['loweronly'],rxalt:'Band lateral raise'},
+  db_lunge:     {n:'DB Reverse Lunge',eq:'dumbbell',mg:'quads/glutes',mod:'BW only',rx:['noheavylift','upperonly'],rxalt:'BW step-up'},
+  db_clean:     {n:'DB Power Clean',eq:'dumbbell',mg:'full body/power',mod:'Lighter, slow pull',rx:['nospine','noheavylift'],rxalt:'DB high pull'},
+  db_snatch:    {n:'DB Snatch (1 arm)',eq:'dumbbell',mg:'full body/power',mod:'Lighter',rx:['nooverhead','nospine'],rxalt:'DB deadlift to high pull'},
+  db_swing:     {n:'DB Swing',eq:'dumbbell',mg:'posterior chain',mod:'Lighter, two-hand',rx:['nospine','nooverhead'],rxalt:'Glute bridge'},
+  db_chest:     {n:'DB Chest Press (floor)',eq:'dumbbell',mg:'chest/triceps',mod:'Lighter',rx:['loweronly'],rxalt:'Push-up'},
+  // BARBELL
+  bb_squat:     {n:'Barbell Back Squat',eq:'barbell',mg:'quads/glutes',mod:'Goblet squat DB',rx:['nospine','noheavylift','upperonly'],rxalt:'BW squat'},
+  bb_deadlift:  {n:'Deadlift',eq:'barbell',mg:'posterior chain',mod:'Romanian DL',rx:['nospine','noheavylift'],rxalt:'DB RDL'},
+  bb_ohp:       {n:'Overhead Press',eq:'barbell',mg:'shoulders',mod:'DB press seated',rx:['nooverhead','nospine'],rxalt:'DB lateral raise'},
+  bb_row:       {n:'Barbell Row',eq:'barbell',mg:'back',mod:'DB row',rx:['nospine','noheavylift'],rxalt:'Band row'},
+  bb_power:     {n:'Power Clean',eq:'barbell',mg:'full body/power',mod:'DB clean',rx:['nospine','noheavylift'],rxalt:'DB high pull'},
+  bb_thruster:  {n:'Barbell Thruster',eq:'barbell',mg:'full body',mod:'DB thruster',rx:['nooverhead','nospine','noheavylift'],rxalt:'Front squat only'},
+  bb_hip:       {n:'Hip Thrust (barbell)',eq:'barbell',mg:'glutes',mod:'BW glute bridge',rx:['nospine','noheavylift'],rxalt:'Glute bridge'},
+  // KETTLEBELL
+  kb_swing:     {n:'KB Swing',eq:'kettlebell',mg:'posterior chain',mod:'Lighter, two-hand',rx:['nospine','nooverhead','noheavylift'],rxalt:'Glute bridge'},
+  kb_goblet:    {n:'KB Goblet Squat',eq:'kettlebell',mg:'quads/glutes',mod:'Lighter',rx:['noheavylift','upperonly'],rxalt:'BW squat'},
+  kb_clean:     {n:'KB Clean',eq:'kettlebell',mg:'full body',mod:'KB deadlift',rx:['nospine','noheavylift'],rxalt:'KB deadlift'},
+  kb_press:     {n:'KB Press (1 arm)',eq:'kettlebell',mg:'shoulders',mod:'Two-hand lighter',rx:['nooverhead'],rxalt:'Band press'},
+  kb_snatch:    {n:'KB Snatch',eq:'kettlebell',mg:'full body/power',mod:'KB high pull',rx:['nooverhead','nospine'],rxalt:'KB swing'},
+  kb_tgu:       {n:'Turkish Get-Up',eq:'kettlebell',mg:'full body/stability',mod:'No weight',rx:['nospine','noheavylift'],rxalt:'BW get-up'},
+  kb_dl:        {n:'KB Deadlift',eq:'kettlebell',mg:'posterior chain',mod:'Lighter',rx:['nospine','noheavylift'],rxalt:'Glute bridge'},
+  // MACHINES / CARDIO EQUIPMENT
+  assault_bike: {n:'Assault Bike Sprint',eq:'assaultbike',mg:'cardio/full body',mod:'Easy pace',rx:[],rxalt:''},
+  ski_erg:      {n:'Ski Erg',eq:'skierg',mg:'cardio/upper body',mod:'Slower pace',rx:['nonwb','loweronly'],rxalt:''},
+  bike_erg:     {n:'Bike Erg',eq:'bikeerg',mg:'cardio/lower body',mod:'Easy pace',rx:['norun','nonwb'],rxalt:''},
+  rower:        {n:'Rowing (Erg)',eq:'rower',mg:'cardio/full body',mod:'Arms-only rowing',rx:[],rxalt:'Arms-only row'},
+  // SPECIALIST
+  battle_rope:  {n:'Battle Rope Slams',eq:'battlerope',mg:'cardio/shoulders',mod:'Lighter waves',rx:['nooverhead','loweronly'],rxalt:''},
+  sandbag_carry:{n:'Sandbag Carry (20m)',eq:'sandbag',mg:'full body/grip',mod:'Lighter bag',rx:['nospine','noheavylift'],rxalt:'Unloaded walk'},
+  sandbag_squat:{n:'Sandbag Squat',eq:'sandbag',mg:'quads/glutes',mod:'Lighter bag',rx:['noheavylift','upperonly'],rxalt:'BW squat'},
+  sandbag_clean:{n:'Sandbag Clean',eq:'sandbag',mg:'full body',mod:'Lighter bag',rx:['nospine','noheavylift'],rxalt:'BW jump squat'},
+  buddy_carry:  {n:'Buddy / Fireman Carry (10m)',eq:'bodyweight',mg:'full body',mod:'Partner drag instead',rx:['nospine','noheavylift','nonwb'],rxalt:'Sandbag drag'},
+  log_carry:    {n:'Jerry Can Carry (20m)',eq:'sandbag',mg:'grip/full body',mod:'Lighter can',rx:['nospine','noheavylift'],rxalt:'Unloaded walk'},
+  sled_push:    {n:'Sled Push (20m)',eq:'sled',mg:'full body/legs',mod:'No weight on sled',rx:['nospine'],rxalt:'BW lunge walk'},
+  rope_climb:   {n:'Rope Climb',eq:'rope',mg:'back/arms',mod:'Rope pull (seated)',rx:['nonwb','loweronly'],rxalt:'Band lat pulldown'},
+  medball_slam: {n:'Med Ball Slam',eq:'medball',mg:'full body/core',mod:'Lighter ball',rx:['nospine','nooverhead'],rxalt:'Plank'},
+  wall_ball:    {n:'Wall Ball',eq:'medball',mg:'full body',mod:'Lighter ball, lower target',rx:['nooverhead','nospine'],rxalt:'BW squat'},
+  tyre_flip:    {n:'Tyre Flip',eq:'tyre',mg:'full body/power',mod:'Push sled instead',rx:['nospine','noheavylift'],rxalt:'BW broad jump'},
+  trx_row:      {n:'TRX Row',eq:'trx',mg:'back/biceps',mod:'More vertical = easier',rx:['loweronly'],rxalt:'Inverted row'},
+  trx_pushup:   {n:'TRX Push-up',eq:'trx',mg:'chest/triceps',mod:'Feet lower',rx:['loweronly'],rxalt:'Push-up'},
+  // BAND
+  band_row:     {n:'Band Row',eq:'band',mg:'back',mod:'Lighter band',rx:['loweronly'],rxalt:''},
+  band_press:   {n:'Band Chest Press',eq:'band',mg:'chest',mod:'Lighter',rx:['loweronly'],rxalt:''},
+  band_squat:   {n:'Band Squat',eq:'band',mg:'quads/glutes',mod:'No band',rx:['upperonly'],rxalt:'BW squat'},
+  band_curl:    {n:'Band Curl',eq:'band',mg:'biceps',mod:'Lighter band',rx:['loweronly'],rxalt:''},
+  band_lateral: {n:'Band Lateral Walk',eq:'band',mg:'glutes/hips',mod:'Shorter steps',rx:['upperonly','nonwb'],rxalt:'Clamshell (floor)'},
+};
+
+// ── GOAL → EXERCISE MAPPING ──
+const GOAL_EXERCISES = {
+  conditioning: ['burpee','pushup','squat_bw','mtn_climb','situp','run_shuttle','pullup','db_thruster','kb_swing','plank','high_knees','lunge_bw','battle_rope','medball_slam'],
+  strength:     ['bb_squat','bb_deadlift','bb_ohp','bb_row','db_rdl','db_press','db_row','kb_swing','kb_goblet','pullup','chinup','dips','bb_thruster','db_squat'],
+  cardio:       ['run_shuttle','sprint_20','high_knees','butt_kicks','lateral_hop','assault_bike','rower','ski_erg','bike_erg','burpee','box_jump','broad_jump','mtn_climb','battle_rope'],
+  fullbody:     ['burpee','db_thruster','kb_swing','bb_deadlift','pushup','pullup','squat_bw','situp','db_clean','sandbag_clean','wall_ball','sled_push','buddy_carry','rower'],
+  upper:        ['pushup','pullup','chinup','db_row','db_press','db_curl','db_lateral','bb_ohp','bb_row','tricep_dip','diamond_pu','trx_row','trx_pushup','battle_rope','rope_climb','band_row'],
+  lower:        ['bb_squat','db_squat','kb_goblet','lunge_bw','db_lunge','glute_bridge','db_rdl','bb_deadlift','kb_dl','calf_raise','stepup_bw','wallsit','band_squat','band_lateral','box_jump'],
+  combat:       ['burpee','buddy_carry','sandbag_carry','sandbag_squat','log_carry','tyre_flip','rope_climb','sled_push','run_shuttle','sprint_20','pushup','pullup','mtn_climb','situp','medball_slam'],
+  power:        ['box_jump','broad_jump','db_snatch','kb_snatch','db_clean','kb_clean','bb_power','tyre_flip','medball_slam','wall_ball','sprint_20','db_thruster','sandbag_clean','assault_bike'],
+  adf:          ['pushup','situp','pullup','run_shuttle','high_knees','squat_bw','plank','flutter_kick','v_up','burpee','sprint_20','lunge_bw','mtn_climb','glute_bridge','kb_swing'],
+};
+
+// ── RESTRICTION FILTERS ──
+function isAllowed(exKey, restrictions) {
+  if (restrictions.size === 0) return true;
+  const ex = EXDB[exKey];
+  if (!ex) return false;
+  for (const r of restrictions) {
+    if (ex.rx && ex.rx.includes(r)) return false;
+    // Additional hard blocks
+    if (r === 'norun' && (ex.mg === 'cardio' && ex.eq === 'cones' && ex.n.toLowerCase().includes('run'))) return false;
+    if (r === 'nojump' && ex.n.toLowerCase().includes('jump')) return false;
+    if (r === 'nooverhead' && ex.n.toLowerCase().includes('press') && ex.rx && !ex.rx.includes('nooverhead')) return false;
+    if (r === 'upperonly' && (ex.mg.includes('quads') || ex.mg.includes('glutes') || ex.mg.includes('hamstring') || ex.mg.includes('calves'))) return false;
+    if (r === 'loweronly' && (ex.mg.includes('chest') || ex.mg.includes('shoulder') || ex.mg.includes('biceps') || ex.mg.includes('triceps') || ex.mg.includes('back'))) return false;
+  }
+  return true;
+}
+
+function getModification(exKey, restrictions) {
+  if (restrictions.size === 0) return null;
+  const ex = EXDB[exKey];
+  if (!ex) return null;
+  for (const r of restrictions) {
+    if (ex.rx && ex.rx.includes(r) && ex.rxalt) return ex.rxalt;
+  }
+  return null;
+}
+
+// ── STATION COUNT LOGIC ──
+function calcStations(groupSize, method, totalMin) {
+  if (method === 'amrap' || method === 'fortime' || method === 'chipper' || method === 'deathby') {
+    if (groupSize <= 10) return 5;
+    if (groupSize <= 30) return 6;
+    if (groupSize <= 60) return 8;
+    if (groupSize <= 120) return 10;
+    return 12;
+  }
+  if (method === 'station') {
+    if (groupSize <= 10) return 6;
+    if (groupSize <= 30) return 8;
+    if (groupSize <= 60) return 10;
+    if (groupSize <= 120) return 12;
+    return 15;
+  }
+  if (method === 'emom') return Math.min(8, Math.floor(totalMin / 2));
+  if (method === 'tabata') return 8;
+  if (method === 'partner') return Math.ceil(groupSize / 2) > 8 ? 8 : 6;
+  return 6;
+}
+
+// ── METHOD RULES TEXT ──
+const METHOD_RULES = {
+  amrap:    (t,s,g) => `AMRAP ${t} minutes. Set a timer for ${t} minutes. Work through all ${s} exercises in order, completing the prescribed reps. Count total rounds completed. Record score.`,
+  fortime:  (t,s,g) => `For Time. Complete ${Math.ceil(g<=1?3:g<=30?3:4)} rounds of all ${s} exercises as fast as possible. Record total time. Scale reps if needed to maintain intensity.`,
+  emom:     (t,s,g) => `EMOM ${t} minutes. Every minute on the minute, complete the prescribed work for that station. Rest for the remainder of the minute. Rotate through all ${s} stations.`,
+  tabata:   (t,s,g) => `Tabata Protocol. 20 seconds work / 10 seconds rest × 8 rounds per exercise. Complete all 8 rounds of one exercise before moving to the next. Total work time per exercise: 4 minutes.`,
+  station:  (t,s,g) => `Station Rotation. ${s} stations, ${g>1?Math.ceil(g/s):1} person(s) per station. Work for ${Math.ceil((t-10)/s*0.8)}–${Math.ceil((t-10)/s)} seconds per station on PTI whistle. 10s transition. Complete ${Math.ceil((t-10)/((Math.ceil((t-10)/s))+10))} full rotations.`,
+  ladder:   (t,s,g) => `Ascending Ladder. Start with 2 reps of each exercise. Add 2 reps every round (2, 4, 6, 8...). Continue ascending until time expires or max rep round is reached. Scale to descending if needed.`,
+  chipper:  (t,s,g) => `Chipper. One long list of work. Complete every rep of Exercise 1 before moving to Exercise 2. Work through all ${s} exercises in order. For Time — record when all reps are complete.`,
+  pyramid:  (t,s,g) => `Pyramid. Rep scheme: 10–8–6–4–2–4–6–8–10 (or 5–10–15–10–5). Complete all exercises at each rep count before moving to next level. Rest 60–90s between levels.`,
+  deathby:  (t,s,g) => `Death By. Start with 1 rep of the primary exercise in minute 1. Add 1 rep each minute. Continue until you cannot complete the required reps within the minute. Note the last successful minute.`,
+  partner:  (t,s,g) => `Partner Work. Pair up — one partner works while the other rests (I Go / You Go). Share the total rep count for each exercise. Switch when partner taps out or set rep count is reached. Buddy carries and team exercises included.`,
+};
+
+// ── TIMING STRUCTURE ──
+function getTimingStructure(method, totalMin, numStations, level) {
+  const workMin = totalMin - 10; // minus warmup/cooldown
+  const restRatio = level === 'beginner' ? 1 : level === 'advanced' ? 0.33 : 0.5;
+  let workTime, restTime, rounds, stationTime;
+  switch(method) {
+    case 'amrap': workTime = workMin; restTime = 0; rounds = 1; break;
+    case 'fortime': workTime = workMin; restTime = 60; rounds = 3; break;
+    case 'emom': workTime = 40; restTime = 20; rounds = workMin; stationTime = '1 min'; break;
+    case 'tabata': workTime = 20; restTime = 10; rounds = 8; stationTime = '4 min/exercise'; break;
+    case 'station': stationTime = Math.ceil((workMin * 60) / numStations / 1.1); workTime = stationTime; restTime = 10; rounds = Math.floor((workMin*60)/(stationTime+10)/numStations)+1; break;
+    case 'ladder': workTime = workMin; restTime = 90; rounds = 'ascending'; break;
+    case 'chipper': workTime = workMin; restTime = 0; rounds = 1; break;
+    case 'pyramid': workTime = workMin; restTime = 90; rounds = 5; break;
+    case 'deathby': workTime = workMin; restTime = 0; rounds = 'to failure'; break;
+    case 'partner': workTime = workMin; restTime = 'while partner works'; rounds = 3; break;
+    default: workTime = workMin; restTime = 60; rounds = 3;
+  }
+  return {workTime, restTime, rounds, stationTime};
+}
+
+// ── REP SCHEMES ──
+function getReps(method, exKey, level, groupSize) {
+  const ex = EXDB[exKey];
+  const isBig = ex && (ex.mg.includes('full body') || ex.mg.includes('posterior chain'));
+  const isCardio = ex && ex.mg === 'cardio';
+  const base = { beginner: isCardio?20:isBig?8:12, intermediate: isCardio?25:isBig?10:15, advanced: isCardio?30:isBig?12:20 }[level] || 15;
+  switch(method) {
+    case 'amrap': return `${base} reps`;
+    case 'fortime': return `${base} reps`;
+    case 'emom': return `${Math.ceil(base*0.6)} reps`;
+    case 'tabata': return '20s on / 10s off';
+    case 'station': return `${Math.ceil(base*0.8)} reps or max in time`;
+    case 'ladder': return '2-4-6-8... reps';
+    case 'chipper': return `${base*3} reps total`;
+    case 'pyramid': return '10-8-6-4-2-4-6-8-10';
+    case 'deathby': return '+1 rep/min';
+    case 'partner': return `${base*2} reps shared`;
+    default: return `${base} reps`;
+  }
+}
+
+// ── SELECT EXERCISES ──
+function selectExercises(goal, equip, restrictions, numStations, method) {
+  const pool = GOAL_EXERCISES[goal] || GOAL_EXERCISES['conditioning'];
+  // Filter by equipment and restrictions
+  const filtered = pool.filter(key => {
+    const ex = EXDB[key];
+    if (!ex) return false;
+    // Check equipment
+    if (ex.eq !== 'bodyweight' && ex.eq !== 'cones' && !equip.has(ex.eq)) return false;
+    // Check restrictions
+    return isAllowed(key, restrictions);
+  });
+
+  // If not enough, pad with bodyweight fallbacks
+  const fallbacks = ['pushup','squat_bw','situp','plank','lunge_bw','mtn_climb','burpee','glute_bridge','dead_bug','flutter_kick'];
+  const combined = [...new Set([...filtered, ...fallbacks])].filter(k => EXDB[k]);
+  
+  // Shuffle and pick
+  const shuffled = combined.sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(numStations, shuffled.length));
+}
+
+// ── GROUP LOGISTICS ──
+function buildGroupLogistics(groupSize, numStations, method, totalMin) {
+  if (purpose === 'individual') return '';
+  const perStation = Math.ceil(groupSize / numStations);
+  const numCircuits = groupSize > 120 ? Math.ceil(groupSize / 60) : groupSize > 60 ? 2 : 1;
+  const paxPerCircuit = Math.ceil(groupSize / numCircuits);
+  const stationTime = method === 'station' ? Math.ceil((totalMin-10)*60/numStations/1.1) : null;
+  return `
+    <div class="card-section">
+      <div class="cs-title">Group Logistics</div>
+      <div class="logistics-grid">
+        <div class="lg-card"><div class="lg-label">Total Personnel</div><div class="lg-val">${groupSize}</div><div class="lg-sub">pax on parade</div></div>
+        <div class="lg-card"><div class="lg-label">Stations</div><div class="lg-val">${numStations}</div><div class="lg-sub">${perStation} pax per station</div></div>
+        <div class="lg-card"><div class="lg-label">Circuits</div><div class="lg-val">${numCircuits}</div><div class="lg-sub">${paxPerCircuit} pax per circuit</div></div>
+      </div>
+      ${numCircuits > 1 ? `<div class="info-box"><b>Multiple Circuits Required</b>Group size requires ${numCircuits} identical parallel circuits. Appoint a sub-circuit PTI/supervisor for each. Ensure clear sightlines and consistent start/stop signals across all circuits.</div>` : ''}
+      ${groupSize > 200 ? `<div class="warn-box"><b>Mass PT — Additional Planning Required</b>200+ personnel requires detailed pre-brief, clearly marked station areas, multiple PTIs with radios or whistles, and rehearsed emergency procedures. Consider dividing into companies or platoons with dedicated PTI leadership.</div>` : ''}
+      <ul class="crit-list">
+        <li>Brief all personnel on the circuit before starting — demonstrate each exercise</li>
+        <li>Mark each station clearly with cones and station number cards</li>
+        ${stationTime ? `<li>Station time: ${stationTime} seconds work, 10 seconds transition on whistle</li>` : ''}
+        <li>Position PTIs at stations with highest injury risk or technique requirements</li>
+        <li>Identify restricted/injured members before start — seat them at modified stations</li>
+        <li>Have water available at each station for large groups</li>
+        ${groupSize > 50 ? '<li>Designate a safety officer who is not leading exercises to monitor for injury/distress</li>' : ''}
+      </ul>
+    </div>`;
+}
+
+// ── RESTRICTION ALTERNATIVES ──
+function buildRestrictionBlock(restrictions, exercises, equip, level) {
+  if (restrictions.size === 0) return '';
+  const alts = exercises.map(key => {
+    const ex = EXDB[key];
+    if (!ex) return null;
+    const mod = ex.mod;
+    const rxalt = ex.rxalt;
+    return { station: ex.n, mod, rxalt };
+  }).filter(Boolean);
+  
+  const restrLabels = {norun:'No Running',nojump:'No Jumping',nooverhead:'No Overhead',nospine:'No Spinal Load',nonwb:'Non-Weight-Bearing',nopushpull:'No Push/Pull',noheavylift:'No Heavy Lifting',upperonly:'Upper Body Only',loweronly:'Lower Body Only'};
+  const restrList = [...restrictions].map(r => restrLabels[r]).join(', ');
+
+  return `
+    <div class="card-section">
+      <div class="cs-title">Restricted Member Modifications</div>
+      <div class="warn-box"><b>Active Restrictions: ${restrList}</b>The following modifications apply for members with these restrictions. Seat restricted members at modified stations or provide an alternative exercise card.</div>
+      <table><thead><tr><th>Station</th><th>Standard Exercise</th><th>Modification</th><th>Alternative (if needed)</th></tr></thead><tbody>
+        ${alts.map((a,i) => `<tr><td class="stn-num">${i+1}</td><td>${a.station}</td><td>${a.mod}</td><td>${a.rxalt||'Rest / mobility work'}</td></tr>`).join('')}
+      </tbody></table>
+      <div class="note-box"><b>PTI Note</b>Restricted members should be briefed individually before the session. Ensure they have a printed modification card. Never leave a restricted member without a clear alternative — idle standing in a group PT session leads to disengagement and poor practice.</div>
+    </div>`;
+}
+
+// ── WARMUP / COOLDOWN ──
+function buildWarmup(goal, dur) {
+  const warmupExercises = [
+    ['Jog / dynamic movement (laps or in place)','3 min','Easy pace'],
+    ['Arm circles — forward and backward','30s each','Increase ROM'],
+    ['Hip circles','30s each','Mobilise hips'],
+    ['Leg swings — front/back and lateral','10 each leg','Hip flexor and glute activation'],
+    ['Inchworm walk-out','6 reps','Hamstring and shoulder warm-up'],
+    ['World\'s greatest stretch','5 each side','Hip flexor, t-spine, hamstring'],
+    ['Jumping jacks / star jumps','30 reps','Elevate heart rate'],
+    ['Bodyweight squats (slow)','10 reps','Prime lower body'],
+    ['Push-up to downward dog','8 reps','Chest and posterior chain'],
+  ];
+  const cooldownExercises = [
+    ['Easy jog or walk','2–3 min','Allow heart rate to drop'],
+    ['Standing quad stretch','30s each','Hold, no bounce'],
+    ['Hamstring stretch (seated or standing)','30s each','Hold at end range'],
+    ['Hip flexor lunge stretch','30s each','Front knee at 90°'],
+    ['Shoulder cross-body stretch','30s each','Gentle overpressure'],
+    ['Seated glute stretch (figure 4)','30s each','Cross ankle over knee'],
+    ['Child\'s pose','45s','Full spinal decompression'],
+    ['Deep breathing — 4-4-4-4 box breathing','1 min','4s inhale, 4s hold, 4s exhale, 4s hold'],
+  ];
+  return `
+    <div class="card-section">
+      <div class="cs-title">Warm-up (10 minutes)</div>
+      <table><thead><tr><th>Activity</th><th>Duration / Reps</th><th>Coaching Cue</th></tr></thead><tbody>
+        ${warmupExercises.map(w=>`<tr><td>${w[0]}</td><td>${w[1]}</td><td>${w[2]}</td></tr>`).join('')}
+      </tbody></table>
+      <div class="note-box"><b>Warm-up Note</b>Warm-up is non-negotiable regardless of time pressure. A proper warm-up reduces injury risk significantly. If session time is short, reduce the circuit duration — never cut the warm-up.</div>
+    </div>
+    <div class="card-section">
+      <div class="cs-title">Cool-down (5–8 minutes)</div>
+      <table><thead><tr><th>Activity</th><th>Duration</th><th>Coaching Cue</th></tr></thead><tbody>
+        ${cooldownExercises.map(c=>`<tr><td>${c[0]}</td><td>${c[1]}</td><td>${c[2]}</td></tr>`).join('')}
+      </tbody></table>
+      <div class="note-box"><b>Cool-down Note</b>ADF box breathing (4-4-4-4) at the end of every session builds mental resilience and parasympathetic recovery. Make it a habit across all group PT sessions.</div>
+    </div>`;
+}
+
+// ── MAIN GENERATE ──
+function generate() {
+  const groupSize = parseInt(document.getElementById('groupSize').value) || 1;
+  const numPTI = parseInt(document.getElementById('numPTI').value) || 1;
+  const totalMin = parseInt(document.getElementById('totalDur').value);
+  const level = document.getElementById('fitnessLevel').value;
+  const sessionNotes = document.getElementById('sessionNotes').value.trim();
+  const goal = selectedGoal;
+  const method = selectedMethod;
+  const equip = selectedEquip;
+  const restrictions = selectedRestr;
+
+  const numStations = calcStations(purpose === 'individual' ? 1 : groupSize, method, totalMin);
+  const exercises = selectExercises(goal, equip, restrictions, numStations, method);
+  const timing = getTimingStructure(method, totalMin, numStations, level);
+
+  const goalLabels = {conditioning:'Conditioning',strength:'Strength',cardio:'Cardio Base',fullbody:'Full Body',upper:'Upper Body',lower:'Lower Body',combat:'Combat Fitness',power:'Power',adf:'ADF PFA Prep'};
+  const methodLabels = {amrap:'AMRAP',fortime:'For Time',emom:'EMOM',tabata:'Tabata',station:'Station Rotation',ladder:'Ladder',chipper:'Chipper',pyramid:'Pyramid',deathby:'Death By',partner:'Partner Work'};
+  const levelLabels = {beginner:'Beginner / Mixed',intermediate:'Intermediate',advanced:'Advanced'};
+
+  const now = new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+
+  // Build stations HTML
+  const stationsHTML = exercises.map((key, i) => {
+    const ex = EXDB[key];
+    if (!ex) return '';
+    const reps = getReps(method, key, level, groupSize);
+    const mod = getModification(key, restrictions);
+    const isRestricted = restrictions.size > 0 && ex.rx && [...restrictions].some(r => ex.rx.includes(r));
+    return `<tr>
+      <td class="stn-num">${i+1}</td>
+      <td>${ex.n}${mod?`<span class="stn-mod">MOD: ${mod}</span>`:''}</td>
+      <td>${ex.mg}</td>
+      <td>${reps}</td>
+      <td>${ex.mod}</td>
+      <td>${ex.eq === 'bodyweight' || ex.eq === 'cones' ? 'Bodyweight / Cones' : ex.eq.charAt(0).toUpperCase()+ex.eq.slice(1)}</td>
+    </tr>`;
+  }).join('');
+
+  // Work/rest display
+  let workRestStr = '';
+  if (method === 'station') workRestStr = `${timing.workTime}s work / 10s transition`;
+  else if (method === 'tabata') workRestStr = '20s work / 10s rest';
+  else if (method === 'emom') workRestStr = '40s work / 20s rest (each minute)';
+  else if (timing.restTime) workRestStr = `Work: ${timing.workTime} min | Rest: ${typeof timing.restTime === 'number' ? Math.round(timing.restTime/60)+'min' : timing.restTime}`;
+  else workRestStr = `${timing.workTime} min total`;
+
+  const purposeLabel = purpose === 'individual' ? 'Individual' : purpose === 'both' ? 'Group + Individual' : `Group PT (${groupSize} pax)`;
+
+  const html = `
+    <div class="rpt-header">
+      <div>
+        <div class="rpt-title">Circuit <span>Program</span></div>
+        <div class="rpt-meta">Generated ${now} — ADF PTI Circuit Generator</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';">Reset</button>
+      </div>
+    </div>
+
+    <div class="session-card">
+      <div class="sc-item"><label>Purpose</label><div class="scv">${purposeLabel}</div></div>
+      <div class="sc-item"><label>Method</label><div class="scv">${methodLabels[method]}</div></div>
+      <div class="sc-item"><label>Goal</label><div class="scv">${goalLabels[goal]}</div></div>
+      <div class="sc-item"><label>Duration</label><div class="scv">${totalMin} min</div></div>
+      <div class="sc-item"><label>Level</label><div class="scv">${levelLabels[level]}</div></div>
+    </div>
+
+    <div class="method-banner">
+      <div class="mb-name">${methodLabels[method]} — How It Works</div>
+      <div class="mb-rules">${METHOD_RULES[method](totalMin-10, numStations, groupSize)}</div>
+      <div style="margin-top:8px;font-size:12px;color:#888;">${workRestStr} · ${numStations} stations · ${typeof timing.rounds === 'number' ? timing.rounds+' rounds' : timing.rounds}</div>
+    </div>
+
+    ${buildGroupLogistics(groupSize, numStations, method, totalMin)}
+
+    ${buildWarmup(goal, totalMin)}
+
+    <div class="card-section">
+      <div class="cs-title">Circuit — ${numStations} Stations</div>
+      <table>
+        <thead><tr><th>#</th><th>Exercise</th><th>Muscle Group</th><th>Reps / Work</th><th>Modification</th><th>Equipment</th></tr></thead>
+        <tbody>${stationsHTML}</tbody>
+      </table>
+      <div class="note-box"><b>PTI Delivery Notes</b>
+        Demonstrate each exercise before the session starts — correct form before intensity. Call time/reps loudly and clearly. Provide constant coaching cues throughout. Watch for form breakdown under fatigue — reduce load rather than compromising technique. Recognise genuine distress vs discomfort — never push through pain.
+      </div>
+    </div>
+
+    ${buildRestrictionBlock(restrictions, exercises, equip, level)}
+
+    ${sessionNotes ? `<div class="card-section"><div class="cs-title">Session Notes</div><p style="font-size:13.5px;color:#444;line-height:1.7;">${sessionNotes}</p></div>` : ''}
+
+    <div class="card-section">
+      <div class="cs-title">Scaling Guidelines</div>
+      <table><thead><tr><th>Level</th><th>Load</th><th>Reps</th><th>Rest</th><th>Target</th></tr></thead>
+      <tbody>
+        <tr><td>Beginner</td><td>Light (50–60% effort)</td><td>Reduce by 30%</td><td>1:1 work/rest</td><td>Complete each set with good form</td></tr>
+        <tr><td>Intermediate</td><td>Moderate (70–80%)</td><td>As prescribed</td><td>1:0.5 work/rest</td><td>Maintain pace across all rounds</td></tr>
+        <tr><td>Advanced</td><td>Heavy (80–90%)</td><td>Increase by 20%</td><td>Minimal rest</td><td>Push intensity, maintain form</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="card-section">
+      <div class="cs-title">PTI Safety Checklist</div>
+      <ul class="crit-list">
+        <li>Conduct roll call and identify all restricted/injured members before session begins</li>
+        <li>Brief emergency action plan — nearest medical facility, chain of command notification</li>
+        <li>Ensure adequate water is available — enforce hydration breaks every 15 min for sessions over 30 min</li>
+        <li>Check surface conditions — wet, uneven or slippery surfaces require exercise modification</li>
+        <li>Monitor heat/cold stress indicators — adjust intensity and rest periods for extreme temperatures</li>
+        <li>Designate a buddy pair system for large groups — nobody trains alone or unobserved</li>
+        <li>Know the signs of overexertion: pale/grey colour, excessive sweating, confusion, nausea — stop immediately</li>
+        <li>All falls, collisions or injuries must be reported to the chain of command and MO regardless of apparent severity</li>
+        ${groupSize > 30 ? '<li>Appoint a safety NCO who is NOT leading the session — their sole job is to watch for injury and distress</li>' : ''}
+      </ul>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This circuit program is a planning aid for qualified ADF Physical Training Instructors. All sessions must be conducted in accordance with ADF physical training directives and relevant SOPs. PTIs are responsible for identifying and managing injury risk. Any member who reports pain, dizziness or distress must be removed from the session and referred to an MO. Never compromise member safety for program completion.
+    </div>`;
+
+  document.getElementById('emptyState').style.display = 'none';
+  const ra = document.getElementById('reportArea');
+  ra.style.display = 'block';
+  ra.innerHTML = html;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Init group hint
+updateGroupHints();
+</script>
+</body>
+</html>
