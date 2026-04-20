@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADF PTI — Run Program Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1f16;--ink2:#242920;--ink3:#2e3428;
+  --red:#c8392b;--red2:#e05a40;--orange:#e8a020;
+  --green:#3a6b2a;--green2:#50a030;--green-pale:#eaf4e0;
+  --cream:#f5f2eb;--sand:#ede8dc;--card:#ffffff;
+  --border:#d0c8b8;--muted:#7a7060;--text:#1a1a16;--text2:#55504a;
+  --radius:4px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+header{background:var(--ink);color:#fff;padding:0 2rem;display:flex;align-items:stretch;border-bottom:3px solid var(--red);}
+.hflag{background:var(--red);width:6px;margin-right:1.5rem;}
+.htext{padding:1.25rem 0;}
+.hey{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:4px;}
+header h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+header h1 span{color:var(--red2);}
+.hsub{font-size:12px;color:#aaa;margin-top:4px;font-weight:300;}
+.hright{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hbadge{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:700;}
+.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;transition:background .15s;}
+.hlink:hover{background:rgba(255,255,255,0.12);}
+
+.layout{display:grid;grid-template-columns:400px 1fr;min-height:calc(100vh - 72px);}
+
+.sidebar{background:var(--sand);border-right:1px solid var(--border);padding:1.5rem;overflow-y:auto;}
+.slabel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.75rem;}
+.fg label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink2);}
+input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;transition:border-color .15s;}
+input:focus,select:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 2px rgba(200,57,43,.1);}
+.fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:.75rem;}
+
+/* GOAL CHIPS */
+.goal-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:.75rem;}
+.gchip{border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 10px;cursor:pointer;background:var(--card);transition:all .15s;}
+.gchip:hover{border-color:var(--red);}
+.gchip.sel{border-color:var(--red);background:#fdf0ee;}
+.gchip-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);}
+.gchip.sel .gchip-name{color:var(--red);}
+.gchip-desc{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.4;}
+
+/* TIME INPUT */
+.time-row{display:grid;grid-template-columns:1fr 1fr 20px;gap:6px;align-items:center;margin-bottom:.75rem;}
+.time-sep{font-size:16px;font-weight:700;color:var(--muted);text-align:center;}
+
+.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:.75rem;}
+.btn-gen:hover{background:var(--red);}
+
+/* OUTPUT */
+.output{padding:2rem;overflow-y:auto;}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;opacity:.45;}
+.empty-icon{width:64px;height:64px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:28px;}
+.empty h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.empty p{font-size:13px;color:var(--muted);}
+
+/* REPORT */
+.rpt-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--ink);}
+.rpt-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1.1;}
+.rpt-title span{color:var(--red);}
+.rpt-meta{font-size:12px;color:var(--muted);margin-top:4px;}
+.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;}
+.btn-sec:hover{background:var(--sand);}
+
+/* STATS */
+.stats-row{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;}
+.stat-item label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:3px;}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--orange);letter-spacing:1px;}
+
+/* GAP ANALYSIS */
+.gap-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.gap-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.gap-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
+.gap-row-g{display:grid;grid-template-columns:140px 1fr 70px 70px;align-items:center;gap:10px;margin-bottom:8px;font-size:12.5px;}
+.gap-label{color:var(--text2);font-weight:500;}
+.gap-bar{background:var(--border);border-radius:2px;height:6px;overflow:hidden;}
+.gap-fill{height:100%;border-radius:2px;transition:width .5s;}
+.gap-current{text-align:right;font-weight:600;color:var(--text);}
+.gap-target-v{text-align:right;color:var(--muted);}
+
+/* PHASE BLOCKS */
+.phase-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.25rem;overflow:hidden;}
+.ph-head{background:var(--ink);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.ph-badge{background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;padding:2px 8px;border-radius:2px;letter-spacing:1px;}
+.ph-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.ph-weeks{margin-left:auto;font-size:11px;color:#aaa;}
+.ph-body{padding:1rem 1.25rem;}
+.ph-obj{font-size:13px;color:var(--text2);font-style:italic;margin-bottom:12px;}
+
+/* WEEK TABLE */
+table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:12.5px;}
+th{background:#f0ebe0;color:var(--ink2);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 10px;text-align:left;font-weight:700;}
+td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:nth-child(even) td{background:#fafaf6;}
+.day-tag{display:inline-block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:2px 7px;border-radius:2px;}
+.tag-easy{background:#eaf4e0;color:#2a5a1a;}
+.tag-tempo{background:#fdf5e0;color:#7a5010;}
+.tag-interval{background:#fdf0ee;color:#8a2010;}
+.tag-long{background:#eef4fc;color:#1a4a8a;}
+.tag-rest{background:#f0ebe0;color:#5a5050;}
+.tag-race{background:var(--ink);color:var(--orange);}
+.tag-strength{background:#f0eafa;color:#5a2a8a;}
+
+.note-box{background:#f0ebe0;border-left:4px solid var(--ink2);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-top:10px;font-size:12.5px;color:#3a3a30;}
+.note-box b{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink2);margin-bottom:3px;}
+.green-box{background:var(--green-pale);border-left:4px solid var(--green);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px;font-size:13px;}
+.green-box b{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:3px;}
+.warn-box{background:#fdf5e0;border-left:4px solid var(--orange);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px;font-size:13px;}
+.warn-box b{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#8a5010;margin-bottom:3px;}
+
+.card-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.cs-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.cs-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
+
+.crit-list{list-style:none;padding:0;}
+.crit-list li{padding:5px 0 5px 20px;position:relative;font-size:13px;border-bottom:1px solid #f0ebe0;}
+.crit-list li:last-child{border-bottom:none;}
+.crit-list li::before{content:'→';position:absolute;left:0;color:var(--red);font-weight:700;}
+
+.pace-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:1rem;}
+.pace-card{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
+.pace-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.pace-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--ink);letter-spacing:1px;}
+.pace-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+.disclaimer{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-top:2rem;font-size:12px;color:var(--muted);font-style:italic;}
+
+@media print{.sidebar,.hright{display:none!important;}.layout{display:block;}.output{padding:1rem;}.ph-head,.stats-row{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:480px){header{padding:0 1rem;}.output,.sidebar{padding:1rem;}.fgrid2,.fgrid3{grid-template-columns:1fr;}.goal-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hflag"></div>
+  <div class="htext">
+    <div class="hey">Australian Defence Force</div>
+    <h1>PTI <span>Run</span> Program Builder</h1>
+    <div class="hsub">Progressive Running Program Generator — Individual &amp; Group</div>
+  </div>
+  <div class="hright">
+    <a class="hlink" href="index.html">← Back to Tools</a>
+    <div class="hbadge">Free &amp; Offline</div>
+  </div>
+</header>
+
+<div class="layout">
+<div class="sidebar">
+
+  <div class="slabel">Member Details</div>
+  <div class="fgrid2">
+    <div class="fg"><label>Full Name</label><input type="text" id="name" placeholder="e.g. CPL Smith, J."></div>
+    <div class="fg"><label>Age</label><input type="number" id="age" placeholder="e.g. 26" min="17" max="65"></div>
+    <div class="fg"><label>Sex</label>
+      <select id="sex"><option value="">— Select —</option><option>Male</option><option>Female</option></select>
+    </div>
+    <div class="fg"><label>Unit / Corps</label><input type="text" id="unit" placeholder="e.g. 3 RAR"></div>
+  </div>
+
+  <div class="slabel">Current Performance</div>
+  <div class="fg"><label>Current 2.4 km Time (min : sec)</label>
+    <div class="time-row">
+      <input type="number" id="cur24min" placeholder="Min" min="6" max="25">
+      <input type="number" id="cur24sec" placeholder="Sec" min="0" max="59">
+      <div class="time-sep">:</div>
+    </div>
+  </div>
+  <div class="fg"><label>Current 5 km Time (min : sec) — optional</label>
+    <div class="time-row">
+      <input type="number" id="cur5min" placeholder="Min" min="14" max="50">
+      <input type="number" id="cur5sec" placeholder="Sec" min="0" max="59">
+      <div class="time-sep">:</div>
+    </div>
+  </div>
+  <div class="fg" style="margin-bottom:.75rem;"><label>Weekly Running Distance (km)</label>
+    <select id="curKm">
+      <option value="0">0 — Not running currently</option>
+      <option value="10">~10 km/week</option>
+      <option value="20">~20 km/week</option>
+      <option value="30">~30 km/week</option>
+      <option value="40">~40 km/week</option>
+      <option value="50">50+ km/week</option>
+    </select>
+  </div>
+
+  <div class="slabel">Training Goal</div>
+  <div class="goal-row" id="goalGrid">
+    <div class="gchip sel" id="gc_adf24" onclick="selGoal('adf24')"><div class="gchip-name">ADF 2.4 km PFA</div><div class="gchip-desc">Improve 2.4 km time to meet / exceed ADF minimum standard</div></div>
+    <div class="gchip" id="gc_speed" onclick="selGoal('speed')"><div class="gchip-name">Speed Improvement</div><div class="gchip-desc">Drop time significantly — 2.4 km or 5 km race pace focus</div></div>
+    <div class="gchip" id="gc_base" onclick="selGoal('base')"><div class="gchip-name">Aerobic Base Build</div><div class="gchip-desc">Build volume and cardiovascular engine — foundation phase</div></div>
+    <div class="gchip" id="gc_selection" onclick="selGoal('selection')"><div class="gchip-name">Selection Prep</div><div class="gchip-desc">Prepare for SF webbing run, pack march and sustained output</div></div>
+    <div class="gchip" id="gc_return" onclick="selGoal('return')"><div class="gchip-name">Return to Running</div><div class="gchip-desc">Post-injury / deconditioning — gradual return to full fitness</div></div>
+    <div class="gchip" id="gc_beep" onclick="selGoal('beep')"><div class="gchip-name">BEEP Test Prep</div><div class="gchip-desc">Build aerobic capacity specifically for shuttle run / BEEP test</div></div>
+  </div>
+
+  <div class="slabel">Target</div>
+  <div class="fg"><label>Target 2.4 km Time (min : sec)</label>
+    <div class="time-row">
+      <input type="number" id="tgt24min" placeholder="Min" min="6" max="20">
+      <input type="number" id="tgt24sec" placeholder="Sec" min="0" max="59">
+      <div class="time-sep">:</div>
+    </div>
+  </div>
+  <div class="fg" style="margin-bottom:.75rem;"><label>Target BEEP Level (optional)</label>
+    <input type="number" id="tgtBeep" placeholder="e.g. 10.4" min="4" max="15" step="0.1">
+  </div>
+
+  <div class="slabel">Program Setup</div>
+  <div class="fgrid3">
+    <div class="fg"><label>Duration</label>
+      <select id="duration">
+        <option value="4">4 weeks</option>
+        <option value="6">6 weeks</option>
+        <option value="8" selected>8 weeks</option>
+        <option value="12">12 weeks</option>
+        <option value="16">16 weeks</option>
+        <option value="20">20 weeks</option>
+      </select>
+    </div>
+    <div class="fg"><label>Sessions/Week</label>
+      <select id="sessions">
+        <option value="3">3 runs/wk</option>
+        <option value="4" selected>4 runs/wk</option>
+        <option value="5">5 runs/wk</option>
+        <option value="6">6 runs/wk</option>
+      </select>
+    </div>
+    <div class="fg"><label>Fitness Level</label>
+      <select id="level">
+        <option value="beginner">Beginner</option>
+        <option value="intermediate" selected>Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+    </div>
+  </div>
+  <div class="fgrid2">
+    <div class="fg"><label>Include Strength Work</label>
+      <select id="strength"><option value="yes">Yes — 2x/week</option><option value="no">No — run only</option></select>
+    </div>
+    <div class="fg"><label>Terrain / Environment</label>
+      <select id="terrain">
+        <option value="track">Track / flat road</option>
+        <option value="mixed">Mixed — road and trail</option>
+        <option value="hilly">Hilly terrain</option>
+        <option value="treadmill">Treadmill</option>
+      </select>
+    </div>
+  </div>
+  <div class="fg" style="margin-bottom:.75rem;"><label>Injuries / Notes</label>
+    <textarea id="notes" placeholder="e.g. History of shin splints. Avoid tarmac where possible. Selection in 12 weeks."></textarea>
+  </div>
+
+  <button class="btn-gen" onclick="generate()">Generate Run Program</button>
+</div>
+
+<div class="output">
+  <div class="empty" id="emptyState">
+    <div class="empty-icon">→</div>
+    <h2>No Program Generated</h2>
+    <p>Enter current performance and target,<br>then press Generate Run Program.</p>
+  </div>
+  <div id="reportArea" style="display:none;"></div>
+</div>
+</div>
+
+<script>
+let selectedGoal = 'adf24';
+
+function selGoal(g) {
+  selectedGoal = g;
+  document.querySelectorAll('.gchip').forEach(c => c.classList.remove('sel'));
+  document.getElementById('gc_'+g).classList.add('sel');
+}
+
+// ── TIME UTILITIES ──
+function toSec(min, sec) { return (parseInt(min)||0)*60 + (parseInt(sec)||0); }
+function toMMSS(totalSec) {
+  if (!totalSec || totalSec <= 0) return '--:--';
+  const m = Math.floor(totalSec/60);
+  const s = Math.round(totalSec%60);
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+function pacePerKm(totalSec, distKm) {
+  if (!totalSec || !distKm) return '--:--';
+  return toMMSS(totalSec/distKm);
+}
+
+// ── ADF STANDARDS ──
+const ADF_STANDARDS = {
+  Male: [
+    {ageMin:17,ageMax:29,beep:8.1,run24:'11:00',pushups:30,situps:45},
+    {ageMin:30,ageMax:34,beep:7.5,run24:'11:30',pushups:28,situps:40},
+    {ageMin:35,ageMax:39,beep:7.0,run24:'12:30',pushups:24,situps:38},
+    {ageMin:40,ageMax:44,beep:6.5,run24:'13:00',pushups:20,situps:34},
+    {ageMin:45,ageMax:49,beep:6.0,run24:'13:30',pushups:16,situps:30},
+    {ageMin:50,ageMax:65,beep:5.5,run24:'14:30',pushups:12,situps:25},
+  ],
+  Female: [
+    {ageMin:17,ageMax:29,beep:6.5,run24:'13:00',pushups:15,situps:40},
+    {ageMin:30,ageMax:34,beep:6.0,run24:'13:30',pushups:12,situps:36},
+    {ageMin:35,ageMax:39,beep:5.5,run24:'14:00',pushups:10,situps:34},
+    {ageMin:40,ageMax:44,beep:5.0,run24:'14:30',pushups:8,situps:30},
+    {ageMin:45,ageMax:49,beep:4.5,run24:'15:00',pushups:6,situps:26},
+    {ageMin:50,ageMax:65,beep:4.0,run24:'15:30',pushups:4,situps:22},
+  ]
+};
+
+function getStandard(age, sex) {
+  const tbl = ADF_STANDARDS[sex] || ADF_STANDARDS['Male'];
+  return tbl.find(r => age >= r.ageMin && age <= r.ageMax) || tbl[0];
+}
+
+// ── PACE ZONES ──
+function buildPaceZones(cur24Sec) {
+  if (!cur24Sec) return null;
+  const pacePerKmSec = cur24Sec / 2.4;
+  return {
+    easy:     toMMSS(pacePerKmSec * 1.25),
+    moderate: toMMSS(pacePerKmSec * 1.10),
+    tempo:    toMMSS(pacePerKmSec * 1.02),
+    race:     toMMSS(pacePerKmSec),
+    interval: toMMSS(pacePerKmSec * 0.94),
+    target:   null
+  };
+}
+
+// ── WEEKLY SESSION BUILDER ──
+function buildWeek(weekNum, totalWeeks, goal, sessions, level, cur24Sec, tgt24Sec, strength, terrain) {
+  const prog = weekNum / totalWeeks;
+  const isDeload = weekNum % 4 === 0;
+  const isTaper = weekNum >= totalWeeks - 1;
+  const volFactor = isDeload ? 0.65 : isTaper ? 0.55 : 0.7 + prog * 0.4;
+  const baseKm = {beginner:2.4, intermediate:4, advanced:6}[level];
+  const easyKm = Math.round((baseKm * volFactor) * 10) / 10;
+  const longKm = Math.round((baseKm * volFactor * 1.8) * 10) / 10;
+  const pacePerKmSec = cur24Sec / 2.4;
+  const tgtPacePerKm = tgt24Sec ? tgt24Sec / 2.4 : null;
+
+  // Build session plan
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const sessionsPerWeek = parseInt(sessions);
+  const includeStrength = strength === 'yes';
+  const weekRows = [];
+
+  // Always: easy, tempo/interval, long run. Add more for higher session count.
+  const sessionPlan = [];
+
+  if (goal === 'return') {
+    sessionPlan.push({day:days[0],type:'easy',label:'EASY',desc:`Easy jog/walk ${Math.max(1.5,easyKm*0.7).toFixed(1)} km`,detail:'Run/walk as needed. 1 min jog : 1 min walk. Build to continuous jog.',tag:'tag-easy'});
+    sessionPlan.push({day:days[2],type:'easy',label:'EASY',desc:`Continuous easy run ${Math.max(2,easyKm*0.9).toFixed(1)} km`,detail:'Conversational pace. Stop if pain appears.',tag:'tag-easy'});
+    if (sessionsPerWeek >= 3) sessionPlan.push({day:days[4],type:'long',label:'LONG',desc:`Long easy run ${Math.max(3,longKm*0.6).toFixed(1)} km`,detail:'Very easy pace. Walk breaks as needed. Build duration over weeks.',tag:'tag-long'});
+  } else if (goal === 'base') {
+    sessionPlan.push({day:days[0],type:'easy',label:'EASY',desc:`Easy run ${easyKm.toFixed(1)} km`,detail:`Target pace: ${toMMSS(pacePerKmSec*1.25)}/km. Conversational, RPE 5.`,tag:'tag-easy'});
+    sessionPlan.push({day:days[1],type:'tempo',label:'TEMPO',desc:`Tempo run ${Math.round(easyKm*0.85*10)/10} km`,detail:`Target pace: ${toMMSS(pacePerKmSec*1.05)}/km. Comfortably hard, RPE 7.`,tag:'tag-tempo'});
+    if (sessionsPerWeek >= 3) sessionPlan.push({day:days[3],type:'easy',label:'EASY',desc:`Easy recovery run ${Math.round(easyKm*0.7*10)/10} km`,detail:'Very easy. Active recovery. Flush legs.',tag:'tag-easy'});
+    sessionPlan.push({day:days[5],type:'long',label:'LONG',desc:`Long run ${longKm.toFixed(1)} km`,detail:`Easy pace ${toMMSS(pacePerKmSec*1.3)}/km. Build distance by 10% each week.`,tag:'tag-long'});
+    if (sessionsPerWeek >= 5) sessionPlan.push({day:days[4],type:'easy',label:'EASY',desc:`Easy run ${easyKm.toFixed(1)} km`,detail:'Easy aerobic volume. Keep pace controlled.',tag:'tag-easy'});
+  } else if (goal === 'speed' || goal === 'adf24') {
+    sessionPlan.push({day:days[0],type:'interval',label:'INTERVALS',desc:`Speed intervals — ${Math.max(4, Math.round(3+prog*5))} × 400 m`,detail:`Target: ${toMMSS(pacePerKmSec*0.93*0.4)}/rep. Rest 90s between reps. Full effort.`,tag:'tag-interval'});
+    sessionPlan.push({day:days[1],type:'easy',label:'EASY',desc:`Easy recovery run ${Math.round(easyKm*0.75*10)/10} km`,detail:`${toMMSS(pacePerKmSec*1.3)}/km. Flush legs after intervals.`,tag:'tag-easy'});
+    sessionPlan.push({day:days[3],type:'tempo',label:'TEMPO',desc:`Tempo run ${Math.round(easyKm*0.9*10)/10} km`,detail:`${toMMSS(pacePerKmSec*1.03)}/km. Build lactate threshold. RPE 7–8.`,tag:'tag-tempo'});
+    if (sessionsPerWeek >= 4) sessionPlan.push({day:days[5],type:'long',label:'LONG',desc:`Long run ${longKm.toFixed(1)} km`,detail:`${toMMSS(pacePerKmSec*1.25)}/km. Builds aerobic base to support speed work.`,tag:'tag-long'});
+    if (sessionsPerWeek >= 5) sessionPlan.push({day:days[2],type:'easy',label:'EASY',desc:`Easy run ${easyKm.toFixed(1)} km`,detail:'Extra aerobic volume. Conversational pace.',tag:'tag-easy'});
+    if (sessionsPerWeek >= 6) sessionPlan.push({day:days[4],type:'interval',label:'INTERVALS',desc:`Short intervals — ${Math.max(6,Math.round(5+prog*4))} × 200 m`,detail:`Max speed. Full rest 2 min. Neuromuscular development.`,tag:'tag-interval'});
+  } else if (goal === 'selection') {
+    sessionPlan.push({day:days[0],type:'interval',label:'WEBBING RUN SIM',desc:`3.2 km loaded run sim — ${Math.round(3+prog*1)} reps`,detail:`Wear 8 kg load. Target pace: ${tgtPacePerKm?toMMSS(tgtPacePerKm*3.2/3):toMMSS(pacePerKmSec*3.2)} total. Rest 3 min.`,tag:'tag-interval'});
+    sessionPlan.push({day:days[1],type:'easy',label:'EASY',desc:`Recovery run ${easyKm.toFixed(1)} km`,detail:'Easy flush run. Legs should feel recovered for next session.',tag:'tag-easy'});
+    sessionPlan.push({day:days[3],type:'tempo',label:'TEMPO / FARTLEK',desc:`Fartlek ${Math.round(easyKm*1.1*10)/10} km`,detail:'Vary pace every 2–3 min. Mix hard efforts (80%) with easy recovery. Simulates SF selection demands.',tag:'tag-tempo'});
+    sessionPlan.push({day:days[5],type:'long',label:'LONG LOADED',desc:`Loaded march/run ${Math.round(8+prog*10)} km`,detail:`Progressive pack weight. Start 10 kg, build to 25–28 kg. Walk/run as needed. Record time.`,tag:'tag-long'});
+    if (sessionsPerWeek >= 5) sessionPlan.push({day:days[2],type:'easy',label:'EASY',desc:`Easy run ${easyKm.toFixed(1)} km`,detail:'Aerobic base volume. Light and relaxed.',tag:'tag-easy'});
+  } else if (goal === 'beep') {
+    sessionPlan.push({day:days[0],type:'interval',label:'SHUTTLE INTERVALS',desc:`Shuttle intervals — ${Math.max(6,Math.round(6+prog*6))} × 20 m shuttles`,detail:`Match BEEP test shuttle format. Build speed and direction-change ability. Rest 90s.`,tag:'tag-interval'});
+    sessionPlan.push({day:days[1],type:'easy',label:'EASY',desc:`Continuous easy run ${easyKm.toFixed(1)} km`,detail:`${toMMSS(pacePerKmSec*1.25)}/km. Aerobic engine development.`,tag:'tag-easy'});
+    sessionPlan.push({day:days[3],type:'interval',label:'BEEP PREP',desc:`BEEP test simulation — levels ${Math.max(5,Math.round(5+prog*4))}–${Math.min(13,Math.round(8+prog*4))}`,detail:'Run full BEEP test simulation. Record highest completed level. Build 0.5 levels each fortnight.',tag:'tag-interval'});
+    if (sessionsPerWeek >= 4) sessionPlan.push({day:days[5],type:'tempo',label:'TEMPO',desc:`Tempo run ${Math.round(easyKm*0.9*10)/10} km`,detail:`${toMMSS(pacePerKmSec*1.02)}/km. VO2max development supports BEEP improvement.`,tag:'tag-tempo'});
+    if (sessionsPerWeek >= 5) sessionPlan.push({day:days[2],type:'easy',label:'EASY',desc:`Easy run ${easyKm.toFixed(1)} km`,detail:'Aerobic base support.',tag:'tag-easy'});
+  }
+
+  // Add rest days
+  const usedDays = sessionPlan.map(s => s.day);
+  const restDays = days.filter(d => !usedDays.includes(d)).slice(0,7-sessionsPerWeek);
+
+  // Add strength days if selected
+  if (includeStrength && sessionsPerWeek <= 5) {
+    const strDay = days.find(d => !usedDays.includes(d));
+    if (strDay) sessionPlan.push({day:strDay,type:'strength',label:'STRENGTH',desc:'Running-specific strength session',detail:'Squats, deadlifts, single-leg work, calf raises, hip flexor work. 45–60 min.',tag:'tag-strength'});
+  }
+
+  // Sort by day order
+  sessionPlan.sort((a,b) => days.indexOf(a.day) - days.indexOf(b.day));
+
+  const taperNote = isTaper ? '<div class="warn-box" style="margin-top:10px;"><b>Taper Week</b>Reduce volume by 50%. Maintain 1–2 short sharp sessions. Trust the training. Prioritise sleep and nutrition.</div>' : '';
+  const deloadNote = isDeload ? '<div class="green-box" style="margin-top:10px;"><b>Deload Week</b>Reduce all distances by 30–40%. Same types of runs, lower volume. Allows adaptation and reduces injury risk. Do not skip — supercompensation happens during recovery.</div>' : '';
+
+  const totalKm = sessionPlan.filter(s=>s.type!=='strength').reduce((sum,s) => {
+    const match = s.desc.match(/[\d.]+\s*km/);
+    return sum + (match ? parseFloat(match[0]) : 0);
+  }, 0);
+
+  const rows = sessionPlan.map(s => `
+    <tr>
+      <td style="width:100px;font-weight:600;color:#555;">${s.day}</td>
+      <td><span class="day-tag ${s.tag}">${s.label}</span></td>
+      <td style="font-weight:500;">${s.desc}</td>
+      <td style="font-size:12px;color:#666;">${s.detail}</td>
+    </tr>`).join('');
+
+  restDays.slice(0,2).forEach(d => {
+    // Just show rest in the note
+  });
+
+  return `
+    <table>
+      <thead><tr><th>Day</th><th>Type</th><th>Session</th><th>Details &amp; Target Pace</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px;">Estimated weekly volume: ~${totalKm.toFixed(1)} km · Rest days: ${restDays.slice(0,7-sessionsPerWeek-(includeStrength?1:0)).join(', ')}</div>
+    ${deloadNote}${taperNote}`;
+}
+
+// ── MAIN GENERATE ──
+function generate() {
+  const name = document.getElementById('name').value.trim() || 'Member';
+  const age = parseInt(document.getElementById('age').value) || 25;
+  const sex = document.getElementById('sex').value || 'Male';
+  const unit = document.getElementById('unit').value.trim() || 'N/A';
+  const cur24Sec = toSec(document.getElementById('cur24min').value, document.getElementById('cur24sec').value);
+  const cur5Sec = toSec(document.getElementById('cur5min').value, document.getElementById('cur5sec').value);
+  const tgt24Sec = toSec(document.getElementById('tgt24min').value, document.getElementById('tgt24sec').value);
+  const tgtBeep = parseFloat(document.getElementById('tgtBeep').value) || null;
+  const dur = parseInt(document.getElementById('duration').value);
+  const sessions = document.getElementById('sessions').value;
+  const level = document.getElementById('level').value;
+  const strength = document.getElementById('strength').value;
+  const terrain = document.getElementById('terrain').value;
+  const notes = document.getElementById('notes').value.trim();
+  const goal = selectedGoal;
+
+  if (!cur24Sec) { alert('Please enter your current 2.4 km time.'); return; }
+  if (!tgt24Sec) { alert('Please enter your target 2.4 km time.'); return; }
+
+  const std = getStandard(age, sex);
+  const stdSec = toSec(...std.run24.split(':'));
+  const zones = buildPaceZones(cur24Sec);
+  const gapSec = cur24Sec - tgt24Sec;
+  const gapToStdSec = cur24Sec - stdSec;
+  const meetsStd = cur24Sec <= stdSec;
+  const improvement = Math.round((gapSec / cur24Sec) * 100);
+
+  // Phase structure
+  let phases;
+  if (dur <= 4) phases = [{n:'Base & Assessment',w:[1,2],obj:'Establish baseline, begin structured training. Assess current capacity.'},{n:'Speed Development',w:[3,4],obj:'Introduce higher intensity work. Build toward target pace.'}];
+  else if (dur <= 8) phases = [{n:'Foundation',w:[1,2],obj:'Build aerobic base. Establish training routine and consistency.'},{n:'Build',w:[3,5],obj:'Progressive volume and intensity. Introduce tempo and interval work.'},{n:'Peak & Sharpen',w:[6,7],obj:'Race-pace work. Sharpen speed. Reduce volume.'},{n:'Taper',w:[8,8],obj:'50% volume reduction. Maintain sharpness. Prepare for test.'}];
+  else if (dur <= 12) phases = [{n:'Foundation',w:[1,3],obj:'Aerobic base. Easy volume. Movement quality.'},{n:'Base Build',w:[4,6],obj:'Progressive mileage. Introduce tempo running.'},{n:'Threshold',w:[7,9],obj:'Tempo and interval focus. Push lactate threshold.'},{n:'Race Prep',w:[10,11],obj:'Race-pace training. Confidence building.'},{n:'Taper',w:[12,12],obj:'Volume drop. Sharpen. Rest and recover.'}];
+  else phases = [{n:'Foundation',w:[1,4],obj:'Aerobic base building. Easy runs, progressive distance.'},{n:'Base Build',w:[5,8],obj:'Increase mileage and introduce structured tempo work.'},{n:'Threshold Development',w:[9,12],obj:'Tempo and interval training. VO2max development.'},{n:'Specialisation',w:[13,Math.max(14,dur-2)],obj:'Goal-specific training. Race-pace work. High intensity.'},{n:'Taper',w:[dur-1,dur],obj:'Sharp reduction in volume. Maintain speed. Race preparation.'}];
+
+  const now = new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const endD = new Date(); endD.setDate(endD.getDate()+dur*7);
+  const endStr = endD.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+
+  const goalLabels = {adf24:'ADF 2.4 km PFA',speed:'Speed Improvement',base:'Aerobic Base Build',selection:'Selection Prep',return:'Return to Running',beep:'BEEP Test Prep'};
+
+  // Gap analysis
+  const gapColor = meetsStd ? '#2a8a20' : gapToStdSec < 60 ? '#c8a020' : '#c83020';
+  const gapPct = Math.min(100, Math.round((stdSec / cur24Sec) * 100));
+  const tgtPct = Math.min(100, Math.round((tgt24Sec / cur24Sec) * 100));
+
+  const phasesHTML = phases.map((ph,i) => `
+    <div class="phase-block">
+      <div class="ph-head">
+        <span class="ph-badge">PHASE ${i+1}</span>
+        <span class="ph-name">${ph.n}</span>
+        <span class="ph-weeks">Weeks ${ph.w[0]}–${ph.w[1]}</span>
+      </div>
+      <div class="ph-body">
+        <div class="ph-obj">${ph.obj}</div>
+        ${Array.from({length:ph.w[1]-ph.w[0]+1},(_,j)=>{
+          const wNum = ph.w[0]+j;
+          return `<div style="margin-bottom:1rem;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:6px;">Week ${wNum}</div>
+            ${buildWeek(wNum,dur,goal,sessions,level,cur24Sec,tgt24Sec,strength,terrain)}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+
+  const html = `
+    <div class="rpt-header">
+      <div>
+        <div class="rpt-title">Run <span>Program</span></div>
+        <div class="rpt-meta">Generated ${now} — ${name} — ${dur} weeks — Target: ${endStr}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';">Reset</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item"><label>Member</label><div class="stat-val" style="font-size:14px;">${name}</div></div>
+      <div class="stat-item"><label>Current 2.4 km</label><div class="stat-val">${toMMSS(cur24Sec)}</div></div>
+      <div class="stat-item"><label>Target 2.4 km</label><div class="stat-val">${toMMSS(tgt24Sec)}</div></div>
+      <div class="stat-item"><label>Improvement Needed</label><div class="stat-val">${toMMSS(Math.max(0,gapSec))}</div></div>
+      <div class="stat-item"><label>ADF Standard</label><div class="stat-val">${std.run24}</div></div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-title">Gap Analysis</div>
+      <div class="gap-row-g">
+        <div class="gap-label">Current time</div>
+        <div class="gap-bar"><div class="gap-fill" style="width:100%;background:#c8392b;"></div></div>
+        <div class="gap-current">${toMMSS(cur24Sec)}</div>
+        <div class="gap-target-v">baseline</div>
+      </div>
+      <div class="gap-row-g">
+        <div class="gap-label">ADF minimum (${sex}, ${age})</div>
+        <div class="gap-bar"><div class="gap-fill" style="width:${gapPct}%;background:${gapColor};"></div></div>
+        <div class="gap-current" style="color:${gapColor};">${std.run24}</div>
+        <div class="gap-target-v">${meetsStd?'✓ Met':'Not yet met'}</div>
+      </div>
+      <div class="gap-row-g">
+        <div class="gap-label">Your target</div>
+        <div class="gap-bar"><div class="gap-fill" style="width:${tgtPct}%;background:#1a7a8a;"></div></div>
+        <div class="gap-current" style="color:#1a7a8a;">${toMMSS(tgt24Sec)}</div>
+        <div class="gap-target-v">${improvement > 0 ? improvement+'% faster' : 'on track'}</div>
+      </div>
+      ${tgtBeep ? `<div class="gap-row-g">
+        <div class="gap-label">BEEP target</div>
+        <div class="gap-bar"><div class="gap-fill" style="width:${Math.round(tgtBeep/15*100)}%;background:#5a2a8a;"></div></div>
+        <div class="gap-current" style="color:#5a2a8a;">Level ${tgtBeep}</div>
+        <div class="gap-target-v">target</div>
+      </div>` : ''}
+    </div>
+
+    <div class="card-section">
+      <div class="cs-title">Training Pace Zones</div>
+      <div class="pace-grid">
+        <div class="pace-card"><div class="pace-label">Easy / Recovery</div><div class="pace-val">${zones.easy}/km</div><div class="pace-sub">RPE 4–5 · conversational</div></div>
+        <div class="pace-card"><div class="pace-label">Moderate / Aerobic</div><div class="pace-val">${zones.moderate}/km</div><div class="pace-sub">RPE 6 · controlled breathing</div></div>
+        <div class="pace-card"><div class="pace-label">Tempo / Threshold</div><div class="pace-val">${zones.tempo}/km</div><div class="pace-sub">RPE 7–8 · comfortably hard</div></div>
+        <div class="pace-card"><div class="pace-label">Current Race Pace</div><div class="pace-val">${zones.race}/km</div><div class="pace-sub">2.4 km current effort</div></div>
+        <div class="pace-card"><div class="pace-label">Interval Pace</div><div class="pace-val">${zones.interval}/km</div><div class="pace-sub">RPE 9 · hard, short efforts</div></div>
+        <div class="pace-card"><div class="pace-label">Target Race Pace</div><div class="pace-val">${pacePerKm(tgt24Sec,2.4)}/km</div><div class="pace-sub">goal 2.4 km pace</div></div>
+      </div>
+      <div class="note-box"><b>How to Use Pace Zones</b>Most of your running (70–80%) should be at Easy pace. Only 20–30% should be at Tempo or Interval intensity. The biggest mistake runners make is running every session too hard — easy runs should feel genuinely easy.</div>
+    </div>
+
+    <div class="card-section">
+      <div class="cs-title">Program Overview</div>
+      <table><tbody>
+        <tr><td style="width:160px;font-weight:600;">Goal</td><td>${goalLabels[goal]}</td></tr>
+        <tr><td style="font-weight:600;">Duration</td><td>${dur} weeks (${sessions} sessions/week)</td></tr>
+        <tr><td style="font-weight:600;">Fitness Level</td><td>${level.charAt(0).toUpperCase()+level.slice(1)}</td></tr>
+        <tr><td style="font-weight:600;">Strength Work</td><td>${strength==='yes'?'Yes — 2 sessions per week':'Not included'}</td></tr>
+        <tr><td style="font-weight:600;">Terrain</td><td>${document.getElementById('terrain').options[document.getElementById('terrain').selectedIndex].text}</td></tr>
+        ${notes?`<tr><td style="font-weight:600;">Notes</td><td>${notes}</td></tr>`:''}
+      </tbody></table>
+    </div>
+
+    ${phasesHTML}
+
+    <div class="card-section">
+      <div class="cs-title">Key Training Principles</div>
+      <ul class="crit-list">
+        <li>10% Rule — never increase total weekly distance by more than 10% from the previous week</li>
+        <li>80/20 Rule — 80% of running at easy pace, 20% at moderate to hard intensity</li>
+        <li>Deload every 4th week — reduce volume by 30–40%. Adaptation happens during recovery, not training</li>
+        <li>Consistency beats intensity — 4 easy weeks beats 1 hard week followed by 3 weeks injured</li>
+        <li>Sleep 8+ hours — most of the physiological adaptation from running occurs during sleep</li>
+        <li>Run in the shoes you'll be tested in — don't wear new footwear on test day</li>
+        <li>Warm up before every session — 5 min easy walk/jog + dynamic drills before any hard effort</li>
+        <li>Taper correctly — the last 1–2 weeks before a test should have significantly reduced volume</li>
+      </ul>
+    </div>
+
+    <div class="card-section">
+      <div class="cs-title">Injury Prevention</div>
+      <ul class="crit-list">
+        <li>Shin pain — reduce mileage, run on softer surfaces, check footwear, strengthen calves eccentrically</li>
+        <li>Knee pain — check cadence (aim for 170–180 steps/min), strengthen glutes, reduce downhill running</li>
+        <li>Achilles — never stretch a cold Achilles. Eccentric calf raises are the gold-standard rehab exercise</li>
+        <li>IT band — hip strengthening (glute med) and foam rolling. Avoid camber running</li>
+        <li>If pain is above 3/10 during running — stop and seek assessment. Do not run through joint or tendon pain</li>
+      </ul>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This running program is a planning aid for ADF PTIs and individuals. It does not replace the advice of a physiotherapist or sports physician. If you experience pain during training, stop and seek medical assessment. ADF fitness standards are subject to change — always verify current requirements with your unit PTI or chain of command.
+    </div>`;
+
+  document.getElementById('emptyState').style.display = 'none';
+  const ra = document.getElementById('reportArea');
+  ra.style.display = 'block';
+  ra.innerHTML = html;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
