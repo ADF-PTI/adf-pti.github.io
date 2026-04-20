@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADF PTI — Swimming Program Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1f2d; --navy2: #132535; --navy3: #1a3045;
+    --teal: #1a7a8a; --teal2: #22a0b4; --teal-pale: #e0f4f7;
+    --sand: #ede8dc; --cream: #f5f2eb;
+    --charcoal: #1e2a30; --text: #1a2830; --text-muted: #4a6070;
+    --border: #b8cdd4; --accent: #1a7a8a; --accent-dark: #105060;
+    --white: #ffffff; --radius: 4px;
+    --gold: #c8a030; --gold-pale: #fdf5e0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  header { background: var(--navy); color: var(--white); padding: 0 2rem; display: flex; align-items: stretch; border-bottom: 3px solid var(--teal2); }
+  .header-flag { background: var(--teal2); width: 6px; margin-right: 1.5rem; }
+  .header-content { padding: 1.25rem 0; }
+  .header-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal2); font-weight: 600; margin-bottom: 4px; }
+  header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; line-height: 1; }
+  header h1 span { color: var(--teal2); }
+  .header-sub { font-size: 12px; color: #7aaabb; margin-top: 4px; font-weight: 300; }
+  .header-badge { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .badge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius); padding: 4px 10px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #7aaabb; font-weight: 600; }
+  .home-link { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 4px 12px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #7aaabb; font-weight: 600; text-decoration: none; transition: background 0.15s; }
+  .home-link:hover { background: rgba(255,255,255,0.12); }
+
+  .app-layout { display: grid; grid-template-columns: 400px 1fr; min-height: calc(100vh - 72px); }
+
+  /* SIDEBAR */
+  .sidebar { background: var(--sand); border-right: 1px solid var(--border); padding: 1.5rem; overflow-y: auto; }
+  .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); font-weight: 600; margin-bottom: 1rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent-dark); }
+  input, select, textarea { font-family: 'Barlow', sans-serif; font-size: 14px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; color: var(--text); transition: border-color 0.15s; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--teal2); box-shadow: 0 0 0 2px rgba(26,122,138,0.15); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  /* GOAL CARDS */
+  .goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .goal-card { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; cursor: pointer; transition: all 0.15s; background: var(--white); }
+  .goal-card:hover { border-color: var(--teal2); background: var(--teal-pale); }
+  .goal-card.selected { border-color: var(--teal2); background: var(--teal-pale); }
+  .goal-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--navy); margin-bottom: 3px; }
+  .goal-card.selected .goal-card-title { color: var(--teal); }
+  .goal-card-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+  /* SELECTION DROPDOWN */
+  .selection-group { display: none; margin-bottom: 1.5rem; }
+  .selection-group.visible { display: block; }
+
+  /* CHECK ITEMS */
+  .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 5px; }
+  .check-item { display: flex; align-items: center; gap: 7px; font-size: 13px; cursor: pointer; padding: 5px 6px; border-radius: var(--radius); border: 1px solid transparent; }
+  .check-item:hover { background: var(--teal-pale); border-color: var(--border); }
+  .check-item input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--teal); flex-shrink: 0; }
+
+  .btn-generate { width: 100%; background: var(--navy); color: var(--white); border: none; border-radius: var(--radius); padding: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.15s; margin-top: 1rem; }
+  .btn-generate:hover { background: var(--teal); }
+
+  /* OUTPUT */
+  .output-panel { padding: 2rem; overflow-y: auto; }
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; text-align: center; opacity: 0.5; }
+  .empty-icon { width: 64px; height: 64px; border: 2px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 28px; color: var(--teal); }
+  .empty-state h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; color: var(--text-muted); }
+
+  /* REPORT */
+  .report-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--navy); }
+  .report-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; line-height: 1.1; }
+  .report-title span { color: var(--teal); }
+  .report-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .btn-secondary { background: var(--white); color: var(--charcoal); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; }
+  .btn-secondary:hover { background: var(--sand); }
+
+  .member-card { background: var(--navy); color: var(--white); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .member-stat label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--teal2); display: block; margin-bottom: 3px; }
+  .member-stat .val { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 600; }
+
+  .card-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .card-title::before { content: ''; display: inline-block; width: 4px; height: 14px; background: var(--teal2); border-radius: 2px; flex-shrink: 0; }
+
+  /* WEEK ACCORDION */
+  .week-block { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  .week-header { background: var(--navy); color: var(--white); padding: 10px 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .week-num { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; color: var(--teal2); min-width: 70px; }
+  .week-focus { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .week-toggle { margin-left: auto; font-size: 12px; color: #7aaabb; transition: transform 0.2s; }
+  .week-content { display: none; padding: 1rem 1.25rem; }
+  .week-content.open { display: block; }
+
+  .session-block { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--teal-pale); }
+  .session-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .session-day { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); font-weight: 700; margin-bottom: 6px; }
+  .session-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--navy); margin-bottom: 8px; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 13px; }
+  th { background: var(--teal-pale); color: var(--accent-dark); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 7px 10px; text-align: left; font-weight: 600; }
+  td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f7fbfc; }
+
+  .notes-box { background: var(--teal-pale); border-left: 4px solid var(--teal2); padding: 8px 12px; border-radius: 0 var(--radius) var(--radius) 0; margin-top: 8px; font-size: 12.5px; color: var(--accent-dark); }
+  .notes-box b { display: block; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; color: var(--teal); }
+
+  .warn-box { background: #fff8e0; border-left: 4px solid var(--gold); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 12px; font-size: 13px; }
+  .warn-box b { color: #8a6010; display: block; margin-bottom: 3px; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  .standard-card { background: var(--navy); color: var(--white); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .standard-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--teal2); margin-bottom: 10px; }
+  .standard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .standard-item { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); padding: 8px 10px; }
+  .standard-item .s-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #7aaabb; margin-bottom: 3px; }
+  .standard-item .s-val { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; color: var(--teal2); letter-spacing: 1px; }
+
+  .crit-list { list-style: none; padding: 0; }
+  .crit-list li { padding: 5px 0 5px 22px; position: relative; font-size: 13px; border-bottom: 1px solid var(--teal-pale); }
+  .crit-list li:last-child { border-bottom: none; }
+  .crit-list li::before { content: '✓'; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
+
+  .disclaimer { background: var(--sand); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-top: 2rem; font-size: 12px; color: var(--text-muted); font-style: italic; }
+
+  .phase-badge { display: inline-block; background: var(--teal2); color: var(--white); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 2px 8px; border-radius: 2px; margin-bottom: 8px; }
+
+  .stroke-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .stroke-card { background: var(--teal-pale); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+  .stroke-name { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--navy); margin-bottom: 4px; }
+  .stroke-cue { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  @media print {
+    .sidebar, .header-badge, .home-link { display: none !important; }
+    .app-layout { display: block; }
+    .output-panel { padding: 1rem; }
+    .week-content { display: block !important; }
+    .week-toggle { display: none; }
+    .navy { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media (max-width: 900px) { .app-layout { grid-template-columns: 1fr; } .sidebar { border-right: none; border-bottom: 1px solid var(--border); } .member-card { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { header { padding: 0 1rem; } .output-panel, .sidebar { padding: 1rem; } .form-grid { grid-column: 1fr; } .goal-grid { grid-template-columns: 1fr; } .stroke-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-flag"></div>
+  <div class="header-content">
+    <div class="header-eyebrow">Australian Defence Force</div>
+    <h1>PTI <span>Swim</span> Program Builder</h1>
+    <div class="header-sub">Swimming Fitness, Technique &amp; Selection Preparation Generator</div>
+  </div>
+  <div class="header-badge">
+    <a class="home-link" href="index.html">← Back to Tools</a>
+    <div class="badge">Free &amp; Offline</div>
+  </div>
+</header>
+
+<div class="app-layout">
+  <div class="sidebar">
+
+    <div class="section-label">Member Details</div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Full Name</label><input type="text" id="name" placeholder="e.g. PTE Collins, R."></div>
+      <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="e.g. 24" min="17" max="65"></div>
+      <div class="form-group"><label>Sex</label>
+        <select id="sex"><option value="">— Select —</option><option>Male</option><option>Female</option></select>
+      </div>
+      <div class="form-group"><label>Corps / Unit</label><input type="text" id="corps" placeholder="e.g. Infantry, 2 RAR"></div>
+      <div class="form-group"><label>Swim Ability</label>
+        <select id="ability">
+          <option value="beginner">Beginner — limited swim ability</option>
+          <option value="intermediate">Intermediate — comfortable swimmer</option>
+          <option value="advanced">Advanced — strong swimmer</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Pool Size</label>
+        <select id="pool">
+          <option value="25">25 m Pool</option>
+          <option value="50">50 m Pool</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-label">Program Goal</div>
+    <div class="goal-grid">
+      <div class="goal-card selected" id="goal_fitness" onclick="selectGoal('fitness')">
+        <div class="goal-card-title">General Fitness</div>
+        <div class="goal-card-desc">Build swim fitness and cardiovascular base</div>
+      </div>
+      <div class="goal-card" id="goal_technique" onclick="selectGoal('technique')">
+        <div class="goal-card-title">Technique</div>
+        <div class="goal-card-desc">Improve stroke efficiency and form</div>
+      </div>
+      <div class="goal-card" id="goal_survival" onclick="selectGoal('survival')">
+        <div class="goal-card-title">Survival Swimming</div>
+        <div class="goal-card-desc">DPCU tread water, survival strokes, uniform swim</div>
+      </div>
+      <div class="goal-card" id="goal_selection" onclick="selectGoal('selection')">
+        <div class="goal-card-title">Selection Prep</div>
+        <div class="goal-card-desc">Prepare for a specific selection swim standard</div>
+      </div>
+    </div>
+
+    <div class="selection-group" id="selectionGroup">
+      <div class="section-label">Target Selection</div>
+      <div class="form-group full">
+        <label>Selection / Course</label>
+        <select id="selectionTest">
+          <option value="clearance">Navy Clearance Diver — CDAT (500 m fin swim sub-13:00, run sub-10:15)</option>
+          <option value="cdg">Combat Diver Group — 400 m swim sub-8:00, 200 m snorkel sub-4:30</option>
+          <option value="soer">SFET / SOER — 400 m swim in uniform sub-16:00 after 2 min tread</option>
+          <option value="sasr">SASR / Commando — 400 m swim in uniform sub-16:00 after 2 min tread</option>
+          <option value="pti">PTI Selection — 400 m Bronze Medallion swim</option>
+          <option value="bpc">Basic Parachutist / Rigger — survival swim, 15 min tread, tower jump</option>
+          <option value="awd">Army Work Diver — 400 m in uniform, 10 min tread, underwater confidence</option>
+          <option value="icat">Infantry PESA — 10 min tread in DPCU, 400 m in uniform</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-label">Program Setup</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Duration</label>
+        <select id="duration">
+          <option value="4">4 weeks</option>
+          <option value="6">6 weeks</option>
+          <option value="8" selected>8 weeks</option>
+          <option value="12">12 weeks</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Sessions / Week</label>
+        <select id="sessions">
+          <option value="2">2 per week</option>
+          <option value="3" selected>3 per week</option>
+          <option value="4">4 per week</option>
+          <option value="5">5 per week</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-label">Focus Areas (select all that apply)</div>
+    <div class="check-grid" id="focusAreas" style="margin-bottom:1.5rem;">
+      <label class="check-item"><input type="checkbox" value="freestyle" checked> Freestyle</label>
+      <label class="check-item"><input type="checkbox" value="breaststroke"> Breaststroke</label>
+      <label class="check-item"><input type="checkbox" value="sidestroke"> Sidestroke</label>
+      <label class="check-item"><input type="checkbox" value="backstroke"> Backstroke</label>
+      <label class="check-item"><input type="checkbox" value="tread"> Tread Water</label>
+      <label class="check-item"><input type="checkbox" value="underwater"> Underwater Swim</label>
+      <label class="check-item"><input type="checkbox" value="fins"> Fin Swimming</label>
+      <label class="check-item"><input type="checkbox" value="uniform"> Uniform Swimming</label>
+    </div>
+
+    <div class="section-label">Additional Notes</div>
+    <div class="form-group full" style="margin-bottom:1.5rem;">
+      <label>Injuries / Restrictions / Notes</label>
+      <textarea id="notes" placeholder="e.g. Fear of deep water. History of shoulder injury. Confident in pool but no open water experience."></textarea>
+    </div>
+
+    <button class="btn-generate" onclick="generate()">Generate Swim Program</button>
+  </div>
+
+  <div class="output-panel">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">~</div>
+      <h2>No Program Generated</h2>
+      <p>Fill in the member's details and goals,<br>then press Generate Swim Program.</p>
+    </div>
+    <div id="reportArea" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+// ── GOAL SELECTION ──
+let selectedGoal = 'fitness';
+function selectGoal(goal) {
+  selectedGoal = goal;
+  document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('goal_' + goal).classList.add('selected');
+  document.getElementById('selectionGroup').classList.toggle('visible', goal === 'selection');
+}
+
+function getCheckedFocus() {
+  return [...document.querySelectorAll('#focusAreas input:checked')].map(c => c.value);
+}
+
+// ── SESSION DATABASE ──
+const SESSIONS = {
+
+  // TECHNIQUE DRILLS
+  tech_catch:   ['Catch-up drill','4 × 50 m','Drill','One arm extended until the other completes pull. Develops timing and high elbow catch.'],
+  tech_finger:  ['Fingertip drag drill','4 × 50 m','Drill','Drag fingertips along water surface during recovery. Trains high elbow recovery.'],
+  tech_kick:    ['Kick sets (board)','6 × 50 m','Kick drill','Kickboard held, focus on propulsion from hips. Ankles relaxed, small fast kick.'],
+  tech_pull:    ['Pull buoy sets','4 × 100 m','Pull drill','Buoy between thighs, arms only. Focus on high elbow catch and full extension.'],
+  tech_bilateral:['Bilateral breathing','4 × 100 m','Drill','Breathe every 3 strokes. Develops balance and reduces shoulder dominance.'],
+  tech_sight:   ['Sighting drill','4 × 50 m','Drill','Lift head every 6 strokes to sight forward. Essential for open water and uniform swimming.'],
+  tech_breast:  ['Breaststroke technique','4 × 50 m','Drill','Focus on narrow kick, strong pull-in, glide phase. No wide knee flare.'],
+  tech_side:    ['Sidestroke drill','4 × 50 m','Drill','Lead arm extends, trailing arm sweeps. Scissor kick. Used for survival and casualty tow.'],
+  tech_back:    ['Backstroke technique','4 × 100 m','Drill','Continuous rotation, high elbow recovery, catch at shoulder width.'],
+  tech_turns:   ['Tumble turn practice','10 × turns','Drill','Approach wall, flip, push hard. Note: open turns acceptable for survival swimming.'],
+
+  // ENDURANCE — BEGINNER
+  end_beg_1:    ['Easy freestyle swim','1 × 200 m','Easy','Continuous if possible, rest as needed. Focus on breathing rhythm.'],
+  end_beg_2:    ['Interval freestyle','8 × 25 m','On 1:00','Rest 30–40s between each. Comfortable pace.'],
+  end_beg_3:    ['Mixed stroke easy','4 × 50 m','Easy','Alternate freestyle and breaststroke 25 m each.'],
+  end_beg_4:    ['Build continuous','1 × 300 m','Easy','Slow and steady. Rest at wall if needed.'],
+  end_beg_5:    ['Continuous freestyle','1 × 400 m','Easy','Non-stop if able. Record time each session.'],
+
+  // ENDURANCE — INTERMEDIATE
+  end_int_1:    ['Aerobic freestyle','1 × 400 m','Moderate','Steady pace, RPE 6. Record time.'],
+  end_int_2:    ['Pyramid set','50/100/200/100/50 m','Moderate','15s rest between each. Increase pace on way down.'],
+  end_int_3:    ['Interval 100s','6 × 100 m','On 2:00 send-off','Consistent pace across all reps. Note split times.'],
+  end_int_4:    ['Tempo 200s','4 × 200 m','On 4:00 send-off','Controlled effort, RPE 7. Build speed each set.'],
+  end_int_5:    ['Long continuous','1 × 600 m','Easy-Moderate','Non-stop. Focus on stroke count per length.'],
+  end_int_6:    ['Mixed distance set','100/200/400/200/100 m','Moderate','60s rest between. Note each split time.'],
+
+  // ENDURANCE — ADVANCED
+  end_adv_1:    ['Race pace 50s','10 × 50 m','On 1:00 send-off','Target pace: faster than your 400 m split. Full effort.'],
+  end_adv_2:    ['Threshold 400s','3 × 400 m','On 7:00 send-off','RPE 8. Record each time — should be consistent.'],
+  end_adv_3:    ['Long aerobic','1 × 800 m','Moderate','Continuous. Note stroke count per length to monitor fatigue.'],
+  end_adv_4:    ['Descending 200s','5 × 200 m','On 3:30','Each rep faster than previous. Max effort on last rep.'],
+  end_adv_5:    ['Timed 400 m trial','1 × 400 m','Max effort','Full race effort. Record time. Compare to selection standard.'],
+  end_adv_6:    ['1000 m continuous','1 × 1000 m','Moderate','Build volume. Maintain stroke efficiency throughout.'],
+
+  // TREAD WATER
+  tread_intro:  ['Tread water — eggbeater intro','3 × 2 min','Technique','Alternating circular leg motion. Keep shoulders out of water. Rest 1 min between.'],
+  tread_build:  ['Tread water — arms crossed','3 × 3 min','Build','Arms folded on chest. Legs only. Builds toward DPCU standard.'],
+  tread_dpcu:   ['Tread water in DPCU (no boots)','2 × 5 min','DPCU','Wear training DPCU. Eggbeater kick. Shoulders above water throughout.'],
+  tread_full:   ['Tread water — full DPCU 10 min','1 × 10 min','Standard','Full DPCU no boots. Continuous. Matches Infantry PESA standard.'],
+  tread_15:     ['Tread water 15 min — uniform','1 × 15 min','BPC/CD Standard','Full uniform. Matches BPC and Clearance Diver survival standard.'],
+  tread_hands:  ['Hands-out tread water','3 × 3 min','Advanced','Keep hands and forearms above surface. Legs only. Harder variation.'],
+
+  // UNDERWATER
+  under_intro:  ['Underwater push-off','5 × 12.5 m','Drill','Push off wall, glide underwater, surface smoothly. No hypoxic training.'],
+  under_build:  ['Underwater distance build','6 × 12.5 m','Drill','Full breath, streamlined position, dolphin kick underwater. Supervised only.'],
+  under_25:     ['25 m underwater swim','3 × 25 m','Standard','Full breath, controlled kick, surface gently. NEVER alone. Rest 3 min between.'],
+  under_breath: ['Breath control sets','5 × 25 m','Controlled','Breathe every 5 strokes freestyle. Trains breath economy — not apnea training.'],
+
+  // FIN SWIMMING
+  fin_intro:    ['Fin kick — board','6 × 50 m','Drill','Kickboard, fins on, flutter kick from hip. Get feel for fin propulsion.'],
+  fin_200:      ['Fin swim 200 m','3 × 200 m','Moderate','Freestyle arms, fins on. Focus on streamline. Record time.'],
+  fin_400:      ['Fin swim 400 m','2 × 400 m','Moderate','Continuous. Build to 500 m. Record each time.'],
+  fin_500:      ['Timed 500 m fin swim','1 × 500 m','Timed','Max effort. Compare to selection standard (sub-14:30 SCUBA gate, sub-13:00 CDAT).'],
+  fin_intervals:['Fin swim intervals','6 × 100 m','On 2:30','Push pace. Rest fully. Build speed over weeks.'],
+
+  // UNIFORM SWIMMING
+  uniform_intro:['Freestyle in DPCU shirt','4 × 50 m','Drill','Shirt only, feel the drag. Maintain technique. Rest as needed.'],
+  uniform_full: ['Full uniform freestyle','4 × 100 m','Moderate','DPCU top and pants. Focus on maintaining stroke despite drag. Time each rep.'],
+  uniform_400:  ['400 m uniform swim','1 × 400 m','Timed','Full uniform. Record time. Matches SOER/SASR/Commando standard.'],
+  uniform_mixed:['Uniform mixed strokes','4 × 100 m','Moderate','Alternate freestyle and sidestroke each 50 m. Builds versatility.'],
+
+  // SURVIVAL
+  surv_side:    ['Sidestroke survival sets','6 × 50 m','Drill','Lead arm extend, scissor kick, glide. Efficient low-energy stroke.'],
+  surv_breast:  ['Survival breaststroke','6 × 50 m','Drill','Head up option — sight forward each stroke. Used when assessing environment.'],
+  surv_float:   ['Float and recover','5 × 1 min','Drill','Passive float face down, roll to breathe. Conserves energy in open water.'],
+  surv_tower:   ['3 m tower jump entry','Practice','Drill','Step off, body straight, entry feet first, resurface under control. Safety brief mandatory.'],
+  surv_clothed: ['Clothed swim — mixed strokes','1 × 200 m','Moderate','DPCU full. Mix survival strokes. Simulate being in water unexpectedly.'],
+  surv_tow:     ['Casualty tow practice','4 × 25 m','Drill','Sidestroke tow of passive partner. One arm tucks under chin of casualty. Essential for CDG/AWD.'],
+
+  // WARMUP / COOLDOWN
+  warmup:       ['Warm-up','1 × 200 m','Easy','200 m easy mixed strokes — 50 m freestyle, 50 m backstroke, 50 m breast, 50 m freestyle.'],
+  cooldown:     ['Cool-down','1 × 100 m','Easy','Easy backstroke or gentle freestyle. Full breath cycle.'],
+  dryland_warm: ['Dryland warm-up','5 min','Dryland','Arm circles, shoulder rolls, hip circles, ankle rotations, light jog on pool deck.'],
+};
+
+// ── SELECTION STANDARDS ──
+const SELECTION_STANDARDS = {
+  clearance: {
+    name:'Navy Clearance Diver',
+    gates:[
+      {phase:'PFA (Entry)',items:['BEEP Test: Level 10.1','Push-ups: 30','Sit-ups: 25','Heaves: 6']},
+      {phase:'Navy Swim Test',items:['3m tower safety jump','10m underwater swim','50m survival stroke','15 min tread water in overalls']},
+      {phase:'SCUBA Air Course Gate',items:['2.4km run: sub-12:00','500m fin swim: sub-14:30']},
+      {phase:'CDAT (Hell Week)',items:['2.4km run: sub-10:15','Heaves: 10','500m fin swim: sub-13:00']}
+    ],
+    swimStandards:{'500 m Fin Swim':'Sub 13:00 (CDAT)','Tread Water':'15 min in overalls','Underwater Swim':'Supervised practice','Tower Jump':'3 m in uniform'},
+    focus:['fin_intro','fin_200','fin_400','fin_500','fin_intervals','tread_intro','tread_build','tread_15','under_intro','under_build','under_25','surv_tower']
+  },
+  cdg: {
+    name:'Combat Diver Group',
+    gates:[
+      {phase:'CDG Swim Standards',items:['400m pool swim: sub-8:00','200m snorkel swim: sub-4:30','Tread water: 10 min (no hands)','25m underwater swim','BEEP Test: Level 11+']}
+    ],
+    swimStandards:{'400 m Pool Swim':'Sub 8:00','200 m Snorkel Swim':'Sub 4:30','Tread Water (no hands)':'10 minutes','25 m Underwater':'Complete'},
+    focus:['end_adv_2','end_adv_5','tread_intro','tread_build','tread_hands','under_intro','under_build','under_25','tech_pull','tech_catch']
+  },
+  soer: {
+    name:'SFET / SOER Integrator',
+    gates:[{phase:'SFET Swim Standard',items:['2 min tread water','400m swim in uniform and runners: sub-16:00 (pass) / sub-13:00 (competitive)']}],
+    swimStandards:{'Tread Water':'2 minutes','400 m in Uniform + Runners':'Sub 16:00 (pass) / Sub 13:00 (competitive)'},
+    focus:['tread_intro','tread_build','tread_dpcu','uniform_intro','uniform_full','uniform_400','end_int_3','end_int_4']
+  },
+  sasr: {
+    name:'SASR / 2 Commando',
+    gates:[{phase:'SFET Swim Standard',items:['2 min tread water','400m swim in uniform and runners: sub-16:00 (pass) / sub-13:00 (competitive)']}],
+    swimStandards:{'Tread Water':'2 minutes','400 m in Uniform + Runners':'Sub 16:00 (pass) / Sub 13:00 (competitive)'},
+    focus:['tread_intro','tread_build','tread_dpcu','uniform_intro','uniform_full','uniform_400','end_int_3','end_int_4']
+  },
+  pti: {
+    name:'PTI Selection — Bronze Medallion',
+    gates:[{phase:'PTI Swim Standard',items:['400m swim (Bronze Medallion standard)','Tread water component','Rescue awareness']}],
+    swimStandards:{'400 m Swim':'Bronze Medallion standard','Survival Skills':'Required','Rescue Awareness':'Assessed'},
+    focus:['end_int_3','end_int_4','end_int_5','tread_intro','tread_build','surv_side','surv_breast','surv_float','tech_pull','tech_bilateral']
+  },
+  bpc: {
+    name:'Basic Parachutist Course / Rigger',
+    gates:[{phase:'BPC Water Module',items:['3m tower safety jump in uniform','10m underwater swim','50m survival stroke (sidestroke or breaststroke)','15 min tread water in uniform']}],
+    swimStandards:{'3 m Tower Jump':'In full uniform','10 m Underwater':'Continuous','50 m Survival Stroke':'Sidestroke or breaststroke','15 min Tread Water':'In uniform'},
+    focus:['surv_tower','under_intro','under_build','surv_side','surv_breast','tread_intro','tread_build','tread_15','surv_float']
+  },
+  awd: {
+    name:'Army Work Diver',
+    gates:[{phase:'AWD Swim Requirements',items:['400m swim in uniform','10 min tread water in uniform','Underwater swimming confidence','Water confidence and composure under pressure']}],
+    swimStandards:{'400 m Swim in Uniform':'Complete','Tread Water':'10 min in uniform','Underwater Confidence':'Supervised practice'},
+    focus:['uniform_intro','uniform_full','uniform_400','tread_intro','tread_dpcu','tread_full','under_intro','under_build','surv_clothed']
+  },
+  icat: {
+    name:'Infantry PESA',
+    gates:[{phase:'PESA Amphibious Survival',items:['10 min tread water in DPCU (no boots)','400m continuous swim in uniform']}],
+    swimStandards:{'Tread Water in DPCU':'10 minutes (no boots)','400 m Swim in Uniform':'Continuous'},
+    focus:['tread_intro','tread_build','tread_dpcu','tread_full','uniform_intro','uniform_full','uniform_400','surv_side','surv_breast']
+  }
+};
+
+// ── TECHNIQUE CUES ──
+const STROKE_CUES = {
+  freestyle: { name:'Freestyle', cue:'High elbow catch, rotate hips with each stroke, exhale continuously underwater, bilateral breathing every 3 strokes. Long and low in the water.' },
+  breaststroke: { name:'Breaststroke', cue:'Pull in to chest, kick narrow (no wide knees), glide fully between strokes. Head-up option for survival swimming. Arms and legs never move simultaneously.' },
+  sidestroke: { name:'Sidestroke (Survival)', cue:'Lead arm extends forward, trailing arm sweeps to hip, scissor kick. Efficient and low-energy — used for long distances and casualty tow. Glide fully between strokes.' },
+  backstroke: { name:'Backstroke', cue:'Continuous hip rotation, high elbow recovery past the head, catch wide at shoulder. Keep hips high and kick from hip — not knee.' },
+  underwater: { name:'Underwater Swimming', cue:'Full breath, streamlined streamline off wall, dolphin kick underwater. Arms at sides or extended. Surface gradually — never hold breath to point of discomfort. ALWAYS supervised.' },
+  fins: { name:'Fin Swimming', cue:'Flutter kick from the hip — not knee. Long relaxed kick, fins fully loaded. Arms in freestyle or at sides depending on selection requirement. Breathe every 2–3 strokes.' }
+};
+
+// ── BUILD WEEK SESSIONS ──
+function buildSessionRow(key) {
+  const s = SESSIONS[key];
+  if (!s) return '';
+  return `<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td><td>${s[3]}</td></tr>`;
+}
+
+function buildTable(title, keys) {
+  const rows = keys.map(k => buildSessionRow(k)).filter(Boolean).join('');
+  if (!rows) return '';
+  return `
+    <div class="session-title">${title}</div>
+    <table><thead><tr><th>Exercise / Set</th><th>Volume</th><th>Intensity</th><th>Coaching Cue</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+
+function buildWeek(weekNum, phase, pool, ability, goal, focus, selKey, totalDistance) {
+  const p = parseInt(pool);
+  const lengthStr = p === 25 ? '25 m lengths' : '50 m lengths';
+  const prog = weekNum / 12; // progression scalar 0–1
+
+  // Scale volume
+  const vol = Math.round(totalDistance * (0.7 + prog * 0.5));
+  const volStr = vol >= 1000 ? `${(vol/1000).toFixed(1)} km` : `${vol} m`;
+
+  // Build sessions based on goal + ability
+  let sessions = [];
+  const isBeg = ability === 'beginner';
+  const isAdv = ability === 'advanced';
+
+  if (goal === 'technique') {
+    sessions = [
+      { label:'Session 1', title:'Technique Focus', keys:['dryland_warm','warmup','tech_catch','tech_finger','tech_kick','cooldown'], note:'Every drill has a purpose — slow is smooth, smooth is fast. Don\'t rush technique sessions.' },
+      { label:'Session 2', title:'Pull & Breathing', keys:['warmup','tech_pull','tech_bilateral','tech_breast','cooldown'], note:'Focus on feel of the water. Aim for fewer strokes per length each session.' },
+      { label:'Session 3', title:'Stroke Integration', keys:['warmup','tech_kick','tech_side','tech_back',isBeg?'end_beg_3':'end_int_2','cooldown'], note:'Apply the drills to continuous swimming. Reduce rest as technique improves.' },
+    ];
+  } else if (goal === 'survival') {
+    sessions = [
+      { label:'Session 1', title:'Survival Strokes', keys:['dryland_warm','warmup','surv_side','surv_breast','surv_float','cooldown'], note:'Sidestroke is your primary survival stroke — efficient, low energy, sustainable for long distances.' },
+      { label:'Session 2', title:'Tread Water & Uniform', keys:['warmup','tread_intro',phase>=2?'tread_dpcu':'tread_build',phase>=3?'uniform_full':'uniform_intro','cooldown'], note:'DPCU absorbs water and adds significant drag and weight. Build time in uniform gradually.' },
+      { label:'Session 3', title:'Full Survival Skills', keys:['warmup',phase>=2?'tread_full':'tread_build','surv_clothed','surv_tow','under_intro','cooldown'], note:'Casualty tow is critical — practice sidestroke tow with a partner every session.' },
+    ];
+  } else if (goal === 'selection') {
+    const sel = SELECTION_STANDARDS[selKey];
+    const selFocus = sel ? sel.focus : [];
+    const s1Keys = ['warmup', selFocus[0]||'end_int_3', selFocus[1]||'tread_intro', selFocus[2]||'tech_pull', 'cooldown'];
+    const s2Keys = ['warmup', selFocus[3]||'end_int_4', selFocus[4]||'tread_build', selFocus[5]||'tech_bilateral', 'cooldown'];
+    const s3Keys = ['warmup', selFocus[6]||'end_int_5', selFocus[7]||'tread_dpcu', 'cooldown'];
+    sessions = [
+      { label:'Session 1', title:'Selection Standard Work', keys:s1Keys, note:`Training toward ${sel?.name||'selection'} standard. Record all timed efforts against the selection benchmark.` },
+      { label:'Session 2', title:'Volume & Specific Skills', keys:s2Keys, note:'Focus on the weakest component of your selection swim test this session.' },
+      { label:'Session 3', title:'Test Simulation', keys:s3Keys, note:`Week ${weekNum}: aim to be at ${Math.round(60+prog*35)}% of selection standard pace by end of this session.` },
+    ];
+  } else {
+    // General fitness
+    const endKeys = isBeg
+      ? ['end_beg_1','end_beg_2','end_beg_3','end_beg_4','end_beg_5']
+      : isAdv
+        ? ['end_adv_1','end_adv_2','end_adv_3','end_adv_4','end_adv_5']
+        : ['end_int_1','end_int_2','end_int_3','end_int_4','end_int_5'];
+    const idx = Math.min(Math.floor(prog * endKeys.length), endKeys.length - 1);
+    sessions = [
+      { label:'Session 1', title:'Aerobic Base', keys:['warmup', endKeys[Math.max(0,idx-1)], 'tech_pull', 'cooldown'], note:'Build aerobic base at comfortable pace. Should be able to hold a conversation if not swimming.' },
+      { label:'Session 2', title:'Technique + Endurance', keys:['dryland_warm','warmup','tech_catch','tech_bilateral', endKeys[idx], 'cooldown'], note:'Apply technique drills directly into endurance sets. Aim to reduce stroke count per length.' },
+      { label:'Session 3', title:'Distance + Mix', keys:['warmup', endKeys[Math.min(idx+1, endKeys.length-1)], focus.includes('tread')?'tread_intro':'tech_kick', focus.includes('breaststroke')?'surv_breast':'tech_back', 'cooldown'], note:'Longer or harder session of the week. Record total distance and note how you felt.' },
+    ];
+  }
+
+  const sessionsHTML = sessions.map((s, i) => `
+    <div class="session-block">
+      <div class="session-day">${s.label}</div>
+      ${buildTable(s.title, s.keys)}
+      <div class="notes-box"><b>Coaching Note</b>${s.note}</div>
+    </div>`).join('');
+
+  const weeklyTip = phase === 1
+    ? 'Foundation week — establish baseline. Record all timed efforts for future comparison.'
+    : phase === 2
+      ? 'Building phase — increase effort slightly each session. Body is adapting.'
+      : phase === 3
+        ? 'Capacity phase — push harder this week. Aim for personal bests on timed efforts.'
+        : 'Peak / specificity phase — simulate the test conditions. Taper in the final week.';
+
+  return `
+    <div class="week-block">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <span class="week-num">WEEK ${weekNum}</span>
+        <span class="week-focus">Target volume: ~${volStr} · ${lengthStr}</span>
+        <span class="week-toggle">▸</span>
+      </div>
+      <div class="week-content">
+        <div class="notes-box" style="margin-bottom:12px;"><b>Week ${weekNum} Focus</b>${weeklyTip}</div>
+        ${sessionsHTML}
+      </div>
+    </div>`;
+}
+
+function toggleWeek(header) {
+  const content = header.nextElementSibling;
+  const toggle = header.querySelector('.week-toggle');
+  const isOpen = content.classList.contains('open');
+  content.classList.toggle('open');
+  toggle.textContent = isOpen ? '▸' : '▾';
+}
+
+// ── MAIN GENERATE ──
+function generate() {
+  const name = document.getElementById('name').value.trim() || 'Member';
+  const age = document.getElementById('age').value || 'N/A';
+  const sex = document.getElementById('sex').value || 'N/A';
+  const corps = document.getElementById('corps').value.trim() || 'N/A';
+  const ability = document.getElementById('ability').value;
+  const pool = document.getElementById('pool').value;
+  const dur = parseInt(document.getElementById('duration').value);
+  const sessions = parseInt(document.getElementById('sessions').value);
+  const goal = selectedGoal;
+  const focus = getCheckedFocus();
+  const notes = document.getElementById('notes').value.trim();
+  const selKey = document.getElementById('selectionTest').value;
+
+  const abilityLabel = { beginner:'Beginner', intermediate:'Intermediate', advanced:'Advanced' }[ability];
+  const goalLabel = { fitness:'General Fitness', technique:'Technique Development', survival:'Survival Swimming', selection:'Selection Preparation' }[goal];
+  const poolLabel = pool === '25' ? '25 m Pool' : '50 m Pool';
+
+  // Base distances by ability
+  const baseDist = { beginner:600, intermediate:1200, advanced:2000 }[ability];
+
+  // Phase structure
+  let phases;
+  if (dur <= 4) phases = [{w:[1,2],n:1},{w:[3,4],n:2}];
+  else if (dur <= 6) phases = [{w:[1,2],n:1},{w:[3,4],n:2},{w:[5,6],n:3}];
+  else if (dur <= 8) phases = [{w:[1,2],n:1},{w:[3,4],n:2},{w:[5,6],n:3},{w:[7,8],n:4}];
+  else phases = [{w:[1,3],n:1},{w:[4,6],n:2},{w:[7,9],n:3},{w:[10,12],n:4}];
+
+  const now = new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const endD = new Date(); endD.setDate(endD.getDate()+dur*7);
+  const endStr = endD.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+
+  // Selection standards block
+  let selStandardsHTML = '';
+  if (goal === 'selection') {
+    const sel = SELECTION_STANDARDS[selKey];
+    if (sel) {
+      const gateRows = sel.gates.map(g => `
+        <div style="margin-bottom:10px;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal2);font-weight:700;margin-bottom:5px;">${g.phase}</div>
+          <ul class="crit-list">${g.items.map(i=>`<li>${i}</li>`).join('')}</ul>
+        </div>`).join('');
+      const stdRows = Object.entries(sel.swimStandards).map(([k,v])=>`
+        <div class="standard-item"><div class="s-label">${k}</div><div class="s-val">${v}</div></div>`).join('');
+      selStandardsHTML = `
+        <div class="standard-card">
+          <div class="standard-title">${sel.name} — Swim Standards</div>
+          <div class="standard-grid">${stdRows}</div>
+        </div>
+        <div class="card-section">
+          <div class="card-title">Selection Gate Requirements</div>
+          ${gateRows}
+        </div>`;
+    }
+  }
+
+  // Stroke cues for selected focus areas
+  const strokeKeys = ['freestyle','breaststroke','sidestroke','backstroke','underwater','fins'];
+  const activeCues = strokeKeys.filter(k => {
+    if (k === 'sidestroke') return focus.includes('sidestroke') || goal === 'survival';
+    if (k === 'underwater') return focus.includes('underwater') || goal === 'selection';
+    if (k === 'fins') return focus.includes('fins') || ['clearance','cdg'].includes(selKey);
+    return focus.includes(k) || goal === 'technique' || goal === 'fitness';
+  });
+
+  const strokeHTML = activeCues.slice(0,6).map(k => {
+    const sc = STROKE_CUES[k];
+    return sc ? `<div class="stroke-card"><div class="stroke-name">${sc.name}</div><div class="stroke-cue">${sc.cue}</div></div>` : '';
+  }).join('');
+
+  // Build weeks
+  let weeksHTML = '';
+  for (let w = 1; w <= dur; w++) {
+    const phaseNum = phases.findIndex(p => w >= p.w[0] && w <= p.w[1]) + 1 || phases.length;
+    const isTaper = w === dur;
+    weeksHTML += buildWeek(w, phaseNum, pool, ability, goal, focus, selKey, isTaper ? baseDist * 0.5 : baseDist);
+  }
+
+  // Safety notice for underwater
+  const underWaterNotice = (focus.includes('underwater') || ['clearance','cdg','bpc','awd'].includes(selKey))
+    ? `<div class="warn-box"><b>Underwater Swimming Safety — Critical</b>All underwater swimming practice MUST be conducted under direct supervision. Never practice breath-holding or underwater swimming alone or unsupervised. Hypoxic training (intentional hyperventilation before underwater swimming) is PROHIBITED — it is a leading cause of pool drowning. If a swimmer shows signs of distress, activate emergency procedures immediately.</div>` : '';
+
+  const html = `
+    <div class="report-header">
+      <div>
+        <div class="report-title">Swimming <span>Program</span></div>
+        <div class="report-meta">Generated ${now} — ADF PTI Swim Builder — Program end: ${endStr}</div>
+      </div>
+      <div class="report-actions"><button class="btn-secondary" onclick="window.print()">Print / Save PDF</button></div>
+    </div>
+
+    <div class="member-card">
+      <div class="member-stat"><label>Member</label><div class="val">${name}</div></div>
+      <div class="member-stat"><label>Age / Sex</label><div class="val">${age} / ${sex.charAt(0)||'—'}</div></div>
+      <div class="member-stat"><label>Corps</label><div class="val">${corps}</div></div>
+      <div class="member-stat"><label>Pool</label><div class="val">${poolLabel}</div></div>
+    </div>
+
+    <div class="card-section">
+      <div class="card-title">Program Overview</div>
+      <table><tbody>
+        <tr><td style="width:160px;font-weight:600;">Goal</td><td>${goalLabel}</td></tr>
+        <tr><td style="font-weight:600;">Ability Level</td><td>${abilityLabel}</td></tr>
+        <tr><td style="font-weight:600;">Duration</td><td>${dur} weeks (${sessions} sessions per week)</td></tr>
+        <tr><td style="font-weight:600;">Pool</td><td>${poolLabel}</td></tr>
+        <tr><td style="font-weight:600;">Focus Areas</td><td>${focus.length ? focus.join(', ') : 'General'}</td></tr>
+        ${goal==='selection'?`<tr><td style="font-weight:600;">Target Selection</td><td>${SELECTION_STANDARDS[selKey]?.name||''}</td></tr>`:''}
+        ${notes?`<tr><td style="font-weight:600;">Notes</td><td>${notes}</td></tr>`:''}
+      </tbody></table>
+    </div>
+
+    ${underWaterNotice}
+    ${selStandardsHTML}
+
+    <div class="card-section">
+      <div class="card-title">Stroke Technique Cues</div>
+      <div class="stroke-grid">${strokeHTML}</div>
+      <div class="notes-box"><b>Counting Strokes</b>Count strokes per length every session. As fitness and technique improve, your stroke count per length should decrease. A beginner may take 22–28 strokes per 25m; an efficient swimmer takes 14–18. Track this weekly.</div>
+    </div>
+
+    <div class="card-section" style="margin-bottom:1.5rem;">
+      <div class="card-title">Pool Measurement Reference</div>
+      <table><thead><tr><th>Distance</th><th>25 m Pool (lengths)</th><th>50 m Pool (lengths)</th></tr></thead>
+      <tbody>
+        <tr><td>100 m</td><td>4 lengths</td><td>2 lengths</td></tr>
+        <tr><td>200 m</td><td>8 lengths</td><td>4 lengths</td></tr>
+        <tr><td>400 m</td><td>16 lengths</td><td>8 lengths</td></tr>
+        <tr><td>500 m</td><td>20 lengths</td><td>10 lengths</td></tr>
+        <tr><td>800 m</td><td>32 lengths</td><td>16 lengths</td></tr>
+        <tr><td>1000 m</td><td>40 lengths</td><td>20 lengths</td></tr>
+      </tbody></table>
+    </div>
+
+    <div style="margin-bottom:1rem;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);font-weight:700;padding-bottom:6px;border-bottom:1px solid var(--border);">Week-by-Week Program — Click Each Week to Expand</div>
+    </div>
+
+    ${weeksHTML}
+
+    <div class="card-section" style="margin-top:1.5rem;">
+      <div class="card-title">Progression &amp; Testing Guidelines</div>
+      <ul class="crit-list">
+        <li>Test your timed efforts (400 m, 500 m fin swim, tread water) every 3–4 weeks and record results</li>
+        <li>Increase weekly volume by no more than 10% each week to prevent overuse injury</li>
+        <li>Every 4th week is a recovery week — reduce volume by 30–40% but maintain intensity</li>
+        <li>Stroke count per length is your technique indicator — track it weekly alongside time</li>
+        <li>If training for selection, simulate test conditions (uniform, fins, tread water) at least once per week from week 4 onward</li>
+        <li>Shoulder warm-up and cool-down is mandatory — swimming is high-repetition and shoulder overuse is common</li>
+        <li>Hydration: swimmers sweat heavily but don't feel it. Drink 500 ml before and after every session</li>
+      </ul>
+    </div>
+
+    <div class="card-section">
+      <div class="card-title">Dryland Swim Conditioning</div>
+      <table><thead><tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Lat pulldown or pull-up</td><td>3</td><td>10–12</td><td>Freestyle pull strength</td></tr>
+        <tr><td>Single-arm cable row</td><td>3</td><td>12 each</td><td>Catch and pull mechanics</td></tr>
+        <tr><td>External rotation (band)</td><td>3</td><td>15</td><td>Rotator cuff injury prevention</td></tr>
+        <tr><td>Face pulls</td><td>3</td><td>15</td><td>Rear delt and scapular stability</td></tr>
+        <tr><td>Plank</td><td>3</td><td>45–60 s</td><td>Core stability for streamline</td></tr>
+        <tr><td>Hip flexor stretch</td><td>3</td><td>30 s each</td><td>Flutter kick range of motion</td></tr>
+        <tr><td>Ankle circles + dorsiflexion</td><td>3</td><td>20 each</td><td>Kick flexibility and propulsion</td></tr>
+      </tbody></table>
+      <div class="notes-box" style="margin-top:8px;"><b>Dryland Note</b>Perform 2× per week alongside swim sessions, not on the same day where possible. Strong lats and rotator cuffs are the foundation of efficient swimming.</div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This swimming program is a planning aid for qualified ADF Physical Training Instructors. Underwater swimming must always be conducted under direct supervision — never alone. Open water swimming carries additional hazards and must comply with all relevant safety orders. If a member has a medical condition or injury, obtain medical clearance before commencing. Selection standards may change — verify current requirements with the relevant selection authority.
+    </div>`;
+
+  document.getElementById('emptyState').style.display = 'none';
+  const ra = document.getElementById('reportArea');
+  ra.style.display = 'block';
+  ra.innerHTML = html;
+  ra.scrollIntoView({ behavior:'smooth', block:'start' });
+
+  // Attach accordion listeners
+  document.querySelectorAll('.week-header').forEach(h => {
+    h.addEventListener('click', () => {
+      const content = h.nextElementSibling;
+      const toggle = h.querySelector('.week-toggle');
+      const isOpen = content.classList.contains('open');
+      content.classList.toggle('open');
+      toggle.textContent = isOpen ? '▸' : '▾';
+    });
+  });
+}
+</script>
+</body>
+</html>
