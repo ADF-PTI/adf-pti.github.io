@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADF PTI — Remedial PT Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1a1a;--ink2:#242420;--ink3:#2e2e28;
+  --amber:#c8820a;--amber2:#e8a020;--amber-pale:#fdf5e0;
+  --red:#c8392b;--green:#2a6b20;--green-pale:#eaf4e0;
+  --blue:#1a4a8a;--blue-pale:#eef4fc;
+  --cream:#f5f2eb;--sand:#ede8dc;--card:#ffffff;
+  --border:#d0c8b8;--muted:#7a7060;--text:#1a1a16;--text2:#55504a;
+  --radius:4px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+header{background:var(--ink);color:#fff;padding:0 2rem;display:flex;align-items:stretch;border-bottom:3px solid var(--amber);}
+.hflag{background:var(--amber);width:6px;margin-right:1.5rem;}
+.htext{padding:1.25rem 0;}
+.hey{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--amber2);font-weight:700;margin-bottom:4px;}
+header h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+header h1 span{color:var(--amber2);}
+.hsub{font-size:12px;color:#aaa;margin-top:4px;font-weight:300;}
+.hright{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hbadge{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:700;}
+.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;transition:background .15s;}
+.hlink:hover{background:rgba(255,255,255,0.12);}
+
+.layout{display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - 72px);}
+.sidebar{background:var(--sand);border-right:1px solid var(--border);padding:1.5rem;overflow-y:auto;}
+.slabel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.75rem;}
+.fg label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink2);}
+input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;transition:border-color .15s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2px rgba(200,130,10,.12);}
+textarea{resize:vertical;min-height:60px;}
+.fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:.75rem;}
+
+/* SCORE INPUT ROWS */
+.score-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:.75rem;}
+.score-block-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;}
+.score-row{display:grid;grid-template-columns:1fr 90px 90px;gap:8px;align-items:center;margin-bottom:8px;font-size:13px;}
+.score-row:last-child{margin-bottom:0;}
+.score-name{color:var(--text2);font-weight:500;}
+.score-input{text-align:center;}
+.score-std{text-align:center;font-size:11px;color:var(--muted);background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:6px 4px;}
+
+.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:.75rem;}
+.btn-gen:hover{background:var(--amber);}
+
+/* OUTPUT */
+.output{padding:2rem;overflow-y:auto;}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;opacity:.45;}
+.empty-icon{width:64px;height:64px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:28px;}
+.empty h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.empty p{font-size:13px;color:var(--muted);}
+
+/* REPORT */
+.rpt-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--ink);}
+.rpt-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1.1;}
+.rpt-title span{color:var(--amber);}
+.rpt-meta{font-size:12px;color:var(--muted);margin-top:4px;}
+.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;}
+.btn-sec:hover{background:var(--sand);}
+
+/* MEMBER CARD */
+.member-card{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.mc-item label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:3px;}
+.mc-val{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--amber2);letter-spacing:1px;}
+
+/* SCORE CARD GRID */
+.score-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:1.25rem;}
+.scard{border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;background:var(--card);}
+.scard.fail{border-color:var(--red);background:#fdf0ee;}
+.scard.marginal{border-color:var(--amber);background:var(--amber-pale);}
+.scard.pass{border-color:var(--green);background:var(--green-pale);}
+.scard-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:4px;}
+.scard.fail .scard-label{color:var(--red);}
+.scard.marginal .scard-label{color:#8a5010;}
+.scard.pass .scard-label{color:var(--green);}
+.scard-current{font-family:'Barlow Condensed',sans-serif;font-size:26px;letter-spacing:1px;line-height:1;}
+.scard.fail .scard-current{color:var(--red);}
+.scard.marginal .scard-current{color:var(--amber);}
+.scard.pass .scard-current{color:var(--green);}
+.scard-standard{font-size:11px;color:var(--muted);margin-top:3px;}
+.scard-gap{font-size:11px;font-weight:600;margin-top:4px;}
+.scard.fail .scard-gap{color:var(--red);}
+.scard.marginal .scard-gap{color:#8a5010;}
+.scard-status{display:inline-block;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;padding:2px 7px;border-radius:2px;margin-top:6px;}
+.status-fail{background:#fde0de;color:#8a1a10;}
+.status-marginal{background:#fdf0d0;color:#8a5010;}
+.status-pass{background:#e0f0dc;color:#1a5010;}
+
+/* GAP BAR */
+.gap-bar-wrap{height:6px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden;}
+.gap-bar-fill{height:100%;border-radius:3px;transition:width .5s;}
+
+/* PRIORITY BANNER */
+.priority-banner{background:var(--amber-pale);border:1.5px solid var(--amber);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.pb-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:.5rem;}
+.priority-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:.5rem;}
+.pchip{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:var(--radius);border:1.5px solid;}
+.pchip.p1{background:#fde8e8;color:#8a1a10;border-color:#c83020;}
+.pchip.p2{background:var(--amber-pale);color:#8a5010;border-color:var(--amber);}
+.pchip.p3{background:var(--blue-pale);color:#1a3a7a;border-color:#3a6ac0;}
+
+/* PHASE BLOCKS */
+.phase-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.25rem;overflow:hidden;}
+.ph-head{background:var(--ink);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.ph-badge{background:var(--amber);color:var(--ink);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;padding:2px 8px;border-radius:2px;letter-spacing:1px;}
+.ph-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.ph-weeks{margin-left:auto;font-size:11px;color:#aaa;}
+.ph-body{padding:1rem 1.25rem;}
+.ph-obj{font-size:13px;color:var(--text2);font-style:italic;margin-bottom:12px;}
+
+/* WEEK ACCORDION */
+.week-acc{border-bottom:1px solid var(--border);}
+.week-acc:last-child{border-bottom:none;}
+.week-hdr{padding:9px 0;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.week-hdr:hover .week-num{color:var(--amber);}
+.week-num{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--amber);min-width:70px;transition:color .15s;}
+.week-focus-txt{font-size:13px;color:var(--text2);}
+.week-toggle{margin-left:auto;font-size:12px;color:var(--muted);}
+.week-body{display:none;padding-bottom:12px;}
+.week-body.open{display:block;}
+
+table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:12.5px;}
+th{background:#f0ebe0;color:var(--ink2);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 10px;text-align:left;font-weight:700;}
+td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:nth-child(even) td{background:#fafaf6;}
+
+.target-tag{display:inline-block;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;padding:2px 6px;border-radius:2px;margin-left:5px;}
+.tt-fail{background:#fde8e8;color:#8a1a10;}
+.tt-marginal{background:var(--amber-pale);color:#8a5010;}
+
+.note-box{background:#f0ebe0;border-left:4px solid var(--amber);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-top:10px;font-size:12.5px;color:#3a3a30;}
+.note-box b{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:3px;}
+.warn-box{background:#fdf0ee;border-left:4px solid var(--red);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px;font-size:13px;}
+.warn-box b{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.info-box{background:var(--blue-pale);border-left:4px solid var(--blue);padding:9px 13px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px;font-size:13px;}
+.info-box b{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:3px;}
+
+.card-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.cs-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.cs-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--amber);border-radius:2px;flex-shrink:0;}
+
+.crit-list{list-style:none;padding:0;}
+.crit-list li{padding:5px 0 5px 20px;position:relative;font-size:13px;border-bottom:1px solid #f0ebe0;}
+.crit-list li:last-child{border-bottom:none;}
+.crit-list li::before{content:'→';position:absolute;left:0;color:var(--amber);font-weight:700;}
+
+.milestone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:1rem;}
+.milestone-card{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
+.ml-week{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.ml-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--ink);letter-spacing:1px;}
+.ml-label{font-size:11px;color:var(--muted);margin-top:2px;}
+
+.disclaimer{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-top:2rem;font-size:12px;color:var(--muted);font-style:italic;}
+
+@media print{.sidebar,.hright{display:none!important;}.layout{display:block;}.output{padding:1rem;}.ph-head,.member-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;}.week-body{display:block!important;}.week-toggle{display:none;}}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}.member-card{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){header{padding:0 1rem;}.output,.sidebar{padding:1rem;}.fgrid2,.fgrid3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hflag"></div>
+  <div class="htext">
+    <div class="hey">Australian Defence Force</div>
+    <h1>PTI <span>Remedial</span> PT Planner</h1>
+    <div class="hsub">PFA Failure Analysis &amp; Targeted Remedial Program Generator</div>
+  </div>
+  <div class="hright">
+    <a class="hlink" href="index.html">← Back to Tools</a>
+    <div class="hbadge">Free &amp; Offline</div>
+  </div>
+</header>
+
+<div class="layout">
+<div class="sidebar">
+
+  <div class="slabel">Member Details</div>
+  <div class="fgrid2">
+    <div class="fg"><label>Full Name</label><input type="text" id="name" placeholder="e.g. PTE Thomson, K."></div>
+    <div class="fg"><label>Service Number</label><input type="text" id="svc" placeholder="e.g. 8234567"></div>
+    <div class="fg"><label>Rank</label>
+      <select id="rank">
+        <option value="">— Select —</option>
+        <optgroup label="Army"><option>Recruit</option><option>Private</option><option>Lance Corporal</option><option>Corporal</option><option>Sergeant</option><option>Staff Sergeant</option><option>Warrant Officer Class 2</option><option>Warrant Officer Class 1</option><option>2nd Lieutenant</option><option>Lieutenant</option><option>Captain</option><option>Major</option></optgroup>
+        <optgroup label="Navy"><option>Seaman</option><option>Able Seaman</option><option>Leading Seaman</option><option>Petty Officer</option><option>Chief Petty Officer</option></optgroup>
+        <optgroup label="Air Force"><option>Aircraftman</option><option>Leading Aircraftman</option><option>Corporal (RAAF)</option><option>Sergeant (RAAF)</option><option>Flight Sergeant</option></optgroup>
+      </select>
+    </div>
+    <div class="fg"><label>Age</label><input type="number" id="age" value="25" min="17" max="65"></div>
+    <div class="fg"><label>Sex</label>
+      <select id="sex"><option value="Male">Male</option><option value="Female">Female</option></select>
+    </div>
+    <div class="fg"><label>Unit / Corps</label><input type="text" id="unit" placeholder="e.g. 1 RAR, Infantry"></div>
+  </div>
+
+  <div class="slabel">PFA Results — Enter Member's Scores</div>
+  <div class="score-block">
+    <div class="score-block-title">Fitness Test Scores</div>
+    <div class="score-row" style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">
+      <div>Component</div><div style="text-align:center;">Score</div><div style="text-align:center;">ADF Standard</div>
+    </div>
+    <div class="score-row">
+      <div class="score-name">BEEP Test (level)</div>
+      <input class="score-input" type="number" id="s_beep" placeholder="e.g. 7.2" min="1" max="15" step="0.1">
+      <div class="score-std" id="std_beep">—</div>
+    </div>
+    <div class="score-row">
+      <div class="score-name">Push-ups (max reps)</div>
+      <input class="score-input" type="number" id="s_pushups" placeholder="e.g. 22" min="0" max="120">
+      <div class="score-std" id="std_pushups">—</div>
+    </div>
+    <div class="score-row">
+      <div class="score-name">Sit-ups (max reps)</div>
+      <input class="score-input" type="number" id="s_situps" placeholder="e.g. 30" min="0" max="120">
+      <div class="score-std" id="std_situps">—</div>
+    </div>
+    <div class="score-row">
+      <div class="score-name">2.4 km Run (min:sec)</div>
+      <input class="score-input" type="text" id="s_run" placeholder="e.g. 13:20">
+      <div class="score-std" id="std_run">—</div>
+    </div>
+  </div>
+
+  <div class="slabel">Program Settings</div>
+  <div class="fgrid2">
+    <div class="fg"><label>Program Duration</label>
+      <select id="duration">
+        <option value="4">4 weeks</option>
+        <option value="6">6 weeks</option>
+        <option value="8" selected>8 weeks</option>
+        <option value="12">12 weeks</option>
+        <option value="16">16 weeks</option>
+      </select>
+    </div>
+    <div class="fg"><label>Sessions Per Week</label>
+      <select id="sessions">
+        <option value="3">3 per week</option>
+        <option value="4">4 per week</option>
+        <option value="5" selected>5 per week</option>
+      </select>
+    </div>
+    <div class="fg"><label>Next PFA Date</label>
+      <input type="text" id="pfaDate" placeholder="e.g. Jun 2026 or unknown">
+    </div>
+    <div class="fg"><label>Equipment Access</label>
+      <select id="equip">
+        <option value="full">Full gym + track</option>
+        <option value="gym">Gym only</option>
+        <option value="minimal">Minimal / field</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="slabel">Injuries / Restrictions / Notes</div>
+  <div class="fg" style="margin-bottom:.75rem;">
+    <textarea id="notes" placeholder="e.g. History of lower back pain. No spinal loading. Member is motivated but struggles with cardiovascular fitness."></textarea>
+  </div>
+
+  <button class="btn-gen" onclick="generate()">Generate Remedial Program</button>
+</div>
+
+<div class="output">
+  <div class="empty" id="emptyState">
+    <div class="empty-icon">!</div>
+    <h2>No Program Generated</h2>
+    <p>Enter the member's PFA scores and details,<br>then press Generate Remedial Program.</p>
+  </div>
+  <div id="reportArea" style="display:none;"></div>
+</div>
+</div>
+
+<script>
+// ── ADF STANDARDS ──
+const STANDARDS = {
+  Male:[
+    {min:17,max:29,beep:8.1,pushups:30,situps:45,run:'11:00'},
+    {min:30,max:34,beep:7.5,pushups:28,situps:40,run:'11:30'},
+    {min:35,max:39,beep:7.0,pushups:24,situps:38,run:'12:30'},
+    {min:40,max:44,beep:6.5,pushups:20,situps:34,run:'13:00'},
+    {min:45,max:49,beep:6.0,pushups:16,situps:30,run:'13:30'},
+    {min:50,max:65,beep:5.5,pushups:12,situps:25,run:'14:30'},
+  ],
+  Female:[
+    {min:17,max:29,beep:6.5,pushups:15,situps:40,run:'13:00'},
+    {min:30,max:34,beep:6.0,pushups:12,situps:36,run:'13:30'},
+    {min:35,max:39,beep:5.5,pushups:10,situps:34,run:'14:00'},
+    {min:40,max:44,beep:5.0,pushups:8,situps:30,run:'14:30'},
+    {min:45,max:49,beep:4.5,pushups:6,situps:26,run:'15:00'},
+    {min:50,max:65,beep:4.0,pushups:4,situps:22,run:'15:30'},
+  ]
+};
+
+function getStd(age,sex){
+  const tbl=STANDARDS[sex]||STANDARDS.Male;
+  return tbl.find(r=>age>=r.min&&age<=r.max)||tbl[0];
+}
+
+function timeToSec(str){
+  if(!str||!str.includes(':'))return null;
+  const [m,s]=str.split(':');
+  return (parseInt(m)||0)*60+(parseInt(s)||0);
+}
+
+function secToMMSS(s){
+  if(!s||s<=0)return '--:--';
+  const m=Math.floor(s/60);
+  const sec=Math.round(s%60);
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+
+// Update standard display when age/sex changes
+function updateStandards(){
+  const age=parseInt(document.getElementById('age').value)||25;
+  const sex=document.getElementById('sex').value||'Male';
+  const std=getStd(age,sex);
+  document.getElementById('std_beep').textContent=std.beep;
+  document.getElementById('std_pushups').textContent=std.pushups;
+  document.getElementById('std_situps').textContent=std.situps;
+  document.getElementById('std_run').textContent=std.run;
+}
+
+document.getElementById('age').addEventListener('input',updateStandards);
+document.getElementById('sex').addEventListener('change',updateStandards);
+updateStandards();
+
+// ── EXERCISE LIBRARY ──
+const EX = {
+  // PUSH-UP FOCUSED
+  pushup_grease:  ['Push-up Grease the Groove','Every 30 min throughout day','50% of max reps','High frequency, low fatigue. Best rapid push-up improvement method.'],
+  pushup_ladder:  ['Push-up Ladder','5 rounds','1-2-3-4-5 reps','Build by 1 rep each set. Rest 30s between. Record total.'],
+  pushup_max:     ['Push-up Max Sets','5 sets','To failure','60s rest. Full ROM — chest to ground, arms locked. Record volume.'],
+  pushup_tempo:   ['Tempo Push-ups','4 sets','8 reps (3s down, 1s up)','Slow eccentric builds strength. Maintain form throughout.'],
+  pushup_wide:    ['Wide-Grip Push-ups','3 sets','15 reps','Chest emphasis. Supplement standard push-up training.'],
+  pushup_diamond: ['Diamond Push-ups','3 sets','10 reps','Tricep emphasis. Harder variation — builds overall pushing strength.'],
+  pushup_incline: ['Incline Push-ups (box/bench)','3 sets','15 reps','Easier variation for beginners. Progress to flat as strength builds.'],
+  bench_press:    ['Bench Press','4 sets','8–10 reps','Builds chest strength that directly transfers to push-up performance.'],
+  db_chest:       ['DB Chest Press (floor)','3 sets','12 reps','Floor limits ROM, reduces shoulder strain. Good supplement.'],
+  dips:           ['Tricep Dips','3 sets','10–12 reps','Tricep strength is critical for push-up lockout.'],
+  // SIT-UP FOCUSED
+  situp_max:      ['Sit-up Max Sets','5 sets','To failure','ADF standard form — heels flat, hands on temples. Record volume.'],
+  situp_tempo:    ['Tempo Sit-ups','4 sets','15 reps (2s up, 2s down)','Controlled movement builds endurance. No jerking.'],
+  situp_grease:   ['Sit-up Grease the Groove','Every 30 min','20–30 reps','Volume accumulation throughout the day.'],
+  plank:          ['Plank Hold','3 sets','45–75 s','Core stability foundation. Progress duration weekly.'],
+  dead_bug:       ['Dead Bug','3 sets','10 each side','Lower back flat. Slow and controlled. Protects spine during sit-up training.'],
+  flutter:        ['Flutter Kicks','3 sets','30 s','Legs 15 cm off ground. Tight core. Hip flexor endurance.'],
+  v_up:           ['V-Ups','3 sets','12 reps','Hip flexor and abs. Harder than sit-ups — builds capacity above standard.'],
+  ttb:            ['Toes to Bar / Hanging Knee Raise','3 sets','10 reps','Full ROM ab and hip flexor. Builds sit-up capacity.'],
+  crunch:         ['Crunches (weighted)','3 sets','20 reps','Add plate to chest when bodyweight is easy. Volume builder.'],
+  // BEEP / AEROBIC
+  beep_sim:       ['BEEP Test Simulation','Progressive','Build to target level','Run full BEEP test. Record highest level. Note where fatigue sets in.'],
+  shuttle_int:    ['Shuttle Intervals (20 m)','8–12 reps','Max effort, 90s rest','Direction change and acceleration. Matches BEEP test demand.'],
+  interval_400:   ['400 m Run Intervals','6–8 reps','Hard effort, 2 min rest','Build speed and lactate tolerance. Record split times.'],
+  interval_200:   ['200 m Sprint Intervals','8–10 reps','Near max, 90s rest','Speed development. Faster than BEEP pace.'],
+  tempo_run:      ['Tempo Run','1 session','20–25 min','Comfortably hard — RPE 7–8. Builds aerobic threshold.'],
+  easy_run:       ['Easy Aerobic Run','1 session','20–35 min','Conversational pace — RPE 5. Aerobic base building.'],
+  fartlek:        ['Fartlek Run','1 session','25 min','Vary pace every 2 min (easy/hard). Builds aerobic capacity.'],
+  assault_bike:   ['Assault Bike Intervals','8 rounds','20s all-out / 40s easy','VO2max stimulus without running load. Great for shin/knee issues.'],
+  rower_int:      ['Rower Intervals','6 rounds','500 m hard / 2 min rest','Full body aerobic. Builds BEEP-relevant fitness without running impact.'],
+  // 2.4 KM RUN
+  run_24_timed:   ['Timed 2.4 km Run (test)','1 rep','Max effort — record time','Conduct fortnightly. Track improvement against ADF standard.'],
+  run_pace:       ['2.4 km Pace Training','2–3 reps','At target pace, 3 min rest','Practice running at goal race pace. Builds confidence and efficiency.'],
+  run_easy:       ['Easy Run (base building)','1 session','25–40 min','Build aerobic engine. Slow is fine. Consistency is the goal.'],
+  hill_repeat:    ['Hill Repeats','6–8 reps','80 m hill, hard up, walk down','Builds run-specific strength and power. Less impact than flat sprints.'],
+  // STRENGTH SUPPORT
+  squat_bw:       ['Bodyweight Squats','3 sets','20 reps','Lower body strength supports running economy and posture.'],
+  lunge_bw:       ['Walking Lunges','3 sets','12 each','Functional lower body. Builds unilateral strength for running.'],
+  glute_bridge:   ['Glute Bridge','3 sets','15 reps','Glute activation. Critical for run efficiency and posture.'],
+  calf_raise:     ['Single-Leg Calf Raise','3 sets','15 each','Injury prevention. Slow eccentric 3s. Essential for runners.'],
+  hip_flexor:     ['Hip Flexor Stretch','3 sets','45s each side','Tight hip flexors inhibit sit-up and run performance.'],
+};
+
+// ── EXERCISE SELECTOR BY FAILING COMPONENT ──
+function getWeekSessions(component, week, totalWeeks, sessions, equip) {
+  const prog = week / totalWeeks;
+  const hasGym = equip !== 'minimal';
+  const rows = [];
+
+  if (component === 'pushups') {
+    rows.push(EX.pushup_max);
+    rows.push(prog < 0.4 ? EX.pushup_incline : EX.pushup_wide);
+    rows.push(hasGym ? EX.bench_press : EX.pushup_tempo);
+    rows.push(EX.pushup_diamond);
+    rows.push(EX.dips);
+    if (prog > 0.5) rows.push(EX.pushup_ladder);
+    rows.push(EX.plank);
+  } else if (component === 'situps') {
+    rows.push(EX.situp_max);
+    rows.push(EX.situp_tempo);
+    rows.push(EX.plank);
+    rows.push(EX.dead_bug);
+    rows.push(EX.flutter);
+    if (prog > 0.4) rows.push(EX.v_up);
+    if (prog > 0.6) rows.push(EX.ttb);
+    rows.push(EX.hip_flexor);
+  } else if (component === 'beep') {
+    rows.push(EX.beep_sim);
+    rows.push(EX.shuttle_int);
+    rows.push(prog < 0.5 ? EX.easy_run : EX.tempo_run);
+    if (prog > 0.4) rows.push(EX.interval_400);
+    if (prog > 0.6) rows.push(EX.interval_200);
+    rows.push(hasGym ? EX.assault_bike : EX.fartlek);
+  } else if (component === 'run') {
+    rows.push(EX.run_pace);
+    rows.push(prog < 0.4 ? EX.run_easy : EX.tempo_run);
+    rows.push(EX.interval_400);
+    if (prog > 0.5) rows.push(EX.hill_repeat);
+    rows.push(EX.glute_bridge);
+    rows.push(EX.calf_raise);
+    rows.push(EX.lunge_bw);
+  }
+  return rows.slice(0, parseInt(sessions) + 1);
+}
+
+function buildWeekTable(exercises) {
+  const dayNames = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const rows = exercises.map((ex, i) => `
+    <tr>
+      <td style="width:90px;font-weight:600;color:#666;">${dayNames[i]||'Session '+(i+1)}</td>
+      <td style="font-weight:500;">${ex[0]}</td>
+      <td>${ex[1]}</td>
+      <td>${ex[2]}</td>
+      <td style="font-size:12px;color:#666;">${ex[3]}</td>
+    </tr>`).join('');
+  return `<table>
+    <thead><tr><th>Day</th><th>Exercise</th><th>Sets</th><th>Reps / Duration</th><th>Coaching Note</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ── MILESTONE CALCULATOR ──
+function buildMilestones(component, current, standard, totalWeeks) {
+  const gap = standard - current;
+  const milestones = [];
+  const checkpoints = [Math.round(totalWeeks*0.25), Math.round(totalWeeks*0.5), Math.round(totalWeeks*0.75), totalWeeks];
+  checkpoints.forEach(w => {
+    const progress = w / totalWeeks;
+    const target = Math.round(current + gap * progress);
+    milestones.push({week: w, target});
+  });
+  return milestones;
+}
+
+// ── MAIN GENERATE ──
+function generate() {
+  const name = document.getElementById('name').value.trim() || 'Unknown Member';
+  const svc = document.getElementById('svc').value.trim() || 'N/A';
+  const rank = document.getElementById('rank').value || '';
+  const age = parseInt(document.getElementById('age').value) || 25;
+  const sex = document.getElementById('sex').value || 'Male';
+  const unit = document.getElementById('unit').value.trim() || 'N/A';
+  const dur = parseInt(document.getElementById('duration').value);
+  const sessions = document.getElementById('sessions').value;
+  const pfaDate = document.getElementById('pfaDate').value.trim() || 'TBD';
+  const equip = document.getElementById('equip').value;
+  const notes = document.getElementById('notes').value.trim();
+
+  const sBeep = parseFloat(document.getElementById('s_beep').value) || null;
+  const sPushups = parseInt(document.getElementById('s_pushups').value) || null;
+  const sSitups = parseInt(document.getElementById('s_situps').value) || null;
+  const sRunStr = document.getElementById('s_run').value.trim();
+  const sRunSec = timeToSec(sRunStr);
+
+  if (!sBeep && !sPushups && !sSitups && !sRunStr) {
+    alert('Please enter at least one PFA score before generating.');
+    return;
+  }
+
+  const std = getStd(age, sex);
+  const stdRunSec = timeToSec(std.run);
+
+  // ── ASSESS EACH COMPONENT ──
+  const assessments = [];
+
+  const assessComponent = (id, label, score, standard, higherBetter, unit, isTime) => {
+    if (score === null || score === undefined) return null;
+    let pct, gap, status, gapStr;
+    if (isTime) {
+      const scoreSec = typeof score === 'number' ? score : timeToSec(score);
+      const stdSec = typeof standard === 'number' ? standard : timeToSec(standard);
+      if (!scoreSec || !stdSec) return null;
+      pct = Math.min(100, Math.round((stdSec / scoreSec) * 100));
+      gap = scoreSec - stdSec;
+      gapStr = gap > 0 ? `${secToMMSS(gap)} over standard` : `${secToMMSS(Math.abs(gap))} under standard`;
+      status = gap <= 0 ? 'pass' : gap <= 30 ? 'marginal' : 'fail';
+    } else {
+      pct = Math.min(100, Math.round((score / standard) * 100));
+      gap = standard - score;
+      gapStr = gap > 0 ? `${gap} ${unit} below standard` : `${Math.abs(gap)} ${unit} above standard`;
+      status = gap <= 0 ? 'pass' : gap <= Math.round(standard * 0.1) ? 'marginal' : 'fail';
+    }
+    return { id, label, score: isTime ? (typeof score === 'number' ? secToMMSS(score) : score) : score, standard: isTime ? (typeof standard === 'number' ? secToMMSS(standard) : standard) : standard, pct, gap, gapStr, status, isTime, rawScore: isTime ? (typeof score === 'number' ? score : timeToSec(score)) : score, rawStandard: isTime ? (typeof standard === 'number' ? standard : timeToSec(standard)) : standard };
+  };
+
+  const beepA = assessComponent('beep', 'BEEP Test', sBeep, std.beep, true, 'levels', false);
+  const pushA = assessComponent('pushups', 'Push-ups', sPushups, std.pushups, true, 'reps', false);
+  const sitA = assessComponent('situps', 'Sit-ups', sSitups, std.situps, true, 'reps', false);
+  const runA = assessComponent('run', '2.4 km Run', sRunSec, stdRunSec, false, '', true);
+
+  [beepA, pushA, sitA, runA].filter(Boolean).forEach(a => assessments.push(a));
+
+  if (assessments.length === 0) { alert('Could not assess any components. Please check your input values.'); return; }
+
+  // ── IDENTIFY PRIORITIES ──
+  const failing = assessments.filter(a => a.status === 'fail').sort((a,b) => a.pct - b.pct);
+  const marginal = assessments.filter(a => a.status === 'marginal');
+  const passing = assessments.filter(a => a.status === 'pass');
+
+  const primaryFocus = failing.length > 0 ? failing[0] : marginal[0] || passing[0];
+  const secondaryFocus = failing.length > 1 ? failing[1] : marginal[0];
+
+  // ── SCORE CARDS ──
+  const statusColors = { fail:'#c83020', marginal:'#c8820a', pass:'#2a6b20' };
+  const scorecards = assessments.map(a => {
+    const fillPct = Math.min(100, a.pct);
+    const fillColor = statusColors[a.status];
+    return `<div class="scard ${a.status}">
+      <div class="scard-label">${a.label}</div>
+      <div class="scard-current">${a.score}</div>
+      <div class="scard-standard">Standard: ${a.standard}</div>
+      <div class="scard-gap">${a.gapStr}</div>
+      <div class="gap-bar-wrap"><div class="gap-bar-fill" style="width:${fillPct}%;background:${fillColor};"></div></div>
+      <span class="scard-status status-${a.status}">${a.status === 'fail' ? 'FAIL' : a.status === 'marginal' ? 'MARGINAL' : 'PASS'}</span>
+    </div>`;
+  }).join('');
+
+  // ── PRIORITY CHIPS ──
+  const p1Chips = failing.map(a => `<div class="pchip p1">${a.label}</div>`).join('');
+  const p2Chips = marginal.map(a => `<div class="pchip p2">${a.label}</div>`).join('');
+  const p3Chips = passing.map(a => `<div class="pchip p3">${a.label} ✓</div>`).join('');
+
+  // ── PHASE STRUCTURE ──
+  let phases;
+  if (dur <= 4) phases = [{n:'Targeted Remediation',w:[1,4],focus:'Intensive focus on failing components. Daily targeted work.'}];
+  else if (dur <= 8) phases = [{n:'Foundation & Volume',w:[1,3],focus:'Build volume in failing areas. Establish training routine.'},{n:'Intensity & Specificity',w:[4,6],focus:'Increase intensity. Simulate test conditions.'},{n:'Peak & Test Prep',w:[7,8],focus:'Reduce volume. Sharpen performance. Taper before PFA.'}];
+  else if (dur <= 12) phases = [{n:'Assessment & Foundation',w:[1,3],focus:'Baseline and volume building.'},{n:'Progressive Build',w:[4,7],focus:'Increase load and specificity.'},{n:'Threshold Work',w:[8,10],focus:'Test-standard intensity.'},{n:'Peak & Taper',w:[11,12],focus:'Peak performance. Rest before PFA.'}];
+  else phases = [{n:'Foundation',w:[1,4],focus:'Volume and consistency.'},{n:'Progressive Build',w:[5,8],focus:'Increasing load and intensity.'},{n:'Specificity',w:[9,12],focus:'Test-specific work at goal standard.'},{n:'Peak',w:[13,Math.max(14,dur-2)],focus:'Race-pace simulation.'},{n:'Taper',w:[dur-1,dur],focus:'Volume reduction. Rest. Prepare for PFA.'}];
+
+  // ── MILESTONES ──
+  let milestoneHTML = '';
+  if (primaryFocus && primaryFocus.status !== 'pass') {
+    const rawGap = primaryFocus.isTime
+      ? primaryFocus.rawStandard - primaryFocus.rawScore
+      : primaryFocus.rawStandard - primaryFocus.rawScore;
+    const checkWeeks = [Math.round(dur*0.25), Math.round(dur*0.5), Math.round(dur*0.75), dur];
+    const mlCards = checkWeeks.map(w => {
+      const p = w / dur;
+      let targetStr;
+      if (primaryFocus.isTime) {
+        targetStr = secToMMSS(Math.round(primaryFocus.rawScore + rawGap * p));
+      } else {
+        targetStr = Math.round(primaryFocus.rawScore + rawGap * p).toString();
+      }
+      return `<div class="milestone-card"><div class="ml-week">Week ${w}</div><div class="ml-val">${targetStr}</div><div class="ml-label">${primaryFocus.label} target</div></div>`;
+    }).join('');
+    milestoneHTML = `<div class="card-section"><div class="cs-title">Progress Milestones — ${primaryFocus.label}</div><div class="milestone-grid">${mlCards}</div><div class="note-box"><b>How to Use Milestones</b>Test the member on their primary failing component every 3–4 weeks. Record every result. If they are not tracking toward the milestone, increase session frequency or adjust the program. Milestones assume linear progression — actual improvement may be non-linear, with faster gains early and slower gains later.</div></div>`;
+  }
+
+  // ── BUILD PHASES HTML ──
+  const phasesHTML = phases.map((ph, pi) => {
+    const weeksHTML = Array.from({length: ph.w[1] - ph.w[0] + 1}, (_, j) => {
+      const wNum = ph.w[0] + j;
+      const isDeload = wNum % 4 === 0 && wNum < dur;
+      const isTaper = wNum >= dur - 1;
+      const primaryEx = getWeekSessions(primaryFocus?.id || 'pushups', wNum, dur, sessions, equip);
+      const secondaryEx = secondaryFocus && secondaryFocus.id !== primaryFocus?.id
+        ? getWeekSessions(secondaryFocus.id, wNum, dur, sessions, equip).slice(0, 2)
+        : [];
+
+      const deloadNote = isDeload ? `<div class="note-box" style="margin-top:8px;"><b>Deload Week ${wNum}</b>Reduce all volumes by 30–40%. Same exercises, fewer reps and sets. Recovery week — adaptation happens here.</div>` : '';
+      const taperNote = isTaper ? `<div class="warn-box" style="margin-top:8px;"><b>Pre-PFA Taper — Week ${wNum}</b>Reduce volume by 50%. No new training stimuli. Prioritise sleep, nutrition and hydration. Short sharp sessions only. Member should feel fresh going into the PFA.</div>` : '';
+
+      const combinedEx = [...primaryEx, ...secondaryEx].slice(0, parseInt(sessions));
+      const weekFocus = isTaper ? 'Taper — prepare for PFA' : isDeload ? 'Deload — active recovery' : `${primaryFocus?.label || ''} focus${secondaryFocus && secondaryFocus.id !== primaryFocus?.id ? ' + ' + secondaryFocus.label : ''}`;
+
+      return `<div class="week-acc">
+        <div class="week-hdr" onclick="toggleWeek(this)">
+          <span class="week-num">WEEK ${wNum}</span>
+          <span class="week-focus-txt">${weekFocus}</span>
+          <span class="week-toggle">▸</span>
+        </div>
+        <div class="week-body">
+          ${buildWeekTable(combinedEx)}
+          ${deloadNote}${taperNote}
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="phase-block">
+      <div class="ph-head">
+        <span class="ph-badge">PHASE ${pi+1}</span>
+        <span class="ph-name">${ph.n}</span>
+        <span class="ph-weeks">Weeks ${ph.w[0]}–${ph.w[1]}</span>
+      </div>
+      <div class="ph-body">
+        <div class="ph-obj">${ph.focus}</div>
+        ${weeksHTML}
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── COMPONENT-SPECIFIC TIPS ──
+  const componentTips = {
+    beep: ['Run BEEP test simulation every fortnight — record the level where failure occurs and focus training just above that point', 'Most BEEP failures are aerobic capacity, not speed — build your easy running base first', 'Shuttle intervals at 5% faster than current BEEP failure pace are the most effective specific training', 'Ensure member is tested in the correct footwear — grip and change-of-direction mechanics matter'],
+    pushups: ['Grease the Groove (frequent sub-maximal sets throughout the day) is the single most effective method for rapid push-up improvement', 'Full ROM is assessed — chest to ground, arms fully locked at top. Partial reps will be no-repped', 'Chest-to-ground pause push-ups build the hardest part of the movement', 'Most failures are in the top quarter of the movement — tricep strength is the limiting factor for many'],
+    situps: ['ADF sit-up form: heels flat, hands on temples, elbows touch knees — brief this before every training session', 'Hip flexor strength and endurance are the primary limiters — direct hip flexor training accelerates improvement', 'High-rep sit-up volume (200+ reps per session broken into sets) is the fastest route to improvement', 'Dead bugs and planks protect the lower back from overuse injury during high-volume sit-up programs'],
+    run: ['2.4 km performance is 80% aerobic base and 20% speed — fix the base first', 'Running at race pace in training teaches the body the required effort and rhythm', 'Most run failures are pacing failures — member goes out too fast and blows up. Teach pacing strategy', 'Calf strength and hip strength directly improve running economy — include in every week'],
+  };
+
+  const tipHTML = [primaryFocus, secondaryFocus].filter(Boolean).filter(a => a.status !== 'pass').map(a => {
+    const tips = componentTips[a.id] || [];
+    return `<div style="margin-bottom:1rem;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px;">${a.label} — PTI Coaching Tips</div>
+      <ul class="crit-list">${tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+    </div>`;
+  }).join('');
+
+  const now = new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const allPass = assessments.every(a => a.status === 'pass');
+
+  const html = `
+    <div class="rpt-header">
+      <div>
+        <div class="rpt-title">Remedial <span>PT Program</span></div>
+        <div class="rpt-meta">Generated ${now} — ADF PTI Remedial Planner — Next PFA: ${pfaDate}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';">Reset</button>
+      </div>
+    </div>
+
+    <div class="member-card">
+      <div class="mc-item"><label>Member</label><div class="mc-val" style="font-size:14px;">${rank} ${name}</div></div>
+      <div class="mc-item"><label>Svc No.</label><div class="mc-val">${svc}</div></div>
+      <div class="mc-item"><label>Age / Sex</label><div class="mc-val">${age} / ${sex.charAt(0)}</div></div>
+      <div class="mc-item"><label>Unit</label><div class="mc-val" style="font-size:13px;">${unit}</div></div>
+    </div>
+
+    ${allPass ? `<div class="info-box"><b>Member Meets All Standards</b>This member currently meets or exceeds the ADF PFA standard for their age and sex category across all assessed components. A maintenance or improvement program is recommended rather than remedial training. Consider using the Run Program Builder or Strength Program Builder for targeted improvement.</div>` : ''}
+
+    <div class="score-cards">${scorecards}</div>
+
+    ${!allPass ? `<div class="priority-banner">
+      <div class="pb-title">Training Priority Order</div>
+      <div style="font-size:13px;color:#6a5010;">Focus the majority of training volume on Priority 1 components. Include Priority 2 maintenance work. Priority 3 components require maintenance only.</div>
+      <div class="priority-chips">
+        ${p1Chips ? `<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:700;width:100%;margin-top:8px;">Priority 1 — Failing</div>${p1Chips}` : ''}
+        ${p2Chips ? `<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);font-weight:700;width:100%;margin-top:8px;">Priority 2 — Marginal</div>${p2Chips}` : ''}
+        ${p3Chips ? `<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-weight:700;width:100%;margin-top:8px;">Priority 3 — Maintain</div>${p3Chips}` : ''}
+      </div>
+    </div>` : ''}
+
+    ${milestoneHTML}
+
+    ${!allPass ? phasesHTML : ''}
+
+    ${!allPass ? `<div class="card-section"><div class="cs-title">Component-Specific Coaching Tips</div>${tipHTML}</div>` : ''}
+
+    <div class="card-section">
+      <div class="cs-title">PTI Monitoring &amp; Reporting Requirements</div>
+      <ul class="crit-list">
+        <li>Conduct fortnightly informal testing on failing components — record every result in member's remedial training log</li>
+        <li>Submit monthly progress report to chain of command — note attendance, attitude and measurable improvement</li>
+        <li>Member must be informed of their failing status, the standard required, and the timeframe — in writing</li>
+        <li>Identify and address non-fitness barriers — sleep, nutrition, motivation, mental health — and refer to appropriate support</li>
+        <li>If member shows no improvement after 8 weeks of consistent training, escalate to chain of command and consider referral to MO for underlying medical assessment</li>
+        <li>Document all sessions — attendance, exercises completed, and any adverse events</li>
+        <li>Remedial training must not be used punitively — it is a support mechanism, not punishment</li>
+        <li>Review and update the program every 4 weeks based on retesting results</li>
+      </ul>
+    </div>
+
+    ${notes ? `<div class="card-section"><div class="cs-title">PTI Notes</div><p style="font-size:13.5px;color:#444;line-height:1.7;">${notes}</p></div>` : ''}
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This remedial program is a planning aid for qualified ADF Physical Training Instructors. ADF PFA standards are subject to change — always verify current standards with the ADFPB. Remedial training programs should be developed in consultation with the member's chain of command and, where appropriate, medical and welfare personnel. This tool does not constitute official ADF administrative action.
+    </div>`;
+
+  document.getElementById('emptyState').style.display = 'none';
+  const ra = document.getElementById('reportArea');
+  ra.style.display = 'block';
+  ra.innerHTML = html;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Accordion listeners
+  document.querySelectorAll('.week-hdr').forEach(h => {
+    h.addEventListener('click', () => {
+      const body = h.nextElementSibling;
+      const toggle = h.querySelector('.week-toggle');
+      const open = body.classList.contains('open');
+      body.classList.toggle('open');
+      toggle.textContent = open ? '▸' : '▾';
+    });
+  });
+}
+
+function toggleWeek(h) {
+  const body = h.nextElementSibling;
+  const toggle = h.querySelector('.week-toggle');
+  const open = body.classList.contains('open');
+  body.classList.toggle('open');
+  toggle.textContent = open ? '▸' : '▾';
+}
+</script>
+</body>
+</html>
