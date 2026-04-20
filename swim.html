@@ -722,17 +722,6 @@ function generate() {
   ra.style.display = 'block';
   ra.innerHTML = html;
   ra.scrollIntoView({ behavior:'smooth', block:'start' });
-
-  // Attach accordion listeners
-  document.querySelectorAll('.week-header').forEach(h => {
-    h.addEventListener('click', () => {
-      const content = h.nextElementSibling;
-      const toggle = h.querySelector('.week-toggle');
-      const isOpen = content.classList.contains('open');
-      content.classList.toggle('open');
-      toggle.textContent = isOpen ? '▸' : '▾';
-    });
-  });
 }
 </script>
 </body>
