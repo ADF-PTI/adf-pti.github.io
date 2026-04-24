@@ -587,7 +587,7 @@ Key: id=row identifier, v=values object, c=confidence (h/m/l), n=notes (empty st
 - Unreadable: "?"
 - Numbers as strings: "45"
 - Times as strings: "11:30"
-- CRITICAL: Extract PMKeys/Student No for EVERY row — this is the unique ID used to match to the master Excel
+- CRITICAL: Extract the Student No (7-digit number e.g. 5685992) AND PMKeys for every row — these are used to match to the master Excel. Do NOT confuse with Division number (single digit like 3,4,5)
 - MUST include Service (ARMY/RAAF/RAN), Gender (M/F), Age in v{} if visible
 - Return ALL rows with any data`;
 
@@ -833,10 +833,26 @@ function showDebug() {
         if (cell && cell.v) colMap[String(cell.v).toLowerCase().trim()] = c;
       }
     }
-    const pmkeysCol = colMap['pmkeys'] ?? colMap['pm keys'] ?? colMap['student no'] ?? colMap['student number'] ?? colMap['member no'] ?? colMap['service no'] ?? -1;
+    const pmkeysCol = colMap['pmkeys'] ?? colMap['pm keys'] ?? -1;
+    const studentNoCol = colMap['student no'] ?? colMap['student number'] ?? colMap['student_no'] ?? -1;
+    const memberNoCol = colMap['member no'] ?? colMap['member number'] ?? colMap['service no'] ?? -1;
     out += `Looking for: pmkeys, pm keys, student no, student number, member no, service no\n`;
     out += `Found colMap keys: ${Object.keys(colMap).slice(0,20).join(', ')}\n`;
     out += `PMKeys column index: ${pmkeysCol} (${pmkeysCol >= 0 ? XLSX.utils.encode_col(pmkeysCol) : 'NOT FOUND'})\n`;
+    out += `Student No column index: ${studentNoCol} (${studentNoCol >= 0 ? XLSX.utils.encode_col(studentNoCol) : 'NOT FOUND'})\n`;
+
+    // Show which col actually has numbers
+    function colHasNums(ci) {
+      if (ci < 0) return false;
+      const rng2 = XLSX.utils.decode_range(ws['!ref']);
+      for (let r = rng2.s.r+2; r <= Math.min(rng2.s.r+6, rng2.e.r); r++) {
+        const cell = ws[XLSX.utils.encode_cell({r, c:ci})];
+        if (cell && cell.v && /^\d{5,}$/.test(String(cell.v).trim())) return true;
+      }
+      return false;
+    }
+    out += `PMKeys col has 5+ digit numbers: ${colHasNums(pmkeysCol)}\n`;
+    out += `Student No col has 5+ digit numbers: ${colHasNums(studentNoCol)}\n`;
 
     // 4. First few PMKeys values
     if (pmkeysCol >= 0) {
@@ -884,29 +900,56 @@ function downloadExcel() {
       }
     }
 
-    // ── Find PMKeys column ──
+    // ── Find the identifier column — try PMKeys then Student No ──
+    // Check column C header first (PMKeys), then D (Student No)
     const pmkeysCol =
-      colMap['pmkeys'] ?? colMap['pm keys'] ?? colMap['student no'] ??
-      colMap['student number'] ?? colMap['member no'] ?? colMap['service no'] ?? -1;
+      colMap['pmkeys'] ?? colMap['pm keys'] ?? -1;
+    const studentNoCol =
+      colMap['student no'] ?? colMap['student number'] ?? colMap['student_no'] ?? -1;
+    const memberNoCol =
+      colMap['member no'] ?? colMap['member number'] ?? colMap['service no'] ?? -1;
 
-    if (pmkeysCol < 0) {
-      toast('Cannot find PMKeys/Student No column in Excel', 'err');
+    // Use whichever identifier col has actual long numbers in the data rows
+    function colHasNumbers(colIdx) {
+      if (colIdx < 0) return false;
+      for (let r = range.s.r + 2; r <= Math.min(range.s.r + 6, range.e.r); r++) {
+        const cell = ws[XLSX.utils.encode_cell({ r, c: colIdx })];
+        if (cell && cell.v && /^\d{5,}$/.test(String(cell.v).trim())) return true;
+      }
+      return false;
+    }
+
+    // Pick the best identifier column
+    let identCol = -1;
+    let identName = '';
+    for (const [col, name] of [[pmkeysCol,'PMKeys'],[studentNoCol,'Student No'],[memberNoCol,'Member No']]) {
+      if (colHasNumbers(col)) { identCol = col; identName = name; break; }
+    }
+    // Last resort — scan all columns for one with 7-digit numbers
+    if (identCol < 0) {
+      for (let c = range.s.c; c <= range.e.c; c++) {
+        if (colHasNumbers(c)) { identCol = c; identName = `Col ${XLSX.utils.encode_col(c)}`; break; }
+      }
+    }
+
+    if (identCol < 0) {
+      toast('Cannot find an ID column (PMKeys/Student No) with numbers in Excel', 'err');
       return;
     }
 
-    // ── Find data start row (first row containing a number ≥5 digits in PMKeys col) ──
+    // ── Find data start row ──
     let dataStartRow = range.s.r + 2;
     for (let r = range.s.r; r <= Math.min(range.s.r + 5, range.e.r); r++) {
-      const cell = ws[XLSX.utils.encode_cell({ r, c: pmkeysCol })];
+      const cell = ws[XLSX.utils.encode_cell({ r, c: identCol })];
       if (cell && cell.v && /\d{5,}/.test(String(cell.v))) { dataStartRow = r; break; }
     }
 
-    // ── Build PMKeys → row index map + surname fallback ──
+    // ── Build identifier → row index map + surname fallback ──
     const pmkeysMap = {};
     const surnameCol = colMap['surname'] ?? colMap['last name'] ?? -1;
     const surnameMap = {};
     for (let r = dataStartRow; r <= range.e.r; r++) {
-      const pkCell = ws[XLSX.utils.encode_cell({ r, c: pmkeysCol })];
+      const pkCell = ws[XLSX.utils.encode_cell({ r, c: identCol })];
       if (pkCell && pkCell.v) pmkeysMap[String(pkCell.v).trim()] = r;
       if (surnameCol >= 0) {
         const snCell = ws[XLSX.utils.encode_cell({ r, c: surnameCol })];
@@ -934,16 +977,23 @@ function downloadExcel() {
 
     function findRow(det) {
       const v = det.values || {};
-      // Primary: PMKeys from scanned values
-      for (const k of ['PMKeys','pmkeys','PM Keys','Student No','student no','Member No','Service No']) {
+      // Try all possible identifier keys the AI might have used
+      const idKeys = ['PMKeys','pmkeys','PM Keys','Student No','student no','Student_No',
+                      'Member No','Service No','StudentNo','Student Number','ID'];
+      for (const k of idKeys) {
         const val = String(v[k] || '').trim();
-        if (val && pmkeysMap[val] !== undefined) return pmkeysMap[val];
+        if (val && /\d{4,}/.test(val) && pmkeysMap[val] !== undefined) return pmkeysMap[val];
       }
-      // Try rowIdentifier if it looks like a number
+      // Try rowIdentifier if numeric
       const rid = (det.rowIdentifier || '').trim();
-      if (/^\d{5,}$/.test(rid) && pmkeysMap[rid] !== undefined) return pmkeysMap[rid];
+      if (/^\d{4,}$/.test(rid) && pmkeysMap[rid] !== undefined) return pmkeysMap[rid];
+      // Try ANY value in the detected row that looks like a long number
+      for (const val of Object.values(v)) {
+        const s = String(val || '').trim();
+        if (/^\d{5,7}$/.test(s) && pmkeysMap[s] !== undefined) return pmkeysMap[s];
+      }
       // Fallback: surname
-      for (const k of ['Surname','surname','Name','Last Name']) {
+      for (const k of ['Surname','surname','Name','Last Name','Given_Names']) {
         const val = (v[k] || '').toLowerCase().trim();
         if (val && surnameMap[val] !== undefined) return surnameMap[val];
       }
