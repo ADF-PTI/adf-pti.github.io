@@ -484,13 +484,17 @@ async function compressImage(b64, mime) {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
-      const MAX = 1600;
+      const MAX = 1200;
       let w = img.width, h = img.height;
       if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      // Also cap height
+      if (h > 1600) { w = Math.round(w * 1600 / h); h = 1600; }
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const compressed = canvas.toDataURL('image/jpeg', 0.75).split(',')[1];
+      const compressed = canvas.toDataURL('image/jpeg', 0.60).split(',')[1];
+      const kb = Math.round(compressed.length * 0.75 / 1024);
+      document.getElementById('procTxt').textContent = `Image compressed to ~${kb}KB — sending to AI...`;
       resolve(compressed);
     };
     img.src = `data:${mime};base64,${b64}`;
@@ -581,14 +585,36 @@ Important rules:
 
     blocks.push({ type:'text', text: prompt });
 
-    const payload = JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:4000, messages:[{ role:'user', content:blocks }] });
-    const headers = { 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' };
+    // Use haiku — much faster than sonnet for vision tasks, less likely to timeout
+    const payload = JSON.stringify({
+      model: 'claude-haiku-4-5',
+      max_tokens: 3000,
+      messages: [{ role:'user', content: blocks }]
+    });
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    };
 
     let resp;
+    // Try direct first, then proxy
     try {
-      resp = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers, body:payload });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 55000); // 55s timeout
+      resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST', headers, body: payload, signal: controller.signal
+      });
+      clearTimeout(timer);
     } catch(e) {
-      resp = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.anthropic.com/v1/messages'), { method:'POST', headers, body:payload });
+      document.getElementById('procTxt').textContent = 'Trying alternate connection...';
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 55000);
+      resp = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.anthropic.com/v1/messages'), {
+        method: 'POST', headers, body: payload, signal: controller.signal
+      });
+      clearTimeout(timer);
     }
 
     clearInterval(ticker);
