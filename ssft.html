@@ -406,36 +406,31 @@ let detected = null;
 // GATE — runs after DOM ready
 // ─────────────────────────────────────────────
 function unlock() {
-  try {
-    const pw = document.getElementById('gPw').value.trim();
-    const key = document.getElementById('gKey').value.trim();
-    const errEl = document.getElementById('gErr');
+  const pw = document.getElementById('gPw').value.trim();
+  const key = document.getElementById('gKey').value.trim();
+  const errEl = document.getElementById('gErr');
+  errEl.textContent = '';
+  document.getElementById('gPw').style.borderColor = '';
+  document.getElementById('gKey').style.borderColor = '';
 
-    errEl.textContent = ''; // clear previous error
-
-    if (pw !== SITE_PW) {
-      errEl.textContent = 'Incorrect password — try ADFA2025';
-      document.getElementById('gPw').style.borderColor = 'var(--danger)';
-      return;
-    }
-    if (!key || key.length < 10) {
-      errEl.textContent = 'Please enter your Anthropic API key.';
-      document.getElementById('gKey').style.borderColor = 'var(--danger)';
-      return;
-    }
-    apiKey = key;
-    document.getElementById('gate').style.display = 'none';
-  } catch(e) {
-    alert('Login error: ' + e.message);
+  if (pw !== SITE_PW) {
+    errEl.textContent = 'Incorrect password.';
+    document.getElementById('gPw').style.borderColor = 'var(--danger)';
+    return;
   }
+  if (!key || key.length < 10) {
+    errEl.textContent = 'Please enter your Anthropic API key.';
+    document.getElementById('gKey').style.borderColor = 'var(--danger)';
+    return;
+  }
+  apiKey = key;
+  document.getElementById('gate').style.display = 'none';
 }
 
-// Wire up button and Enter key after DOM loads
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('gateEnterBtn').addEventListener('click', unlock);
-  document.getElementById('gPw').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
-  document.getElementById('gKey').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
-});
+// Wire up button and Enter key
+document.getElementById('gateEnterBtn').addEventListener('click', unlock);
+document.getElementById('gPw').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
+document.getElementById('gKey').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
 
 // ─────────────────────────────────────────────
 // FILE UPLOADS
@@ -734,6 +729,8 @@ function normaliseRows(data) {
   }));
   return data;
 }
+
+function computePassFail(row, cols) {
   const v = row.values || {};
   // Find service, gender, age
   const service = v['Service'] || v['service'] || v['SERVICE'] || '';
