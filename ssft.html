@@ -154,7 +154,7 @@ tr:hover td { background:rgba(255,255,255,.015); }
     <label class="gate-label" for="gKey">Anthropic API Key</label>
     <input class="gate-input" type="password" id="gKey" placeholder="sk-ant-..." onkeydown="if(event.key==='Enter')unlock()">
     <div class="gate-err" id="gErr"></div>
-    <button class="gate-btn" onclick="unlock()">ENTER</button>
+    <button class="gate-btn" id="gateEnterBtn">ENTER</button>
     <div class="gate-footer">Authorised ADFA PTI Personnel Only</div>
   </div>
 </div>
@@ -403,27 +403,39 @@ let scanB64 = null, scanMime = null;
 let detected = null;
 
 // ─────────────────────────────────────────────
-// GATE
+// GATE — runs after DOM ready
 // ─────────────────────────────────────────────
 function unlock() {
-  const pw = document.getElementById('gPw').value.trim();
-  const key = document.getElementById('gKey').value.trim();
-  const err = document.getElementById('gErr');
-  if (pw !== SITE_PW) {
-    err.textContent = 'Incorrect password.';
-    document.getElementById('gPw').classList.add('shake');
-    setTimeout(() => document.getElementById('gPw').classList.remove('shake'), 400);
-    return;
+  try {
+    const pw = document.getElementById('gPw').value.trim();
+    const key = document.getElementById('gKey').value.trim();
+    const errEl = document.getElementById('gErr');
+
+    errEl.textContent = ''; // clear previous error
+
+    if (pw !== SITE_PW) {
+      errEl.textContent = 'Incorrect password — try ADFA2025';
+      document.getElementById('gPw').style.borderColor = 'var(--danger)';
+      return;
+    }
+    if (!key || key.length < 10) {
+      errEl.textContent = 'Please enter your Anthropic API key.';
+      document.getElementById('gKey').style.borderColor = 'var(--danger)';
+      return;
+    }
+    apiKey = key;
+    document.getElementById('gate').style.display = 'none';
+  } catch(e) {
+    alert('Login error: ' + e.message);
   }
-  if (!key.startsWith('sk-ant-')) {
-    err.textContent = 'Invalid API key — must start with sk-ant-';
-    document.getElementById('gKey').classList.add('shake');
-    setTimeout(() => document.getElementById('gKey').classList.remove('shake'), 400);
-    return;
-  }
-  apiKey = key;
-  document.getElementById('gate').style.display = 'none';
 }
+
+// Wire up button and Enter key after DOM loads
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('gateEnterBtn').addEventListener('click', unlock);
+  document.getElementById('gPw').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
+  document.getElementById('gKey').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
+});
 
 // ─────────────────────────────────────────────
 // FILE UPLOADS
