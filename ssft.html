@@ -478,6 +478,26 @@ function checkReady() {
 // ─────────────────────────────────────────────
 // PDF → IMAGES
 // ─────────────────────────────────────────────
+// IMAGE COMPRESSION — resize to max 1600px wide, 75% JPEG quality
+// ─────────────────────────────────────────────
+async function compressImage(b64, mime) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 1600;
+      let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.75).split(',')[1];
+      resolve(compressed);
+    };
+    img.src = `data:${mime};base64,${b64}`;
+  });
+}
+
+// ─────────────────────────────────────────────
 async function pdfToImages(b64) {
   const bin = atob(b64);
   const bytes = new Uint8Array(bin.length);
@@ -521,14 +541,18 @@ async function doScan() {
   const ticker = setInterval(() => { document.getElementById('procTxt').textContent = msgs[mi++ % msgs.length]; }, 2000);
 
   try {
-    // Build image blocks
+    // Build image blocks — always compress before sending
     let blocks = [];
     if (scanMime === 'application/pdf' || scanMime === 'application/octet-stream') {
       document.getElementById('procTxt').textContent = 'Converting PDF pages...';
       const imgs = await pdfToImages(scanB64);
-      blocks = imgs.map(d => ({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:d } }));
+      // Compress each page
+      const compressed = await Promise.all(imgs.map(d => compressImage(d, 'image/jpeg')));
+      blocks = compressed.map(d => ({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:d } }));
     } else {
-      blocks = [{ type:'image', source:{ type:'base64', media_type: scanMime, data: scanB64 } }];
+      document.getElementById('procTxt').textContent = 'Compressing image...';
+      const compressed = await compressImage(scanB64, scanMime);
+      blocks = [{ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:compressed } }];
     }
 
     const prompt = `You are an expert at reading scanned military fitness test result sheets. Analyse this scanned image and extract ALL data you can see — both pre-printed info and handwritten results.${buildColumnHint()}
