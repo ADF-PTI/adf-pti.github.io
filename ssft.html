@@ -8,1130 +8,822 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #161a23;
-    --surface2: #1e2330;
-    --border: #2a3040;
-    --accent: #e8c84a;
-    --accent2: #4a9ee8;
-    --success: #4ae87a;
-    --danger: #e84a4a;
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --radius: 10px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  /* ── Password Gate ── */
-  #passwordGate {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    background-image: radial-gradient(ellipse at 20% 0%, #1a2035 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 100%, #1a1a2e 0%, transparent 60%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  }
-  .gate-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 48px 40px;
-    width: 100%;
-    max-width: 420px;
-    text-align: center;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
-  }
-  .gate-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
-    letter-spacing: 5px;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .gate-logo span { color: var(--text); }
-  .gate-subtitle {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 40px;
-    line-height: 1.6;
-  }
-  .gate-label {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'DM Mono', monospace;
-    text-align: left;
-    margin-bottom: 6px;
-    display: block;
-  }
-  .gate-input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 13px 16px;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    margin-bottom: 16px;
-    transition: border-color 0.2s;
-  }
-  .gate-input:focus { outline: none; border-color: var(--accent); }
-  .gate-input.shake { animation: shake 0.4s ease; border-color: var(--danger); }
-  .gate-error {
-    color: var(--danger);
-    font-size: 12px;
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 14px;
-    min-height: 18px;
-  }
-  .gate-btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--accent);
-    color: #0d0f14;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 3px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  .gate-btn:hover { background: #f0d45a; transform: translateY(-1px); }
-  .gate-footer {
-    margin-top: 20px;
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-  }
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-8px); }
-    40% { transform: translateX(8px); }
-    60% { transform: translateX(-5px); }
-    80% { transform: translateX(5px); }
-  }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    background-image: radial-gradient(ellipse at 20% 0%, #1a2035 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 100%, #1a1a2e 0%, transparent 60%);
-  }
-
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: rgba(22,26,35,0.8);
-    backdrop-filter: blur(12px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 3px;
-    color: var(--accent);
-    line-height: 1;
-  }
-
-  .logo span { color: var(--text); }
-
-  header .subtitle {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .main {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 32px;
-  }
-
-  /* Steps */
-  .steps {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 40px;
-    align-items: center;
-  }
-
-  .step {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 18px;
-    border-radius: 100px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    font-size: 13px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    transition: all 0.3s;
-  }
-
-  .step.active {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(232,200,74,0.08);
-  }
-
-  .step.done {
-    border-color: var(--success);
-    color: var(--success);
-    background: rgba(74,232,122,0.06);
-  }
-
-  .step-num {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    border: 1px solid currentColor;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-
-  .step-arrow { color: var(--border); font-size: 16px; }
-
-  /* Upload zones */
-  .upload-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 32px;
-  }
-
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 40px 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.25s;
-    background: var(--surface);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--accent);
-    background: rgba(232,200,74,0.04);
-  }
-
-  .upload-zone.uploaded {
-    border-color: var(--success);
-    border-style: solid;
-    background: rgba(74,232,122,0.04);
-  }
-
-  .upload-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  .upload-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-    display: block;
-  }
-
-  .upload-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-
-  .upload-sub {
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  .upload-status {
-    margin-top: 14px;
-    font-size: 13px;
-    font-family: 'DM Mono', monospace;
-    color: var(--success);
-    display: none;
-  }
-
-  .upload-zone.uploaded .upload-status { display: block; }
-  .upload-zone.uploaded .upload-icon { filter: grayscale(0); }
-
-  /* Buttons */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: var(--radius);
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.3px;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #0d0f14;
-  }
-
-  .btn-primary:hover { background: #f0d45a; transform: translateY(-1px); }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  .btn-secondary {
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-
-  .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); }
-
-  .btn-success {
-    background: var(--success);
-    color: #0d0f14;
-  }
-
-  .btn-success:hover { background: #5cf089; transform: translateY(-1px); }
-
-  .action-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 32px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  /* Processing state */
-  .processing-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 32px;
-    text-align: center;
-    display: none;
-    margin-bottom: 32px;
-  }
-
-  .spinner {
-    width: 48px; height: 48px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 16px;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .processing-text {
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    color: var(--muted);
-  }
-
-  /* Results panel */
-  .results-panel {
-    display: none;
-    margin-bottom: 32px;
-  }
-
-  .panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-
-  .panel-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
-    color: var(--accent);
-  }
-
-  .badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 100px;
-    background: rgba(232,200,74,0.12);
-    color: var(--accent);
-    border: 1px solid rgba(232,200,74,0.3);
-  }
-
-  /* Image preview */
-  .image-preview {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .image-preview img {
-    max-width: 100%;
-    border-radius: 6px;
-    max-height: 300px;
-    object-fit: contain;
-  }
-
-  .image-preview-label {
-    font-size: 12px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  /* Detected results table */
-  .detected-table-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-
-  .detected-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  .detected-table th {
-    background: var(--surface2);
-    padding: 10px 14px;
-    text-align: left;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-
-  .detected-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-
-  .detected-table tr:last-child td { border-bottom: none; }
-
-  .detected-table tr:hover td { background: rgba(255,255,255,0.02); }
-
-  .editable-input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 5px 9px;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    width: 100%;
-    min-width: 60px;
-    transition: border-color 0.2s;
-  }
-
-  .editable-input:focus {
-    outline: none;
-    border-color: var(--accent2);
-  }
-
-  .editable-input.changed {
-    border-color: var(--accent);
-    background: rgba(232,200,74,0.06);
-  }
-
-  .row-name {
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .confidence-dot {
-    display: inline-block;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    margin-right: 6px;
-  }
-
-  .conf-high { background: var(--success); }
-  .conf-med { background: var(--accent); }
-  .conf-low { background: var(--danger); }
-
-  /* AI summary box */
-  .ai-summary {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent2);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 20px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text);
-    white-space: pre-wrap;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .ai-summary-label {
-    font-size: 11px;
-    color: var(--accent2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
-
-  /* No excel mode */
-  .manual-entry {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 20px;
-  }
-
-  .manual-entry h3 {
-    font-size: 14px;
-    margin-bottom: 16px;
-    color: var(--accent);
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .manual-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
-  }
-
-  .manual-field label {
-    display: block;
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 20px;
-    font-size: 14px;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    z-index: 1000;
-    animation: slideUp 0.3s ease;
-    max-width: 360px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
-
-  .toast.show { display: flex; }
-  .toast.success { border-color: var(--success); }
-  .toast.error { border-color: var(--danger); }
-
-  @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  /* Scrollable table wrapper */
-  .table-scroll { overflow-x: auto; }
-
-  /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-  }
-
-  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-state h3 { font-size: 18px; margin-bottom: 6px; color: var(--text); }
-
-  @media (max-width: 700px) {
-    .upload-grid { grid-template-columns: 1fr; }
-    .main { padding: 20px; }
-    .steps { flex-wrap: wrap; }
-  }
+:root {
+  --bg: #0d0f14;
+  --surface: #161a23;
+  --surface2: #1e2330;
+  --border: #2a3040;
+  --accent: #e8c84a;
+  --accent2: #4a9ee8;
+  --success: #4ae87a;
+  --danger: #e84a4a;
+  --warn: #e8954a;
+  --text: #e8eaf0;
+  --muted: #6b7280;
+  --radius: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Gate ── */
+#gate {
+  position: fixed; inset: 0; background: var(--bg);
+  background-image: radial-gradient(ellipse at 20% 0%,#1a2035,transparent 60%),radial-gradient(ellipse at 80% 100%,#1a1a2e,transparent 60%);
+  display: flex; align-items: center; justify-content: center; z-index: 9999;
+}
+.gate-box {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 48px 40px; width: 100%; max-width: 440px; text-align: center;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+}
+.gate-logo { font-family:'Bebas Neue',sans-serif; font-size:50px; letter-spacing:5px; color:var(--accent); line-height:1; margin-bottom:4px; }
+.gate-logo span { color:var(--text); }
+.gate-sub { font-size:11px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; font-family:'DM Mono',monospace; margin-bottom:36px; line-height:1.7; }
+.gate-label { display:block; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; font-family:'DM Mono',monospace; text-align:left; margin-bottom:5px; }
+.gate-input { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:13px 16px; color:var(--text); font-family:'DM Mono',monospace; font-size:14px; margin-bottom:14px; transition:border-color .2s; }
+.gate-input:focus { outline:none; border-color:var(--accent); }
+.gate-err { color:var(--danger); font-size:12px; font-family:'DM Mono',monospace; min-height:18px; margin-bottom:12px; }
+.gate-btn { width:100%; padding:15px; background:var(--accent); color:#0d0f14; border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:3px; cursor:pointer; transition:.2s; }
+.gate-btn:hover { background:#f0d45a; transform:translateY(-1px); }
+.gate-footer { margin-top:16px; font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+.shake { animation:shake .4s ease; border-color:var(--danger) !important; }
+
+/* ── Layout ── */
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; background-image:radial-gradient(ellipse at 20% 0%,#1a2035,transparent 60%),radial-gradient(ellipse at 80% 100%,#1a1a2e,transparent 60%); }
+header { border-bottom:1px solid var(--border); padding:18px 32px; display:flex; align-items:center; gap:16px; background:rgba(22,26,35,.8); backdrop-filter:blur(12px); position:sticky; top:0; z-index:100; }
+.logo { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; color:var(--accent); }
+.logo span { color:var(--text); }
+.logo-sub { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; }
+.main { max-width:1400px; margin:0 auto; padding:28px 32px; }
+
+/* ── Steps ── */
+.steps { display:flex; gap:8px; margin-bottom:32px; align-items:center; flex-wrap:wrap; }
+.step { display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; border:1px solid var(--border); background:var(--surface); font-size:13px; color:var(--muted); font-family:'DM Mono',monospace; transition:.3s; }
+.step.active { border-color:var(--accent); color:var(--accent); background:rgba(232,200,74,.08); }
+.step.done { border-color:var(--success); color:var(--success); background:rgba(74,232,122,.06); }
+.step-num { width:20px; height:20px; border-radius:50%; border:1px solid currentColor; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; flex-shrink:0; }
+.step-arr { color:var(--border); }
+
+/* ── Upload ── */
+.upload-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+.upload-zone { border:2px dashed var(--border); border-radius:var(--radius); padding:36px 20px; text-align:center; cursor:pointer; transition:.25s; background:var(--surface); position:relative; overflow:hidden; }
+.upload-zone:hover,.upload-zone.drag { border-color:var(--accent); background:rgba(232,200,74,.04); }
+.upload-zone.done { border-color:var(--success); border-style:solid; background:rgba(74,232,122,.04); }
+.upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.upload-icon { font-size:36px; margin-bottom:10px; display:block; }
+.upload-title { font-size:15px; font-weight:600; margin-bottom:5px; }
+.upload-sub { font-size:12px; color:var(--muted); }
+.upload-ok { margin-top:12px; font-size:12px; font-family:'DM Mono',monospace; color:var(--success); display:none; }
+.upload-zone.done .upload-ok { display:block; }
+
+/* ── Buttons ── */
+.btn { display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:var(--radius); border:none; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:.2s; }
+.btn-primary { background:var(--accent); color:#0d0f14; }
+.btn-primary:hover { background:#f0d45a; transform:translateY(-1px); }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+.btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.btn-secondary:hover { border-color:var(--accent2); color:var(--accent2); }
+.btn-success { background:var(--success); color:#0d0f14; }
+.btn-success:hover { background:#5cf089; transform:translateY(-1px); }
+.action-row { display:flex; gap:12px; margin-bottom:28px; align-items:center; flex-wrap:wrap; }
+
+/* ── Processing ── */
+.processing { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:40px; text-align:center; display:none; margin-bottom:28px; }
+.spinner { width:44px; height:44px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 14px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.proc-text { font-family:'DM Mono',monospace; font-size:13px; color:var(--muted); }
+
+/* ── Results panel ── */
+.results { display:none; margin-bottom:28px; }
+.panel-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+.panel-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--accent); }
+.badge { font-family:'DM Mono',monospace; font-size:11px; padding:4px 10px; border-radius:100px; background:rgba(232,200,74,.12); color:var(--accent); border:1px solid rgba(232,200,74,.3); }
+
+/* ── AI notes ── */
+.ai-note { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent2); border-radius:var(--radius); padding:16px 20px; margin-bottom:16px; font-size:13px; line-height:1.7; font-family:'DM Mono',monospace; display:none; }
+.ai-note-lbl { font-size:10px; color:var(--accent2); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; font-weight:600; }
+
+/* ── Results table ── */
+.tbl-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:16px; overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; min-width:900px; }
+th { background:var(--surface2); padding:9px 12px; text-align:left; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--border); white-space:nowrap; }
+td { padding:9px 12px; border-bottom:1px solid rgba(42,48,64,.5); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,.015); }
+.inp { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:5px 8px; color:var(--text); font-family:'DM Mono',monospace; font-size:12px; width:100%; min-width:55px; transition:border-color .2s; }
+.inp:focus { outline:none; border-color:var(--accent2); }
+.inp.changed { border-color:var(--accent); background:rgba(232,200,74,.06); }
+.pass-badge { display:inline-block; padding:3px 9px; border-radius:100px; font-size:11px; font-weight:600; font-family:'DM Mono',monospace; white-space:nowrap; }
+.pass { background:rgba(74,232,122,.15); color:var(--success); border:1px solid rgba(74,232,122,.3); }
+.fail { background:rgba(232,74,74,.15); color:var(--danger); border:1px solid rgba(232,74,74,.3); }
+.inc1 { background:rgba(74,158,232,.15); color:var(--accent2); border:1px solid rgba(74,158,232,.3); }
+.inc2 { background:rgba(74,158,232,.22); color:#7bbfff; border:1px solid rgba(74,158,232,.4); }
+.pending { background:rgba(107,114,128,.15); color:var(--muted); border:1px solid rgba(107,114,128,.3); }
+.conf-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:5px; }
+.c-hi { background:var(--success); } .c-md { background:var(--accent); } .c-lo { background:var(--danger); }
+.row-name { font-weight:500; white-space:nowrap; }
+
+/* ── Toast ── */
+.toast { position:fixed; bottom:24px; right:24px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 18px; font-size:13px; display:none; align-items:center; gap:8px; z-index:1000; animation:slideUp .3s ease; max-width:360px; box-shadow:0 8px 32px rgba(0,0,0,.4); }
+.toast.show { display:flex; }
+.toast.ok { border-color:var(--success); }
+.toast.err { border-color:var(--danger); }
+@keyframes slideUp { from{transform:translateY(16px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+/* ── Image preview ── */
+.img-prev { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:16px; }
+.img-prev-lbl { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; }
+.img-prev img { max-width:100%; border-radius:6px; max-height:260px; object-fit:contain; }
+
+@media(max-width:700px){
+  .upload-grid{grid-template-columns:1fr;}
+  .main{padding:16px;}
+  .steps{flex-wrap:wrap;}
+}
 </style>
 </head>
 <body>
 
-<!-- Password Gate -->
-<div id="passwordGate">
+<!-- Gate -->
+<div id="gate">
   <div class="gate-box">
     <div class="gate-logo">SSFT <span>ADFA</span></div>
-    <div class="gate-subtitle">Single Service Fitness Test<br>Australian Defence Force Academy</div>
-
-    <label class="gate-label" for="gatePassword">Access Password</label>
-    <input class="gate-input" type="password" id="gatePassword" placeholder="Enter password" onkeydown="if(event.key==='Enter') unlockApp()">
-
-    <label class="gate-label" for="gateApiKey">Anthropic API Key</label>
-    <input class="gate-input" type="password" id="gateApiKey" placeholder="sk-ant-..." onkeydown="if(event.key==='Enter') unlockApp()">
-
-    <div class="gate-error" id="gateError"></div>
-    <button class="gate-btn" onclick="unlockApp()">ENTER</button>
-    <div class="gate-footer">Authorised personnel only — ADFA PTI</div>
+    <div class="gate-sub">Single Service Fitness Test<br>Australian Defence Force Academy</div>
+    <label class="gate-label" for="gPw">Access Password</label>
+    <input class="gate-input" type="password" id="gPw" placeholder="Enter password" onkeydown="if(event.key==='Enter')unlock()">
+    <label class="gate-label" for="gKey">Anthropic API Key</label>
+    <input class="gate-input" type="password" id="gKey" placeholder="sk-ant-..." onkeydown="if(event.key==='Enter')unlock()">
+    <div class="gate-err" id="gErr"></div>
+    <button class="gate-btn" onclick="unlock()">ENTER</button>
+    <div class="gate-footer">Authorised ADFA PTI Personnel Only</div>
   </div>
 </div>
 
 <header>
   <div>
     <div class="logo">SSFT <span>ADFA</span></div>
-    <div class="subtitle">Single Service Fitness Test — Australian Defence Force Academy</div>
+    <div class="logo-sub">Single Service Fitness Test — Australian Defence Force Academy</div>
   </div>
 </header>
 
 <div class="main">
-
   <div class="steps">
-    <div class="step active" id="step1"><div class="step-num">1</div> Upload Files</div>
-    <div class="step-arrow">›</div>
-    <div class="step" id="step2"><div class="step-num">2</div> AI Scan</div>
-    <div class="step-arrow">›</div>
-    <div class="step" id="step3"><div class="step-num">3</div> Review</div>
-    <div class="step-arrow">›</div>
-    <div class="step" id="step4"><div class="step-num">4</div> Download</div>
+    <div class="step active" id="s1"><div class="step-num">1</div>Upload Files</div>
+    <div class="step-arr">›</div>
+    <div class="step" id="s2"><div class="step-num">2</div>AI Scan</div>
+    <div class="step-arr">›</div>
+    <div class="step" id="s3"><div class="step-num">3</div>Review & Pass/Fail</div>
+    <div class="step-arr">›</div>
+    <div class="step" id="s4"><div class="step-num">4</div>Download Excel</div>
   </div>
 
   <div class="upload-grid">
-    <div class="upload-zone" id="excelZone">
-      <input type="file" id="excelFile" accept=".xlsx,.xls,.csv">
+    <div class="upload-zone" id="exZone">
+      <input type="file" id="exFile" accept=".xlsx,.xls,.csv">
       <span class="upload-icon">📊</span>
       <div class="upload-title">Master Excel Sheet</div>
-      <div class="upload-sub">Drop your .xlsx / .xls / .csv file here<br>or click to browse</div>
-      <div class="upload-status" id="excelStatus">✓ File loaded</div>
+      <div class="upload-sub">Drop your .xlsx / .xls / .csv here<br>or click to browse</div>
+      <div class="upload-ok" id="exOk">✓ Loaded</div>
     </div>
-
-    <div class="upload-zone" id="scanZone">
-      <input type="file" id="scanFile" accept="image/*,.pdf">
+    <div class="upload-zone" id="scZone">
+      <input type="file" id="scFile" accept="image/*,.pdf">
       <span class="upload-icon">📷</span>
       <div class="upload-title">Scanned Results Sheet</div>
-      <div class="upload-sub">Drop your scanned photo or PDF here<br>or click to browse</div>
-      <div class="upload-status" id="scanStatus">✓ Scan loaded</div>
+      <div class="upload-sub">Photo (JPG/PNG) recommended — faster than PDF<br>or click to browse</div>
+      <div class="upload-ok" id="scOk">✓ Loaded</div>
     </div>
   </div>
 
   <div class="action-row">
-    <button class="btn btn-primary" id="analyseBtn" disabled onclick="analyseResults()">
-      ⚡ Analyse with AI
-    </button>
+    <button class="btn btn-primary" id="scanBtn" disabled onclick="doScan()">⚡ Analyse with AI</button>
     <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
-    <span id="apiNote" style="font-size:12px; color:var(--muted); font-family:'DM Mono',monospace;"></span>
   </div>
 
-  <div class="processing-panel" id="processingPanel">
+  <div class="processing" id="proc">
     <div class="spinner"></div>
-    <div class="processing-text" id="processingText">Reading your scanned sheet with AI...</div>
+    <div class="proc-text" id="procTxt">Reading scanned sheet with AI...</div>
   </div>
 
-  <div class="results-panel" id="resultsPanel">
-    <div class="panel-header">
-      <div class="panel-title">Detected Results</div>
-      <div class="badge" id="resultsBadge">0 entries</div>
+  <div class="results" id="resPanel">
+    <div class="panel-hdr">
+      <div class="panel-title">Results — Review &amp; Edit</div>
+      <div class="badge" id="resBadge">0 entries</div>
     </div>
 
-    <div class="image-preview" id="imagePreview">
-      <div class="image-preview-label">Uploaded Scan</div>
-      <img id="previewImg" src="" alt="Scan">
+    <div class="img-prev" id="imgPrev">
+      <div class="img-prev-lbl">Uploaded Scan</div>
+      <img id="prevImg" src="" alt="scan">
     </div>
 
-    <div class="ai-summary" id="aiSummary" style="display:none">
-      <div class="ai-summary-label">🤖 AI Reading Notes</div>
-      <div id="aiSummaryText"></div>
+    <div class="ai-note" id="aiNote">
+      <div class="ai-note-lbl">🤖 AI Reading Notes</div>
+      <div id="aiNoteTxt"></div>
     </div>
 
-    <div class="detected-table-wrap">
-      <div class="table-scroll">
-        <table class="detected-table" id="detectedTable">
-          <thead id="tableHead"></thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
+    <div class="tbl-wrap">
+      <table id="resTable">
+        <thead id="tHead"></thead>
+        <tbody id="tBody"></tbody>
+      </table>
     </div>
 
     <div class="action-row">
-      <button class="btn btn-success" id="downloadBtn" onclick="downloadUpdatedExcel()">
-        ⬇ Download Updated Excel
-      </button>
-      <button class="btn btn-secondary" onclick="analyseResults()">↺ Re-scan</button>
+      <button class="btn btn-success" onclick="downloadExcel()">⬇ Download Updated Excel</button>
+      <button class="btn btn-secondary" onclick="doScan()">↺ Re-scan</button>
     </div>
   </div>
-
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── PDF to Images helper ──
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-async function pdfToImages(base64Data) {
-  const binary = atob(base64Data);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+// ─────────────────────────────────────────────
+// FITNESS STANDARDS (hardcoded from your sheets)
+// ─────────────────────────────────────────────
 
-  const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
-  const images = [];
-  const maxPages = Math.min(pdf.numPages, 4); // max 4 pages
-
-  for (let p = 1; p <= maxPages; p++) {
-    const page = await pdf.getPage(p);
-    const viewport = page.getViewport({ scale: 2.0 }); // high res
-    const canvas = document.createElement('canvas');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-    images.push(dataUrl.split(',')[1]);
+// ARMY — Basic Fitness Assessment
+// Push-ups & Sit-ups: minimum (Baseline) by age group
+// 2.4km run: maximum time (Baseline) — lower is better
+// Age groups: 17-25, 26-30, 31-35, 36-40, 41-45, 46-50, 51-55, 56-60, 61-65
+const ARMY = {
+  male: {
+    pushup:  { ages:[25,30,35,40,45,50,55,60,65], baseline:[40,35,30,25,20,10,6,5,3], inc1:[48,42,36,30,24,12,7,6,4], inc2:[56,49,42,35,28,14,8,7,5] },
+    situp:   { ages:[25,30,35,40,45,50,55,60,65], baseline:[70,65,60,50,35,25,20,15,10], inc1:[84,78,72,60,42,30,24,18,12], inc2:[97,90,84,70,49,35,28,21,14] },
+    run24:   { ages:[25,30,35,40,45,50,55,60,65], baseline:['11:18','11:48','12:18','12:42','13:12','13:48','14:30','15:30','16:30'], inc1:['10:10','10:37','11:04','11:26','11:53','12:25','13:07','14:07','15:07'], inc2:['9:02','9:26','9:50','10:10','10:34','11:02','12:44','13:44','14:44'] },
+    walk5k:  { ages:[25,30,35,40,45,50,55,60,65], baseline:['44:00','44:00','44:00','44:00','44:00','45:00','45:00','50:00','55:00'] }
+  },
+  female: {
+    pushup:  { ages:[25,30,35,40,45,50,55,60,65], baseline:[21,18,15,10,7,3,3,3,3], inc1:[25,22,18,12,8,4,4,4,4], inc2:[29,25,21,14,10,4,4,4,4] },
+    situp:   { ages:[25,30,35,40,45,50,55,60,65], baseline:[70,65,60,50,35,25,20,15,10], inc1:[84,78,72,60,42,30,24,18,12], inc2:[97,90,84,70,49,35,28,21,14] },
+    run24:   { ages:[25,30,35,40,45,50,55,60,65], baseline:['13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'], inc1:['12:09','12:36','13:03','13:30','13:57','14:24','14:51','15:30','15:57'], inc2:['10:48','11:12','11:36','12:00','12:24','12:48','13:12','14:08','14:32'] },
+    walk5k:  { ages:[25,30,35,40,45,50,55,60,65], baseline:['45:00','45:00','45:00','45:00','45:00','47:00','47:00','52:00','57:00'] }
   }
-  return images;
+};
+
+// RAAF — Air Force Physical Fitness Test
+// Age groups: <25, 25-34, 35-44, 45-54, 55-59, 60+
+const RAAF = {
+  male: {
+    pushup:   { ages:[25,34,44,54,59,200], baseline:[25,20,15,10,5,3], inc1:[30,25,20,15,10,5], inc2:[35,30,25,20,15,10] },
+    flexhang: { ages:[25,34,44,54,59,200], baseline:[30,25,20,15,10,5], inc1:[35,30,25,20,15,10], inc2:[40,35,30,25,20,15] },
+    situpU:   { ages:[25,34,44,54,59,200], baseline:[30,25,20,15,10,5], inc1:[35,30,25,20,15,10], inc2:[40,35,30,25,20,15] },
+    situpS:   { ages:[25,34,44,54,59,200], baseline:[65,55,45,35,25,15], inc1:[75,65,55,45,35,25], inc2:[85,75,65,55,45,35] },
+    msft:     { ages:[25,34,44,54,59,200], baseline:[8.4,7.5,6.6,5.9,5.3,4.7], inc1:[9.5,8.4,7.5,6.6,5.9,5.3], inc2:[10.6,9.5,8.4,7.5,6.6,5.9] },
+    a3:       { ages:[25,34,44,54,59,200], baseline:[8,7,6,5,4,3], inc1:[9,8,7,6,5,4], inc2:[10,9,8,7,6,5] }
+  },
+  female: {
+    pushup:   { ages:[25,34,44,54,59,200], baseline:[10,8,6,4,3,1], inc1:[12,10,8,6,4,3], inc2:[14,12,10,8,6,4] },
+    flexhang: { ages:[25,34,44,54,59,200], baseline:[30,25,20,15,10,5], inc1:[35,30,25,20,15,10], inc2:[40,35,30,25,20,15] },
+    situpU:   { ages:[25,34,44,54,59,200], baseline:[30,25,20,15,10,5], inc1:[35,30,25,20,15,10], inc2:[40,35,30,25,20,15] },
+    situpS:   { ages:[25,34,44,54,59,200], baseline:[65,55,45,35,25,15], inc1:[75,65,55,45,35,25], inc2:[85,75,65,55,45,35] },
+    msft:     { ages:[25,34,44,54,59,200], baseline:[7.5,6.6,5.9,5.3,4.7,4.2], inc1:[8.4,7.5,6.6,5.9,5.3,4.7], inc2:[9.5,8.4,7.5,6.6,5.9,5.3] },
+    a3:       { ages:[25,34,44,54,59,200], baseline:[6,5,4,3,2,1], inc1:[7,6,5,4,3,2], inc2:[8,7,6,5,4,3] }
+  }
+};
+
+// RAN — Royal Australian Navy RANPFT
+// Age groups: <29, 30-34, 35-39, 40-44, 45-49, 50-54, 55-59, 60+
+// Times stored as decimal minutes (e.g. 13.00 = 13min 00sec)
+const RAN = {
+  male: {
+    plank:  { ages:[29,34,39,44,49,54,59,200], baseline:[1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00], inc1:[1.35,1.35,1.35,1.35,1.35,1.35,1.35,1.35], inc2:[2.15,2.15,2.15,2.15,2.15,2.15,2.15,2.15] },
+    run24:  { ages:[29,34,39,44,49,54,59,200], baseline:['13:00','14:00','14:30','15:00','15:40','16:15','17:00','18:20'], inc1:['11:30','12:30','13:00','13:50','14:10','14:30','15:00','15:30'], inc2:['10:30','11:00','12:00','12:20','12:30','12:45','13:00','13:45'] },
+    walk5k: { ages:[29,34,39,44,49,54,59,200], baseline:['42:00','42:30','43:00','43:30','44:15','45:00','45:45','46:30'], inc1:['39:00','39:30','40:00','40:30','41:10','42:50','43:30','44:00'], inc2:['37:30','38:00','38:30','39:15','40:00','40:30','41:00','42:00'] },
+    swim:   { ages:[29,34,39,44,49,54,59,200], baseline:['13:20','13:30','13:40','13:50','14:00','14:10','14:20','14:35'], inc1:['11:45','11:55','12:05','12:10','12:15','12:25','12:35','12:45'], inc2:['9:40','9:55','10:10','10:20','10:30','10:40','10:55','11:10'] },
+    msft:   { ages:[29,34,39,44,49,54,59,200], baseline:[7.4,7.2,6.10,6.8,6.6,6.4,6.2,5.9], inc1:[8.4,7.8,7.4,7.2,7.1,6.10,6.9,6.8], inc2:[9.5,8.9,8.5,8.2,7.10,7.7,7.4,7.2] }
+  },
+  female: {
+    plank:  { ages:[29,34,39,44,49,54,59,200], baseline:[1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00], inc1:[1.35,1.35,1.35,1.35,1.35,1.35,1.35,1.35], inc2:[2.15,2.15,2.15,2.15,2.15,2.15,2.15,2.15] },
+    run24:  { ages:[29,34,39,44,49,54,59,200], baseline:['15:00','15:45','16:20','17:00','17:15','17:40','18:20','19:25'], inc1:['13:55','14:35','15:20','16:00','16:40','17:10','17:50','18:20'], inc2:['12:50','13:40','14:20','15:00','15:45','16:20','17:00','17:25'] },
+    walk5k: { ages:[29,34,39,44,49,54,59,200], baseline:['43:00','43:30','44:00','44:30','45:15','46:15','47:00','47:45'], inc1:['40:00','40:30','41:00','41:30','42:10','43:50','44:30','45:00'], inc2:['38:30','39:00','39:30','41:00','41:40','42:10','42:50','43:30'] },
+    swim:   { ages:[29,34,39,44,49,54,59,200], baseline:['15:20','15:35','15:50','16:05','16:20','16:35','16:45','17:00'], inc1:['13:45','14:00','14:15','14:30','14:45','15:00','15:15','15:30'], inc2:['11:05','11:20','11:35','11:50','12:05','12:20','12:30','12:45'] },
+    msft:   { ages:[29,34,39,44,49,54,59,200], baseline:[6.9,6.6,6.4,6.2,5.9,5.7,5.4,5.2], inc1:[7.2,6.10,6.8,6.6,6.4,6.2,5.9,5.7], inc2:[7.6,7.3,7.1,6.9,6.6,6.4,6.2,6.1] }
+  }
+};
+
+// ─────────────────────────────────────────────
+// STANDARDS LOOKUP HELPERS
+// ─────────────────────────────────────────────
+
+function getAgeIdx(ages, age) {
+  for (let i = 0; i < ages.length; i++) if (age <= ages[i]) return i;
+  return ages.length - 1;
 }
 
-// ── Password Gate ──
-const SITE_PASSWORD = 'ADFA2025'; // ← Change this to your chosen password
-
-let userApiKey = '';
-
-function unlockApp() {
-  const pw = document.getElementById('gatePassword').value.trim();
-  const apiKey = document.getElementById('gateApiKey').value.trim();
-  const errEl = document.getElementById('gateError');
-
-  if (pw !== SITE_PASSWORD) {
-    errEl.textContent = 'Incorrect password. Try again.';
-    document.getElementById('gatePassword').classList.add('shake');
-    setTimeout(() => document.getElementById('gatePassword').classList.remove('shake'), 400);
-    return;
-  }
-  if (!apiKey.startsWith('sk-ant-')) {
-    errEl.textContent = 'Please enter a valid Anthropic API key (starts with sk-ant-).';
-    document.getElementById('gateApiKey').classList.add('shake');
-    setTimeout(() => document.getElementById('gateApiKey').classList.remove('shake'), 400);
-    return;
-  }
-
-  userApiKey = apiKey;
-  document.getElementById('passwordGate').style.display = 'none';
+// Convert time string "MM:SS" to total seconds
+function timeToSec(t) {
+  if (!t || t === '') return null;
+  t = String(t).trim();
+  const p = t.split(':');
+  if (p.length === 2) return parseInt(p[0]) * 60 + parseInt(p[1]);
+  return parseFloat(t) * 60; // decimal minutes
 }
 
-// ── App State ──
-let excelData = null;
-let excelWorkbook = null;
-let scanBase64 = null;
-let scanMimeType = null;
-let detectedResults = [];
-let excelColumns = [];
+// Higher is better (pushup, situp, beep, hang)
+function evalHigher(val, bl, i1, i2) {
+  const v = parseFloat(val);
+  if (isNaN(v)) return 'pending';
+  if (v >= i2) return 'inc2';
+  if (v >= i1) return 'inc1';
+  if (v >= bl) return 'pass';
+  return 'fail';
+}
 
-// File upload handlers
-document.getElementById('excelFile').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
+// Lower is better (run, swim, walk times)
+function evalLower(val, bl, i1, i2) {
+  const vs = timeToSec(val);
+  const bs = timeToSec(bl);
+  const i1s = timeToSec(i1);
+  const i2s = timeToSec(i2);
+  if (vs === null || bs === null) return 'pending';
+  if (vs <= i2s) return 'inc2';
+  if (vs <= i1s) return 'inc1';
+  if (vs <= bs) return 'pass';
+  return 'fail';
+}
+
+function assess(service, gender, age, component, value) {
+  if (!value || value === '' || value === '?') return 'pending';
+  const g = gender.toLowerCase().startsWith('f') ? 'female' : 'male';
+  const svc = service.toUpperCase();
+  let std, mode = 'higher';
+
+  try {
+    if (svc === 'ARMY' || svc === 'ARA') {
+      const S = ARMY[g];
+      const comp = component.toLowerCase();
+      if (comp.includes('push')) std = S.pushup;
+      else if (comp.includes('sit')) std = S.situp;
+      else if (comp.includes('run') || comp.includes('2.4') || comp.includes('24')) { std = S.run24; mode = 'lower'; }
+      else if (comp.includes('walk') || comp.includes('5k')) { std = S.walk5k; mode = 'lower'; }
+    } else if (svc === 'RAAF' || svc === 'AIRFORCE' || svc === 'AIR FORCE') {
+      const S = RAAF[g];
+      const comp = component.toLowerCase();
+      if (comp.includes('push')) std = S.pushup;
+      else if (comp.includes('hang') || comp.includes('flex')) std = S.flexhang;
+      else if (comp.includes('sit') && comp.includes('unsec')) std = S.situpU;
+      else if (comp.includes('sit') && comp.includes('sec')) std = S.situpS;
+      else if (comp.includes('sit')) std = S.situpU;
+      else if (comp.includes('msft') || comp.includes('beep')) std = S.msft;
+      else if (comp.includes('a3')) std = S.a3;
+    } else if (svc === 'RAN' || svc === 'NAVY') {
+      const S = RAN[g];
+      const comp = component.toLowerCase();
+      if (comp.includes('plank')) std = S.plank;
+      else if (comp.includes('run') || comp.includes('2.4') || comp.includes('24')) { std = S.run24; mode = 'lower'; }
+      else if (comp.includes('walk') || comp.includes('5k')) { std = S.walk5k; mode = 'lower'; }
+      else if (comp.includes('swim')) { std = S.swim; mode = 'lower'; }
+      else if (comp.includes('msft') || comp.includes('beep')) std = S.msft;
+    }
+  } catch(e) { return 'pending'; }
+
+  if (!std) return 'pending';
+  const idx = getAgeIdx(std.ages, parseInt(age));
+  if (mode === 'lower') return evalLower(value, std.baseline[idx], std.inc1[idx], std.inc2[idx]);
+  return evalHigher(value, std.baseline[idx], std.inc1[idx], std.inc2[idx]);
+}
+
+function resultLabel(r) {
+  if (r === 'pass') return '<span class="pass-badge pass">✓ Pass</span>';
+  if (r === 'inc1') return '<span class="pass-badge inc1">★ Incentive 1</span>';
+  if (r === 'inc2') return '<span class="pass-badge inc2">★★ Incentive 2</span>';
+  if (r === 'fail') return '<span class="pass-badge fail">✗ Fail</span>';
+  return '<span class="pass-badge pending">— Pending</span>';
+}
+
+// ─────────────────────────────────────────────
+// APP STATE
+// ─────────────────────────────────────────────
+const SITE_PW = 'ADFA2025';
+let apiKey = '';
+let excelData = null, excelWb = null;
+let scanB64 = null, scanMime = null;
+let detected = null;
+
+// ─────────────────────────────────────────────
+// GATE
+// ─────────────────────────────────────────────
+function unlock() {
+  const pw = document.getElementById('gPw').value.trim();
+  const key = document.getElementById('gKey').value.trim();
+  const err = document.getElementById('gErr');
+  if (pw !== SITE_PW) {
+    err.textContent = 'Incorrect password.';
+    document.getElementById('gPw').classList.add('shake');
+    setTimeout(() => document.getElementById('gPw').classList.remove('shake'), 400);
+    return;
+  }
+  if (!key.startsWith('sk-ant-')) {
+    err.textContent = 'Invalid API key — must start with sk-ant-';
+    document.getElementById('gKey').classList.add('shake');
+    setTimeout(() => document.getElementById('gKey').classList.remove('shake'), 400);
+    return;
+  }
+  apiKey = key;
+  document.getElementById('gate').style.display = 'none';
+}
+
+// ─────────────────────────────────────────────
+// FILE UPLOADS
+// ─────────────────────────────────────────────
+document.getElementById('exFile').addEventListener('change', function(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
     try {
       const data = new Uint8Array(ev.target.result);
-      excelWorkbook = XLSX.read(data, { type: 'array' });
-      const sheet = excelWorkbook.Sheets[excelWorkbook.SheetNames[0]];
-      excelData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-      excelColumns = excelData.length > 0 ? Object.keys(excelData[0]) : [];
-      document.getElementById('excelZone').classList.add('uploaded');
-      document.getElementById('excelStatus').textContent = `✓ ${file.name} — ${excelData.length} rows`;
-    } catch(err) {
-      showToast('Could not read Excel file: ' + err.message, 'error');
-    }
+      excelWb = XLSX.read(data, { type:'array' });
+      const ws = excelWb.Sheets[excelWb.SheetNames[0]];
+      excelData = XLSX.utils.sheet_to_json(ws, { defval:'' });
+      document.getElementById('exZone').classList.add('done');
+      document.getElementById('exOk').textContent = `✓ ${f.name} — ${excelData.length} rows`;
+    } catch(err) { toast('Cannot read Excel: ' + err.message, 'err'); }
     checkReady();
   };
-  reader.readAsArrayBuffer(file);
+  r.readAsArrayBuffer(f);
 });
 
-document.getElementById('scanFile').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  scanMimeType = file.type || 'image/jpeg';
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    scanBase64 = ev.target.result.split(',')[1];
-    document.getElementById('previewImg').src = ev.target.result;
-    document.getElementById('scanZone').classList.add('uploaded');
-    document.getElementById('scanStatus').textContent = `✓ ${file.name}`;
+document.getElementById('scFile').addEventListener('change', function(e) {
+  const f = e.target.files[0]; if (!f) return;
+  scanMime = f.type || 'image/jpeg';
+  const r = new FileReader();
+  r.onload = ev => {
+    scanB64 = ev.target.result.split(',')[1];
+    document.getElementById('prevImg').src = ev.target.result;
+    document.getElementById('scZone').classList.add('done');
+    document.getElementById('scOk').textContent = `✓ ${f.name}`;
     checkReady();
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(f);
 });
 
-// Drag and drop
-['excelZone','scanZone'].forEach(id => {
-  const zone = document.getElementById(id);
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('drag-over');
-    const input = zone.querySelector('input');
-    const dt = new DataTransfer();
-    dt.items.add(e.dataTransfer.files[0]);
-    input.files = dt.files;
-    input.dispatchEvent(new Event('change'));
+['exZone','scZone'].forEach(id => {
+  const z = document.getElementById(id);
+  z.addEventListener('dragover', e => { e.preventDefault(); z.classList.add('drag'); });
+  z.addEventListener('dragleave', () => z.classList.remove('drag'));
+  z.addEventListener('drop', e => {
+    e.preventDefault(); z.classList.remove('drag');
+    const inp = z.querySelector('input');
+    const dt = new DataTransfer(); dt.items.add(e.dataTransfer.files[0]);
+    inp.files = dt.files; inp.dispatchEvent(new Event('change'));
   });
 });
 
 function checkReady() {
-  const ready = scanBase64 !== null;
-  document.getElementById('analyseBtn').disabled = !ready;
-  if (!excelData) {
-    document.getElementById('apiNote').textContent = 'Tip: Upload your Excel file too to get an updated sheet back';
-  } else {
-    document.getElementById('apiNote').textContent = '';
+  document.getElementById('scanBtn').disabled = !scanB64;
+}
+
+// ─────────────────────────────────────────────
+// PDF → IMAGES
+// ─────────────────────────────────────────────
+async function pdfToImages(b64) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+  const imgs = [];
+  const maxP = Math.min(pdf.numPages, 3);
+  for (let p = 1; p <= maxP; p++) {
+    const page = await pdf.getPage(p);
+    const vp = page.getViewport({ scale: 1.8 });
+    const canvas = document.createElement('canvas');
+    canvas.width = vp.width; canvas.height = vp.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+    imgs.push(canvas.toDataURL('image/jpeg', 0.88).split(',')[1]);
+  }
+  return imgs;
+}
+
+// ─────────────────────────────────────────────
+// COLUMN HINTS for the AI
+// ─────────────────────────────────────────────
+function buildColumnHint() {
+  if (excelData && excelData.length > 0) {
+    const cols = Object.keys(excelData[0]);
+    return `\n\nThe Excel master sheet has these columns: ${cols.join(', ')}. Extract values matching these columns.`;
+  }
+  return `\n\nThis is an ADFA SSFT (Single Service Fitness Test) sheet. Typical columns include: Member No, Service (ARMY/RAAF/RAN), Rank, Surname, Given Names, Gender (M/F), Age, Push Ups, Sit Ups, Hang / Flex Arm Hang, 2.4km Run, 5km Walk, Beep Test (MSFT), Swim, Plank, Attend (Y/N), Test Date, Fit Grade / Level.`;
+}
+
+// ─────────────────────────────────────────────
+// MAIN SCAN
+// ─────────────────────────────────────────────
+async function doScan() {
+  if (!scanB64) { toast('Upload a scan first', 'err'); return; }
+  setStep(2);
+  document.getElementById('proc').style.display = 'block';
+  document.getElementById('resPanel').style.display = 'none';
+
+  const msgs = ['Reading scanned sheet with AI...','Detecting handwritten values...','Mapping to columns...','Almost done...'];
+  let mi = 0;
+  const ticker = setInterval(() => { document.getElementById('procTxt').textContent = msgs[mi++ % msgs.length]; }, 2000);
+
+  try {
+    // Build image blocks
+    let blocks = [];
+    if (scanMime === 'application/pdf' || scanMime === 'application/octet-stream') {
+      document.getElementById('procTxt').textContent = 'Converting PDF pages...';
+      const imgs = await pdfToImages(scanB64);
+      blocks = imgs.map(d => ({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:d } }));
+    } else {
+      blocks = [{ type:'image', source:{ type:'base64', media_type: scanMime, data: scanB64 } }];
+    }
+
+    const prompt = `You are an expert at reading scanned military fitness test result sheets. Analyse this scanned image and extract ALL data you can see — both pre-printed info and handwritten results.${buildColumnHint()}
+
+Return ONLY a JSON object (no other text) with this structure:
+{
+  "summary": "brief description of what you see and legibility",
+  "columns": ["col1","col2",...],
+  "rows": [
+    {
+      "rowIdentifier": "Surname or Member No",
+      "values": { "ColumnName": "value" },
+      "confidence": "high|medium|low",
+      "notes": "any legibility issues"
+    }
+  ]
+}
+
+Important rules:
+- Extract ALL rows with any data, even partial
+- Empty cells = ""
+- Unreadable values = "?"
+- Numbers as strings e.g. "45"
+- Times as strings e.g. "11:30"
+- Include Service (ARMY/RAAF/RAN), Gender/Sex (M/F), and Age if visible — these are needed for pass/fail scoring`;
+
+    blocks.push({ type:'text', text: prompt });
+
+    const payload = JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:4000, messages:[{ role:'user', content:blocks }] });
+    const headers = { 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' };
+
+    let resp;
+    try {
+      resp = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers, body:payload });
+    } catch(e) {
+      resp = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.anthropic.com/v1/messages'), { method:'POST', headers, body:payload });
+    }
+
+    clearInterval(ticker);
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error?.message || JSON.stringify(data.error) || 'API error');
+
+    const raw = data.content?.find(b => b.type === 'text')?.text || '';
+    let parsed;
+    try { parsed = JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+    catch(e) { throw new Error('Could not parse AI response: ' + raw.slice(0,200)); }
+
+    detected = parsed;
+    renderResults(parsed);
+    setStep(3);
+
+  } catch(err) {
+    clearInterval(ticker);
+    toast('Error: ' + err.message, 'err');
+    document.getElementById('proc').style.display = 'none';
+    setStep(1);
   }
 }
 
+// ─────────────────────────────────────────────
+// RENDER RESULTS TABLE
+// ─────────────────────────────────────────────
+function renderResults(data) {
+  document.getElementById('proc').style.display = 'none';
+  document.getElementById('resPanel').style.display = 'block';
+
+  if (data.summary) {
+    document.getElementById('aiNoteTxt').textContent = data.summary;
+    document.getElementById('aiNote').style.display = 'block';
+  }
+
+  const rows = data.rows || [];
+  document.getElementById('resBadge').textContent = `${rows.length} entries detected`;
+
+  const cols = data.columns || (rows.length > 0 ? Object.keys(rows[0].values || {}) : []);
+
+  // Header
+  const thead = document.getElementById('tHead');
+  thead.innerHTML = '';
+  const htr = document.createElement('tr');
+  ['Entry','Conf', ...cols, 'Pass/Fail', 'Notes'].forEach(c => {
+    const th = document.createElement('th'); th.textContent = c; htr.appendChild(th);
+  });
+  thead.appendChild(htr);
+
+  // Body
+  const tbody = document.getElementById('tBody');
+  tbody.innerHTML = '';
+
+  rows.forEach((row, ri) => {
+    const tr = document.createElement('tr');
+
+    // Name
+    const tdN = document.createElement('td'); tdN.className = 'row-name'; tdN.textContent = row.rowIdentifier || `Row ${ri+1}`; tr.appendChild(tdN);
+
+    // Confidence
+    const tdC = document.createElement('td');
+    const dot = document.createElement('span');
+    dot.className = 'conf-dot ' + (row.confidence === 'high' ? 'c-hi' : row.confidence === 'medium' ? 'c-md' : 'c-lo');
+    tdC.appendChild(dot); tdC.appendChild(document.createTextNode(row.confidence || '—')); tr.appendChild(tdC);
+
+    // Value cells
+    cols.forEach(col => {
+      const td = document.createElement('td');
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.className = 'inp';
+      inp.value = (row.values && row.values[col] !== undefined) ? row.values[col] : '';
+      inp.dataset.ri = ri; inp.dataset.col = col;
+      inp.addEventListener('input', function() {
+        this.classList.add('changed');
+        if (detected.rows[ri]) {
+          if (!detected.rows[ri].values) detected.rows[ri].values = {};
+          detected.rows[ri].values[col] = this.value;
+        }
+        updatePassFail(tr, ri);
+      });
+      td.appendChild(inp); tr.appendChild(td);
+    });
+
+    // Pass/Fail cell
+    const tdPF = document.createElement('td');
+    tdPF.id = `pf-${ri}`;
+    tdPF.innerHTML = computePassFail(row, cols);
+    tr.appendChild(tdPF);
+
+    // Notes
+    const tdNt = document.createElement('td');
+    tdNt.style.cssText = 'font-size:11px;color:var(--muted);font-family:DM Mono,monospace;max-width:160px;';
+    tdNt.textContent = row.notes || '';
+    tr.appendChild(tdNt);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function computePassFail(row, cols) {
+  const v = row.values || {};
+  // Find service, gender, age
+  const service = v['Service'] || v['service'] || v['SERVICE'] || '';
+  const gender = v['Gender'] || v['gender'] || v['Sex'] || v['sex'] || '';
+  const age = parseInt(v['Age'] || v['age'] || '0');
+
+  if (!service || !gender || !age) return resultLabel('pending');
+
+  const results = [];
+  cols.forEach(col => {
+    const val = v[col] || '';
+    if (!val || val === '') return;
+    const colL = col.toLowerCase();
+    // Map column name to component key words
+    let comp = '';
+    if (colL.includes('push')) comp = 'pushup';
+    else if (colL.includes('sit') && colL.includes('unsec')) comp = 'situp unsecured';
+    else if (colL.includes('sit') && colL.includes('sec')) comp = 'situp secured';
+    else if (colL.includes('sit')) comp = 'situp';
+    else if (colL.includes('hang') || colL.includes('flex')) comp = 'hang';
+    else if (colL.includes('run') || colL.includes('2.4') || colL.includes('24k')) comp = 'run';
+    else if (colL.includes('walk') || colL.includes('5k')) comp = 'walk';
+    else if (colL.includes('swim')) comp = 'swim';
+    else if (colL.includes('beep') || colL.includes('msft')) comp = 'msft';
+    else if (colL.includes('plank')) comp = 'plank';
+    else if (colL.includes('a3')) comp = 'a3';
+    if (!comp) return;
+    const r = assess(service, gender, age, comp, val);
+    if (r !== 'pending') results.push(r);
+  });
+
+  if (results.length === 0) return resultLabel('pending');
+  if (results.every(r => r === 'inc2')) return resultLabel('inc2');
+  if (results.every(r => r === 'inc2' || r === 'inc1')) return resultLabel('inc1');
+  if (results.some(r => r === 'fail')) return resultLabel('fail');
+  if (results.every(r => r === 'pass' || r === 'inc1' || r === 'inc2')) return resultLabel('pass');
+  return resultLabel('pending');
+}
+
+function updatePassFail(tr, ri) {
+  const row = detected.rows[ri];
+  const cols = detected.columns || Object.keys(row.values || {});
+  const cell = document.getElementById(`pf-${ri}`);
+  if (cell) cell.innerHTML = computePassFail(row, cols);
+}
+
+// ─────────────────────────────────────────────
+// DOWNLOAD EXCEL
+// ─────────────────────────────────────────────
+function downloadExcel() {
+  if (!detected || !detected.rows) { toast('No results to download', 'err'); return; }
+
+  const rows = detected.rows;
+  const cols = detected.columns || (rows.length > 0 ? Object.keys(rows[0].values || {}) : []);
+
+  if (excelWb && excelData) {
+    // Merge into existing workbook
+    const sheetName = excelWb.SheetNames[0];
+    const existing = XLSX.utils.sheet_to_json(excelWb.Sheets[sheetName], { defval:'' });
+
+    rows.forEach(det => {
+      const id = (det.rowIdentifier || '').toLowerCase().trim();
+      let matchIdx = -1;
+      if (id) {
+        matchIdx = existing.findIndex(r =>
+          Object.values(r).some(v => String(v).toLowerCase().includes(id.split(' ')[0]))
+        );
+      }
+      // Add pass/fail to values
+      const pfVal = computePassFailText(det, cols);
+      const enriched = { ...(det.values || {}), 'SSFT Result': pfVal };
+
+      if (matchIdx >= 0) Object.assign(existing[matchIdx], enriched);
+      else existing.push(enriched);
+    });
+
+    excelWb.Sheets[sheetName] = XLSX.utils.json_to_sheet(existing);
+    XLSX.writeFile(excelWb, 'SSFT_Updated.xlsx');
+  } else {
+    // New workbook from detected data
+    const out = rows.map(r => {
+      const pfVal = computePassFailText(r, cols);
+      const obj = { Entry: r.rowIdentifier || '', Confidence: r.confidence || '' };
+      cols.forEach(c => { obj[c] = (r.values && r.values[c]) || ''; });
+      obj['SSFT Result'] = pfVal;
+      obj['Notes'] = r.notes || '';
+      return obj;
+    });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(out), 'SSFT Results');
+    XLSX.writeFile(wb, 'SSFT_Results.xlsx');
+  }
+
+  setStep(4);
+  toast('✓ Excel downloaded!', 'ok');
+}
+
+function computePassFailText(row, cols) {
+  const v = row.values || {};
+  const service = v['Service'] || v['SERVICE'] || '';
+  const gender = v['Gender'] || v['Sex'] || '';
+  const age = parseInt(v['Age'] || '0');
+  if (!service || !gender || !age) return 'Pending';
+  const results = [];
+  cols.forEach(col => {
+    const val = v[col] || ''; if (!val) return;
+    const colL = col.toLowerCase();
+    let comp = '';
+    if (colL.includes('push')) comp = 'pushup';
+    else if (colL.includes('sit')) comp = 'situp';
+    else if (colL.includes('hang') || colL.includes('flex')) comp = 'hang';
+    else if (colL.includes('run') || colL.includes('2.4')) comp = 'run';
+    else if (colL.includes('walk') || colL.includes('5k')) comp = 'walk';
+    else if (colL.includes('swim')) comp = 'swim';
+    else if (colL.includes('beep') || colL.includes('msft')) comp = 'msft';
+    else if (colL.includes('plank')) comp = 'plank';
+    if (!comp) return;
+    const r = assess(service, gender, age, comp, val);
+    if (r !== 'pending') results.push(r);
+  });
+  if (results.length === 0) return 'Pending';
+  if (results.every(r => r === 'inc2')) return 'Incentive Level 2';
+  if (results.every(r => r === 'inc2' || r === 'inc1')) return 'Incentive Level 1';
+  if (results.some(r => r === 'fail')) return 'FAIL';
+  if (results.every(r => r === 'pass' || r === 'inc1' || r === 'inc2')) return 'PASS';
+  return 'Pending';
+}
+
+// ─────────────────────────────────────────────
+// UI HELPERS
+// ─────────────────────────────────────────────
 function setStep(n) {
   for (let i = 1; i <= 4; i++) {
-    const el = document.getElementById('step'+i);
+    const el = document.getElementById('s'+i);
     el.classList.remove('active','done');
     if (i < n) el.classList.add('done');
     if (i === n) el.classList.add('active');
   }
 }
 
-async function analyseResults() {
-  if (!scanBase64) { showToast('Please upload a scan first', 'error'); return; }
-
-  setStep(2);
-  document.getElementById('processingPanel').style.display = 'block';
-  document.getElementById('resultsPanel').style.display = 'none';
-
-  const texts = ['Reading your scanned sheet with AI...', 'Detecting handwritten values...', 'Mapping results to columns...'];
-  let ti = 0;
-  const ticker = setInterval(() => {
-    document.getElementById('processingText').textContent = texts[ti++ % texts.length];
-  }, 1800);
-
-  try {
-    let columnHint = '';
-    if (excelColumns.length > 0) {
-      columnHint = `\n\nThe Excel sheet has these columns: ${excelColumns.join(', ')}.\nFocus on extracting data that matches these columns.`;
-    } else {
-      columnHint = `\n\nThis appears to be a military/sports fitness testing sheet. Common columns include: Name, Member No, Service, Rank, Surname, Given Names, Age, Fit Grade, Test Date, Attend, Push Ups, Hang, Chin Ups, Sit Ups, Push, Run Pace, Beep, Walk, Wrestlers, Subs, Total, Points.`;
-    }
-
-    const prompt = `You are an expert at reading scanned handwritten sports and fitness test result sheets. 
-
-Analyse this scanned image carefully and extract ALL handwritten or typed data you can see.${columnHint}
-
-Return a JSON object with this exact structure:
-{
-  "summary": "Brief description of what you see in the scan — how many rows, what columns are filled in, any notes about legibility",
-  "columns": ["array", "of", "column", "names", "you", "detected"],
-  "rows": [
-    {
-      "rowIdentifier": "Name or ID or row number to identify this person/entry",
-      "values": {
-        "ColumnName": "value",
-        "AnotherColumn": "value"
-      },
-      "confidence": "high|medium|low",
-      "notes": "any notes about this row e.g. hard to read"
-    }
-  ]
-}
-
-Rules:
-- Include ALL rows that have any handwritten data filled in
-- Use empty string "" for blank/unfilled cells
-- For numbers, extract as-is (e.g. "45", "12.5")
-- If you cannot read a value, use "?" 
-- confidence: high = clearly readable, medium = partially readable, low = very hard to read
-- Return ONLY the JSON, no other text`;
-
-    // Convert PDF to image if needed, otherwise use image directly
-    let contentBlocks = [];
-    if (scanMimeType === 'application/pdf' || scanMimeType === 'application/octet-stream') {
-      document.getElementById('processingText').textContent = 'Converting PDF pages to images...';
-      try {
-        const pdfImages = await pdfToImages(scanBase64);
-        contentBlocks = pdfImages.map(imgData => ({
-          type: 'image',
-          source: { type: 'base64', media_type: 'image/jpeg', data: imgData }
-        }));
-      } catch(pdfErr) {
-        // Fallback: send as PDF document
-        contentBlocks = [{ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: scanBase64 } }];
-      }
-    } else {
-      contentBlocks = [{ type: 'image', source: { type: 'base64', media_type: scanMimeType, data: scanBase64 } }];
-    }
-
-    contentBlocks.push({ type: 'text', text: prompt });
-
-    let response;
-    try {
-      // Try direct call first (works if browser allows it)
-      const apiPayload = JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: contentBlocks }]
-      });
-
-      const directHeaders = {
-        'Content-Type': 'application/json',
-        'x-api-key': userApiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      };
-
-      try {
-        response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: directHeaders,
-          body: apiPayload
-        });
-      } catch(directErr) {
-        // Fallback: use a CORS proxy
-        document.getElementById('processingText').textContent = 'Connecting via proxy...';
-        response = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.anthropic.com/v1/messages'), {
-          method: 'POST',
-          headers: directHeaders,
-          body: apiPayload
-        });
-      }
-    } catch(fetchErr) {
-      throw new Error('Could not connect to AI service. Please check your API key is correct and try again. (' + fetchErr.message + ')');
-    }
-
-    clearInterval(ticker);
-    const data = await response.json();
-
-    if (!response.ok) throw new Error(data.error?.message || 'API error');
-
-    const rawText = data.content.find(b => b.type === 'text')?.text || '';
-    
-    let parsed;
-    try {
-      const clean = rawText.replace(/```json|```/g, '').trim();
-      parsed = JSON.parse(clean);
-    } catch(e) {
-      throw new Error('Could not parse AI response. Raw: ' + rawText.slice(0, 200));
-    }
-
-    detectedResults = parsed;
-    renderResults(parsed);
-    setStep(3);
-
-  } catch(err) {
-    clearInterval(ticker);
-    showToast('Error: ' + err.message, 'error');
-    document.getElementById('processingPanel').style.display = 'none';
-    setStep(1);
-  }
-}
-
-function renderResults(data) {
-  document.getElementById('processingPanel').style.display = 'none';
-  document.getElementById('resultsPanel').style.display = 'block';
-
-  // Summary
-  if (data.summary) {
-    document.getElementById('aiSummaryText').textContent = data.summary;
-    document.getElementById('aiSummary').style.display = 'block';
-  }
-
-  const rows = data.rows || [];
-  document.getElementById('resultsBadge').textContent = `${rows.length} entries detected`;
-
-  const cols = data.columns || (rows.length > 0 ? Object.keys(rows[0].values || {}) : []);
-
-  // Build table header
-  const thead = document.getElementById('tableHead');
-  thead.innerHTML = '';
-  const tr = document.createElement('tr');
-  ['Entry', 'Confidence', ...cols, 'Notes'].forEach(c => {
-    const th = document.createElement('th');
-    th.textContent = c;
-    tr.appendChild(th);
-  });
-  thead.appendChild(tr);
-
-  // Build table body
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
-
-  if (rows.length === 0) {
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    td.colSpan = cols.length + 3;
-    td.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><h3>No filled data detected</h3><p>The scan may be blank or AI could not read it</p></div>';
-    tr.appendChild(td);
-    tbody.appendChild(tr);
-    return;
-  }
-
-  rows.forEach((row, ri) => {
-    const tr = document.createElement('tr');
-
-    // Row identifier
-    const tdName = document.createElement('td');
-    tdName.className = 'row-name';
-    tdName.textContent = row.rowIdentifier || `Row ${ri+1}`;
-    tr.appendChild(tdName);
-
-    // Confidence
-    const tdConf = document.createElement('td');
-    const dot = document.createElement('span');
-    dot.className = 'confidence-dot ' + (row.confidence === 'high' ? 'conf-high' : row.confidence === 'medium' ? 'conf-med' : 'conf-low');
-    tdConf.appendChild(dot);
-    tdConf.appendChild(document.createTextNode(row.confidence || 'medium'));
-    tr.appendChild(tdConf);
-
-    // Value cells
-    cols.forEach(col => {
-      const td = document.createElement('td');
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.className = 'editable-input';
-      input.value = (row.values && row.values[col] !== undefined) ? row.values[col] : '';
-      input.dataset.row = ri;
-      input.dataset.col = col;
-      input.addEventListener('input', function() {
-        this.classList.add('changed');
-        if (detectedResults.rows[ri]) {
-          if (!detectedResults.rows[ri].values) detectedResults.rows[ri].values = {};
-          detectedResults.rows[ri].values[col] = this.value;
-        }
-      });
-      td.appendChild(input);
-      tr.appendChild(td);
-    });
-
-    // Notes
-    const tdNotes = document.createElement('td');
-    tdNotes.style.cssText = 'font-size:11px; color:var(--muted); font-family:DM Mono,monospace; max-width:180px;';
-    tdNotes.textContent = row.notes || '';
-    tr.appendChild(tdNotes);
-
-    tbody.appendChild(tr);
-  });
-}
-
-function downloadUpdatedExcel() {
-  if (!detectedResults || !detectedResults.rows) {
-    showToast('No results to download', 'error');
-    return;
-  }
-
-  let wb, ws, sheetData;
-
-  if (excelWorkbook && excelData) {
-    // Merge detected results into existing Excel
-    const sheetName = excelWorkbook.SheetNames[0];
-    const existingSheet = excelWorkbook.Sheets[sheetName];
-    const existing = XLSX.utils.sheet_to_json(existingSheet, { defval: '' });
-
-    detectedResults.rows.forEach(detected => {
-      const identifier = detected.rowIdentifier || '';
-      // Try to match by name/ID in first few columns
-      let matchIdx = -1;
-      if (identifier) {
-        matchIdx = existing.findIndex(r =>
-          Object.values(r).some(v => String(v).toLowerCase().includes(identifier.toLowerCase().split(' ')[0]))
-        );
-      }
-
-      if (matchIdx >= 0) {
-        // Update matched row
-        Object.assign(existing[matchIdx], detected.values || {});
-      } else {
-        // Append new row
-        existing.push({ ...detected.values, _note: 'Added from scan - ' + identifier });
-      }
-    });
-
-    const newWs = XLSX.utils.json_to_sheet(existing);
-    excelWorkbook.Sheets[sheetName] = newWs;
-    XLSX.writeFile(excelWorkbook, 'updated_results.xlsx');
-  } else {
-    // No Excel uploaded — create new from detected data
-    const cols = detectedResults.columns || [];
-    const rows = detectedResults.rows.map(r => {
-      const obj = { Entry: r.rowIdentifier || '', Confidence: r.confidence || '' };
-      cols.forEach(c => { obj[c] = (r.values && r.values[c]) || ''; });
-      obj.Notes = r.notes || '';
-      return obj;
-    });
-
-    wb = XLSX.utils.book_new();
-    ws = XLSX.utils.json_to_sheet(rows);
-    XLSX.utils.book_append_sheet(wb, ws, 'Scanned Results');
-    XLSX.writeFile(wb, 'scanned_results.xlsx');
-  }
-
-  setStep(4);
-  showToast('✓ Excel file downloaded!', 'success');
-}
-
 function resetAll() {
-  excelData = null; excelWorkbook = null;
-  scanBase64 = null; scanMimeType = null;
-  detectedResults = []; excelColumns = [];
-  document.getElementById('excelZone').classList.remove('uploaded');
-  document.getElementById('scanZone').classList.remove('uploaded');
-  document.getElementById('excelStatus').textContent = '✓ File loaded';
-  document.getElementById('scanStatus').textContent = '✓ Scan loaded';
-  document.getElementById('excelFile').value = '';
-  document.getElementById('scanFile').value = '';
-  document.getElementById('analyseBtn').disabled = true;
-  document.getElementById('processingPanel').style.display = 'none';
-  document.getElementById('resultsPanel').style.display = 'none';
-  document.getElementById('aiSummary').style.display = 'none';
-  document.getElementById('apiNote').textContent = '';
+  excelData = null; excelWb = null; scanB64 = null; scanMime = null; detected = null;
+  ['exZone','scZone'].forEach(id => document.getElementById(id).classList.remove('done'));
+  document.getElementById('exOk').textContent = '✓ Loaded';
+  document.getElementById('scOk').textContent = '✓ Loaded';
+  document.getElementById('exFile').value = '';
+  document.getElementById('scFile').value = '';
+  document.getElementById('scanBtn').disabled = true;
+  document.getElementById('proc').style.display = 'none';
+  document.getElementById('resPanel').style.display = 'none';
+  document.getElementById('aiNote').style.display = 'none';
   setStep(1);
 }
 
-function showToast(msg, type='success') {
+function toast(msg, type='ok') {
   const t = document.getElementById('toast');
-  t.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
+  t.textContent = (type === 'ok' ? '✓ ' : '✕ ') + msg;
   t.className = 'toast show ' + type;
-  setTimeout(() => t.classList.remove('show'), 3500);
+  setTimeout(() => t.classList.remove('show'), 4000);
 }
 </script>
 </body>
