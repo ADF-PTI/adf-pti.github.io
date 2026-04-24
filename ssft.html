@@ -559,36 +559,25 @@ async function doScan() {
       blocks = [{ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:compressed } }];
     }
 
-    const prompt = `You are an expert at reading scanned military fitness test result sheets. Analyse this scanned image and extract ALL data you can see — both pre-printed info and handwritten results.${buildColumnHint()}
+    const prompt = `You are reading a scanned military fitness test results sheet. Extract ALL data — both pre-printed and handwritten.${buildColumnHint()}
 
-Return ONLY a JSON object (no other text) with this structure:
-{
-  "summary": "brief description of what you see and legibility",
-  "columns": ["col1","col2",...],
-  "rows": [
-    {
-      "rowIdentifier": "Surname or Member No",
-      "values": { "ColumnName": "value" },
-      "confidence": "high|medium|low",
-      "notes": "any legibility issues"
-    }
-  ]
-}
+Return ONLY valid JSON, no markdown, no explanation. Use this exact structure:
+{"summary":"one sentence description","columns":["col1","col2"],"rows":[{"id":"Surname","v":{"Col":"val"},"c":"h","n":""}]}
 
-Important rules:
-- Extract ALL rows with any data, even partial
-- Empty cells = ""
-- Unreadable values = "?"
-- Numbers as strings e.g. "45"
-- Times as strings e.g. "11:30"
-- Include Service (ARMY/RAAF/RAN), Gender/Sex (M/F), and Age if visible — these are needed for pass/fail scoring`;
+Key: id=row identifier, v=values object, c=confidence (h/m/l), n=notes (empty string if none)
+- Empty cells: omit the key entirely
+- Unreadable: "?"
+- Numbers as strings: "45"
+- Times as strings: "11:30"
+- MUST include Service (ARMY/RAAF/RAN), Gender (M/F), Age in v{} if visible
+- Return ALL rows with any data`;
 
     blocks.push({ type:'text', text: prompt });
 
     // Use haiku — much faster than sonnet for vision tasks, less likely to timeout
     const payload = JSON.stringify({
       model: 'claude-haiku-4-5',
-      max_tokens: 3000,
+      max_tokens: 8000,
       messages: [{ role:'user', content: blocks }]
     });
     const headers = {
@@ -631,6 +620,7 @@ Important rules:
       const end = clean.lastIndexOf('}');
       if (start !== -1 && end !== -1) clean = clean.slice(start, end + 1);
       parsed = JSON.parse(clean);
+      parsed = normaliseRows(parsed);
     } catch(e) { throw new Error('Could not parse AI response: ' + raw.slice(0,300)); }
 
     detected = parsed;
@@ -721,7 +711,17 @@ function renderResults(data) {
   });
 }
 
-function computePassFail(row, cols) {
+function normaliseRows(data) {
+  // Handle compact format {id, v, c, n} or full format {rowIdentifier, values, confidence, notes}
+  if (!data.rows) return data;
+  data.rows = data.rows.map(r => ({
+    rowIdentifier: r.rowIdentifier || r.id || '',
+    values: r.values || r.v || {},
+    confidence: r.confidence || (r.c === 'h' ? 'high' : r.c === 'm' ? 'medium' : r.c === 'l' ? 'low' : r.c) || 'medium',
+    notes: r.notes || r.n || ''
+  }));
+  return data;
+}
   const v = row.values || {};
   // Find service, gender, age
   const service = v['Service'] || v['service'] || v['SERVICE'] || '';
