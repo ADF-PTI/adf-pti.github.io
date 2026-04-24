@@ -230,7 +230,18 @@ tr:hover td { background:rgba(255,255,255,.015); }
     <div class="action-row">
       <button class="btn btn-success" onclick="downloadExcel()">⬇ Download Updated Excel</button>
       <button class="btn btn-secondary" onclick="doScan()">↺ Re-scan</button>
+      <button class="btn btn-secondary" onclick="showDebug()" style="background:#2a3040;font-size:12px;">🔍 Debug Info</button>
     </div>
+  </div>
+</div>
+
+<div id="debugPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;overflow:auto;padding:24px;">
+  <div style="background:#161a23;border:1px solid #2a3040;border-radius:10px;max-width:900px;margin:0 auto;padding:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#e8c84a;letter-spacing:2px;">🔍 DEBUG INFO</div>
+      <button onclick="document.getElementById('debugPanel').style.display='none'" style="background:#e84a4a;border:none;color:white;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;">✕ Close</button>
+    </div>
+    <pre id="debugText" style="font-family:'DM Mono',monospace;font-size:11px;color:#e8eaf0;white-space:pre-wrap;line-height:1.6;overflow:auto;max-height:70vh;"></pre>
   </div>
 </div>
 
@@ -776,6 +787,75 @@ function updatePassFail(tr, ri) {
   const cols = detected.columns || Object.keys(row.values || {});
   const cell = document.getElementById(`pf-${ri}`);
   if (cell) cell.innerHTML = computePassFail(row, cols);
+}
+
+// ─────────────────────────────────────────────
+// DEBUG — shows what the app sees
+// ─────────────────────────────────────────────
+function showDebug() {
+  let out = '';
+
+  // 1. What AI detected
+  if (detected) {
+    out += '=== AI DETECTED ===\n';
+    out += `Columns: ${(detected.columns||[]).join(', ')}\n`;
+    out += `Rows: ${(detected.rows||[]).length}\n\n`;
+    (detected.rows||[]).slice(0,5).forEach((r,i) => {
+      out += `Row ${i+1}: id="${r.rowIdentifier}" conf=${r.confidence}\n`;
+      out += `  Values: ${JSON.stringify(r.values)}\n`;
+    });
+    if ((detected.rows||[]).length > 5) out += `  ... and ${detected.rows.length - 5} more rows\n`;
+  } else {
+    out += 'NO AI DATA — run a scan first\n';
+  }
+
+  // 2. Excel column map
+  if (excelWb) {
+    out += '\n=== EXCEL COLUMN HEADERS FOUND ===\n';
+    const ws = excelWb.Sheets[excelWb.SheetNames[0]];
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let hRow = range.s.r; hRow <= Math.min(range.s.r + 3, range.e.r); hRow++) {
+      out += `Row ${hRow+1}: `;
+      const vals = [];
+      for (let c = range.s.c; c <= range.e.c; c++) {
+        const cell = ws[XLSX.utils.encode_cell({ r: hRow, c })];
+        if (cell && cell.v) vals.push(`[${XLSX.utils.encode_col(c)}]="${cell.v}"`);
+      }
+      out += vals.join(', ') + '\n';
+    }
+
+    // 3. PMKeys column detection
+    out += '\n=== PMKEYS COLUMN SEARCH ===\n';
+    const colMap = {};
+    for (let hRow = range.s.r; hRow <= Math.min(range.s.r + 3, range.e.r); hRow++) {
+      for (let c = range.s.c; c <= range.e.c; c++) {
+        const cell = ws[XLSX.utils.encode_cell({ r: hRow, c })];
+        if (cell && cell.v) colMap[String(cell.v).toLowerCase().trim()] = c;
+      }
+    }
+    const pmkeysCol = colMap['pmkeys'] ?? colMap['pm keys'] ?? colMap['student no'] ?? colMap['student number'] ?? colMap['member no'] ?? colMap['service no'] ?? -1;
+    out += `Looking for: pmkeys, pm keys, student no, student number, member no, service no\n`;
+    out += `Found colMap keys: ${Object.keys(colMap).slice(0,20).join(', ')}\n`;
+    out += `PMKeys column index: ${pmkeysCol} (${pmkeysCol >= 0 ? XLSX.utils.encode_col(pmkeysCol) : 'NOT FOUND'})\n`;
+
+    // 4. First few PMKeys values
+    if (pmkeysCol >= 0) {
+      out += '\nFirst 5 PMKeys values in Excel:\n';
+      let count = 0;
+      for (let r = range.s.r; r <= range.e.r && count < 5; r++) {
+        const cell = ws[XLSX.utils.encode_cell({ r, c: pmkeysCol })];
+        if (cell && cell.v && /\d/.test(String(cell.v))) {
+          out += `  Row ${r+1}: "${cell.v}"\n`;
+          count++;
+        }
+      }
+    }
+  } else {
+    out += '\nNO EXCEL LOADED\n';
+  }
+
+  document.getElementById('debugText').textContent = out;
+  document.getElementById('debugPanel').style.display = 'block';
 }
 
 // ─────────────────────────────────────────────
