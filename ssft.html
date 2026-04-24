@@ -906,22 +906,37 @@ Rules:
 
     let response;
     try {
-      response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': userApiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 4000,
-          messages: [{ role: 'user', content: contentBlocks }]
-        })
+      // Try direct call first (works if browser allows it)
+      const apiPayload = JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: contentBlocks }]
       });
+
+      const directHeaders = {
+        'Content-Type': 'application/json',
+        'x-api-key': userApiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      };
+
+      try {
+        response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: directHeaders,
+          body: apiPayload
+        });
+      } catch(directErr) {
+        // Fallback: use a CORS proxy
+        document.getElementById('processingText').textContent = 'Connecting via proxy...';
+        response = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.anthropic.com/v1/messages'), {
+          method: 'POST',
+          headers: directHeaders,
+          body: apiPayload
+        });
+      }
     } catch(fetchErr) {
-      throw new Error('Network error — make sure you are accessing this page from a web server (e.g. adf-pti.github.io) and not opening the file directly from your computer. Details: ' + fetchErr.message);
+      throw new Error('Could not connect to AI service. Please check your API key is correct and try again. (' + fetchErr.message + ')');
     }
 
     clearInterval(ticker);
