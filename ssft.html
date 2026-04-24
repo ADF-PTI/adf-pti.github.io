@@ -778,7 +778,7 @@ function updatePassFail(tr, ri) {
 }
 
 // ─────────────────────────────────────────────
-// DOWNLOAD EXCEL
+// DOWNLOAD EXCEL — surgical cell updates only
 // ─────────────────────────────────────────────
 function downloadExcel() {
   if (!detected || !detected.rows) { toast('No results to download', 'err'); return; }
@@ -787,45 +787,147 @@ function downloadExcel() {
   const cols = detected.columns || (rows.length > 0 ? Object.keys(rows[0].values || {}) : []);
 
   if (excelWb && excelData) {
-    // Merge into existing workbook
+    // ── Work directly on the worksheet to preserve ALL formatting and structure ──
     const sheetName = excelWb.SheetNames[0];
-    const existing = XLSX.utils.sheet_to_json(excelWb.Sheets[sheetName], { defval:'' });
+    const ws = excelWb.Sheets[sheetName];
+    const ref = ws['!ref'];
+    const range = XLSX.utils.decode_range(ref);
+
+    // Read header row — find which Excel column index maps to which column name
+    const headerRow = range.s.r; // usually row 0
+    const colMap = {}; // colName (lowercase) → Excel col index
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cell = ws[XLSX.utils.encode_cell({ r: headerRow, c })];
+      if (cell && cell.v) colMap[String(cell.v).toLowerCase().trim()] = c;
+    }
+
+    // Also try second header row if first row is a title
+    if (Object.keys(colMap).length < 3) {
+      for (let c = range.s.c; c <= range.e.c; c++) {
+        const cell = ws[XLSX.utils.encode_cell({ r: headerRow + 1, c })];
+        if (cell && cell.v) colMap[String(cell.v).toLowerCase().trim()] = c;
+      }
+    }
+
+    // Build a lookup: surname (lowercase) → Excel row index
+    // Check multiple columns for surname/name
+    const nameColIdx = colMap['surname'] ?? colMap['name'] ?? colMap['given name'] ?? colMap['lastname'] ?? -1;
+    const memberColIdx = colMap['member no'] ?? colMap['member number'] ?? colMap['student no'] ?? colMap['student number'] ?? colMap['pmkeys'] ?? -1;
+
+    // Build row lookup map from Excel data
+    const excelRowMap = {}; // key → row index in sheet
+    const dataStartRow = headerRow + 1;
+    for (let r = dataStartRow; r <= range.e.r; r++) {
+      // Try member number first
+      if (memberColIdx >= 0) {
+        const cell = ws[XLSX.utils.encode_cell({ r, c: memberColIdx })];
+        if (cell && cell.v) excelRowMap[String(cell.v).toLowerCase().trim()] = r;
+      }
+      // Also index by surname
+      if (nameColIdx >= 0) {
+        const cell = ws[XLSX.utils.encode_cell({ r, c: nameColIdx })];
+        if (cell && cell.v) excelRowMap[String(cell.v).toLowerCase().trim()] = r;
+      }
+    }
+
+    // Result column keywords → match to Excel header
+    const RESULT_KEYWORDS = [
+      'push', 'hang', 'chin', 'sit', 'plank', 'run', 'walk',
+      'swim', 'beep', 'msft', 'a3', 'attend', 'result', 'ssft', 'grade', 'level'
+    ];
+
+    function findExcelCol(detectedColName) {
+      const dl = detectedColName.toLowerCase().trim();
+      // Exact match first
+      if (colMap[dl] !== undefined) return colMap[dl];
+      // Partial match
+      for (const [hdr, idx] of Object.entries(colMap)) {
+        if (dl.includes(hdr) || hdr.includes(dl)) return idx;
+        // keyword matching
+        for (const kw of RESULT_KEYWORDS) {
+          if (dl.includes(kw) && hdr.includes(kw)) return idx;
+        }
+      }
+      return -1;
+    }
+
+    function findExcelRow(det) {
+      const id = (det.rowIdentifier || '').toLowerCase().trim();
+      const v = det.values || {};
+      // Try member number from values
+      const memberVal = (v['Member No'] || v['member no'] || v['Student No'] || v['PMKeys'] || '').toLowerCase().trim();
+      // Try surname from values
+      const surnameVal = (v['Surname'] || v['surname'] || v['Name'] || '').toLowerCase().trim();
+
+      if (memberVal && excelRowMap[memberVal] !== undefined) return excelRowMap[memberVal];
+      if (surnameVal && excelRowMap[surnameVal] !== undefined) return excelRowMap[surnameVal];
+      if (id && excelRowMap[id] !== undefined) return excelRowMap[id];
+      // Try partial match on id
+      const idParts = id.split(/[\s,]+/);
+      for (const part of idParts) {
+        if (part.length < 3) continue;
+        const match = Object.keys(excelRowMap).find(k => k.includes(part) || part.includes(k));
+        if (match) return excelRowMap[match];
+      }
+      return -1;
+    }
+
+    let updated = 0, notFound = 0;
 
     rows.forEach(det => {
-      const id = (det.rowIdentifier || '').toLowerCase().trim();
-      let matchIdx = -1;
-      if (id) {
-        matchIdx = existing.findIndex(r =>
-          Object.values(r).some(v => String(v).toLowerCase().includes(id.split(' ')[0]))
-        );
-      }
-      // Add pass/fail to values
-      const pfVal = computePassFailText(det, cols);
-      const enriched = { ...(det.values || {}), 'SSFT Result': pfVal };
+      const excelRow = findExcelRow(det);
+      if (excelRow < 0) { notFound++; return; }
 
-      if (matchIdx >= 0) Object.assign(existing[matchIdx], enriched);
-      else existing.push(enriched);
+      const v = det.values || {};
+      // Only write result columns — never touch identity/info columns
+      Object.entries(v).forEach(([detCol, val]) => {
+        if (!val || val === '' || val === '?') return;
+        const detColL = detCol.toLowerCase();
+        // Skip identity/info columns
+        const skipWords = ['surname','name','rank','service','gender','sex','age','member','student','division','pmkeys','year','unit'];
+        if (skipWords.some(s => detColL.includes(s))) return;
+        // Skip if not a result keyword
+        const isResult = RESULT_KEYWORDS.some(kw => detColL.includes(kw));
+        if (!isResult) return;
+
+        const excelCol = findExcelCol(detCol);
+        if (excelCol < 0) return;
+
+        const cellAddr = XLSX.utils.encode_cell({ r: excelRow, c: excelCol });
+        ws[cellAddr] = { v: val, t: 's' };
+      });
+
+      // Write SSFT Result if there's a result column
+      const pfText = computePassFailText(det, cols);
+      if (pfText !== 'Pending') {
+        const resultCol = colMap['ssft result'] ?? colMap['result'] ?? colMap['grade'] ?? colMap['fit grade'] ?? -1;
+        if (resultCol >= 0) {
+          const cellAddr = XLSX.utils.encode_cell({ r: excelRow, c: resultCol });
+          ws[cellAddr] = { v: pfText, t: 's' };
+        }
+      }
+      updated++;
     });
 
-    excelWb.Sheets[sheetName] = XLSX.utils.json_to_sheet(existing);
     XLSX.writeFile(excelWb, 'SSFT_Updated.xlsx');
+    toast(`✓ Updated ${updated} rows${notFound > 0 ? ` (${notFound} not matched)` : ''}`, 'ok');
+
   } else {
-    // New workbook from detected data
+    // No master Excel — create new sheet from detected data
     const out = rows.map(r => {
       const pfVal = computePassFailText(r, cols);
-      const obj = { Entry: r.rowIdentifier || '', Confidence: r.confidence || '' };
+      const obj = { Entry: r.rowIdentifier || '' };
       cols.forEach(c => { obj[c] = (r.values && r.values[c]) || ''; });
       obj['SSFT Result'] = pfVal;
-      obj['Notes'] = r.notes || '';
       return obj;
     });
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(out), 'SSFT Results');
     XLSX.writeFile(wb, 'SSFT_Results.xlsx');
+    toast('✓ Excel downloaded!', 'ok');
   }
 
   setStep(4);
-  toast('✓ Excel downloaded!', 'ok');
 }
 
 function computePassFailText(row, cols) {
