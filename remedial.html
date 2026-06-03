@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ADF PTI — Swim Program Builder</title>
+<title>ADF PTI — Remedial PT Planner</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1a1f16;--ink2:#242920;--red:#c8392b;--red2:#e05a40;--orange:#e8a020;--cream:#f5f2eb;--sand:#ede8dc;--card:#ffffff;--border:#d0c8b8;--muted:#7a7060;--text:#1a1a16;--text2:#55504a;--radius:4px;}
+:root{--ink:#1a1f16;--ink2:#242920;--red:#c8392b;--red2:#e05a40;--orange:#e8a020;--green:#2a6b1a;--cream:#f5f2eb;--sand:#ede8dc;--card:#ffffff;--border:#d0c8b8;--muted:#7a7060;--text:#1a1a16;--text2:#55504a;--radius:4px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
 header{background:var(--ink);color:#fff;padding:0 2rem;display:flex;align-items:stretch;border-bottom:3px solid var(--red);}
@@ -20,7 +20,7 @@ header h1 span{color:var(--red2);}
 .hbadge{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:700;}
 .hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;transition:background .15s;}
 .hlink:hover{background:rgba(255,255,255,0.12);}
-.layout{display:grid;grid-template-columns:400px 1fr;min-height:calc(100vh - 72px);}
+.layout{display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - 72px);}
 .sidebar{background:var(--sand);border-right:1px solid var(--border);padding:1.5rem;overflow-y:auto;}
 .slabel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.75rem;}
@@ -30,6 +30,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);box
 textarea{resize:vertical;min-height:60px;}
 .fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
 .fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:.75rem;}
+.time-row{display:grid;grid-template-columns:1fr 1fr 20px;gap:6px;align-items:center;}
+.time-sep{font-size:16px;font-weight:700;color:var(--muted);text-align:center;}
+.fail-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem;}
+.fail-chip{border:1px solid var(--border);border-radius:var(--radius);padding:5px 12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:var(--card);color:var(--text2);transition:all .15s;}
+.fail-chip:hover,.fail-chip.sel{border-color:var(--red);background:#fdf0ee;color:var(--red);}
 .btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:.75rem;}
 .btn-gen:hover{background:var(--red);}
 .btn-gen:disabled{background:#999;cursor:not-allowed;}
@@ -44,14 +49,21 @@ textarea{resize:vertical;min-height:60px;}
 .rpt-meta{font-size:12px;color:var(--muted);margin-top:4px;}
 .btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
 .btn-sec:hover{background:var(--sand);}
-.stats-row{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
+.stats-row{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;}
 .stat-item label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:3px;}
 .stat-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--orange);}
 .ai-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem;}
 .ai-section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
 .ai-section-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
 .ai-badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:2px;font-weight:700;margin-bottom:.75rem;}
-.ai-output{font-size:13.5px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:'Barlow',sans-serif;}
+.ai-output{font-size:13.5px;line-height:1.7;color:var(--text);font-family:'Barlow',sans-serif;}
+.ai-output h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin:1.5rem 0 .5rem;padding-bottom:4px;border-bottom:2px solid var(--red);}
+.ai-output h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin:1rem 0 .4rem;}
+.ai-output p{margin-bottom:.6rem;}
+.ai-output ul{margin:.4rem 0 .8rem 0;padding:0;list-style:none;}
+.ai-output ul li{padding:4px 0 4px 16px;position:relative;border-bottom:1px solid rgba(0,0,0,.04);}
+.ai-output ul li::before{content:'▸';position:absolute;left:0;color:var(--red);font-size:10px;top:6px;}
+.ai-output strong{font-weight:700;color:var(--ink);}
 .ai-output.streaming::after{content:'▋';animation:blink .7s infinite;color:var(--red);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .loading-strip{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:.75rem;display:none;}
@@ -66,8 +78,8 @@ textarea{resize:vertical;min-height:60px;}
   <div class="hflag"></div>
   <div class="htext">
     <div class="hey">Australian Defence Force</div>
-    <h1>PTI <span>Swim</span> Program Builder</h1>
-    <div class="hsub">AI-Powered Swimming Program Generator — All Levels & Standards</div>
+    <h1>PTI <span>Remedial PT</span> Planner</h1>
+    <div class="hsub">AI-Powered PFA Remedial Program Generator — ADF Standards by Age & Sex</div>
   </div>
   <div class="hright">
     <a class="hlink" href="index.html">← Back to Tools</a>
@@ -77,129 +89,182 @@ textarea{resize:vertical;min-height:60px;}
 <div class="layout">
   <div class="sidebar">
     <div class="slabel">Member Details</div>
+    <div class="fgrid3">
+      <div class="fg"><label>Name</label><input type="text" id="name" placeholder="e.g. PTE Jones"></div>
+      <div class="fg"><label>Service</label><select id="service"><option>Army</option><option>Navy</option><option>RAAF</option></select></div>
+      <div class="fg"><label>Sex</label><select id="sex"><option>Male</option><option>Female</option></select></div>
+    </div>
     <div class="fgrid2">
-      <div class="fg"><label>Name</label><input type="text" id="name" placeholder="e.g. AB Jones"></div>
-      <div class="fg"><label>Unit / Service</label><input type="text" id="unit" placeholder="e.g. 2 CDG"></div>
+      <div class="fg"><label>Age</label><input type="number" id="age" placeholder="e.g. 28" min="17" max="65"></div>
+      <div class="fg"><label>Unit</label><input type="text" id="unit" placeholder="e.g. 6 RAR"></div>
     </div>
 
-    <div class="slabel">Goal</div>
-    <div class="fg">
-      <select id="goal">
-        <option>PFA Swim Standard</option>
-        <option>Survival Swimming</option>
-        <option>CDG Gate Test Preparation</option>
-        <option>Navy Clearance Diver Standard</option>
-        <option>Army Work Diver Standard</option>
-        <option>General Swim Fitness</option>
-        <option>Non-swimmer to Competent</option>
-        <option>Water Confidence Building</option>
-      </select>
+    <div class="slabel">Failed Components</div>
+    <div class="fail-chips" id="failChips">
+      <span class="fail-chip" onclick="toggleFail(this)">Run / BEEP</span>
+      <span class="fail-chip" onclick="toggleFail(this)">Push-ups</span>
+      <span class="fail-chip" onclick="toggleFail(this)">Sit-ups</span>
     </div>
 
-    <div class="slabel">Current Ability & Setup</div>
-    <div class="fg"><label>Current Swim Ability</label>
-      <select id="ability">
-        <option>Non-swimmer / fear of water</option>
-        <option>Can complete 50m freestyle</option>
-        <option>Can complete 200m (slow)</option>
-        <option selected>Can complete 400m</option>
-        <option>Competent — 400m sub 12 min</option>
-        <option>Strong swimmer — sub 10 min 400m</option>
-      </select>
+    <div class="slabel">PFA Scores</div>
+    <div class="fg"><label>2.4 km Run Time (min : sec)</label>
+      <div class="time-row">
+        <input type="number" id="runmin" placeholder="Min">
+        <input type="number" id="runsec" placeholder="Sec" min="0" max="59">
+        <div class="time-sep">:</div>
+      </div>
     </div>
     <div class="fgrid3">
-      <div class="fg"><label>Pool Size</label>
-        <select id="pool"><option>25m pool</option><option selected>50m pool</option><option>Open water</option><option>Variable</option></select>
-      </div>
-      <div class="fg"><label>Sessions/Wk</label>
-        <select id="sessions"><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
-      </div>
+      <div class="fg"><label>BEEP Level</label><input type="number" id="beep" placeholder="e.g. 6.5" step="0.1"></div>
+      <div class="fg"><label>Push-ups</label><input type="number" id="pushups" placeholder="e.g. 18"></div>
+      <div class="fg"><label>Sit-ups/2min</label><input type="number" id="situps" placeholder="e.g. 32"></div>
+    </div>
+
+    <div class="slabel">Remedial Program Setup</div>
+    <div class="fgrid3">
       <div class="fg"><label>Duration (wks)</label>
         <select id="weeks"><option>4</option><option selected>8</option><option>12</option><option>16</option></select>
       </div>
-    </div>
-    <div class="fgrid2">
-      <div class="fg"><label>Uniform Swims Required</label>
-        <select id="uniform">
-          <option>No — pool only</option>
-          <option>Yes — overalls / EPE</option>
-          <option>Yes — full kit + boots</option>
-        </select>
+      <div class="fg"><label>Days/Wk</label>
+        <select id="days"><option>3</option><option selected>4</option><option>5</option></select>
       </div>
-      <div class="fg"><label>Sex</label>
-        <select id="sex"><option>Male</option><option>Female</option></select>
+      <div class="fg"><label>Med Restrictions</label>
+        <select id="med"><option>None — full training</option><option>Light restrictions</option><option>Moderate restrictions</option></select>
       </div>
     </div>
-    <div class="fg"><label>Notes (dive requirements, breath hold, gate tests, fear of water)</label>
-      <textarea id="notes" placeholder="e.g. Must include underwater swim. CDG gate 3 focus. Strong runner but weak swimmer. Fear of deep water."></textarea>
+    <div class="fg"><label>Notes (reason for fail, history, morale, injuries)</label>
+      <textarea id="notes" placeholder="e.g. First failure, been in 8 years. Lower back niggle. Needs morale support and structured plan."></textarea>
     </div>
-    <button class="btn-gen" id="genBtn" onclick="generate()">Generate Swim Program</button>
+    <button class="btn-gen" id="genBtn" onclick="generate()">Generate Remedial Plan</button>
   </div>
 
   <div class="output">
     <div class="empty" id="emptyState">
-      <div class="empty-icon">🏊</div>
-      <h2>No Program Generated</h2>
-      <p>Enter your details and press<br>Generate Swim Program.</p>
+      <div class="empty-icon">📊</div>
+      <h2>No Plan Generated</h2>
+      <p>Enter PFA scores and failed components,<br>then press Generate Remedial Plan.</p>
     </div>
     <div id="reportArea" style="display:none;"></div>
   </div>
 </div>
 
 <script>
+function toggleFail(el){el.classList.toggle('sel');}
+function getFailedComp(){return Array.from(document.querySelectorAll('.fail-chip.sel')).map(e=>e.textContent).join(', ')||'Not specified';}
 function v(id){return document.getElementById(id).value;}
+function toMMSS(min,sec){const m=parseInt(min)||0;const s=parseInt(sec)||0;if(!m&&!s)return'Not provided';return m+':'+(s.toString().padStart(2,'0'));}
+
 async function generate(){
   const btn=document.getElementById('genBtn');
   btn.disabled=true;btn.textContent='Generating...';
   const now=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const failed=getFailedComp();
+  const runTime=toMMSS(v('runmin'),v('runsec'));
   document.getElementById('emptyState').style.display='none';
   const ra=document.getElementById('reportArea');
   ra.style.display='block';
   ra.innerHTML=`
     <div class="rpt-header">
-      <div><div class="rpt-title">Swim <span>Program</span></div><div class="rpt-meta">Generated ${now} — ${v('name')||'Member'} — ${v('weeks')} weeks — ${v('goal')}</div></div>
+      <div><div class="rpt-title">Remedial <span>PT Plan</span></div><div class="rpt-meta">Generated ${now} — ${v('name')||'Member'} — ${v('service')} — ${v('sex')}, age ${v('age')||'N/A'}</div></div>
       <div style="display:flex;gap:8px;">
         <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
-        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='Generate Swim Program';">Reset</button>
+        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='Generate Remedial Plan';">Reset</button>
       </div>
     </div>
     <div class="stats-row">
-      <div class="stat-item"><label>Goal</label><div class="stat-val" style="font-size:13px;">${v('goal')}</div></div>
-      <div class="stat-item"><label>Current Ability</label><div class="stat-val" style="font-size:12px;">${v('ability').split(' ')[0]+'...'}</div></div>
-      <div class="stat-item"><label>Duration</label><div class="stat-val">${v('weeks')} wks</div></div>
-      <div class="stat-item"><label>Pool</label><div class="stat-val">${v('pool')}</div></div>
+      <div class="stat-item"><label>Member</label><div class="stat-val" style="font-size:13px;">${v('name')||'N/A'}</div></div>
+      <div class="stat-item"><label>Service / Sex / Age</label><div class="stat-val" style="font-size:13px;">${v('service')} ${v('sex')} ${v('age')||'?'}</div></div>
+      <div class="stat-item"><label>Failed Components</label><div class="stat-val" style="font-size:12px;">${failed}</div></div>
+      <div class="stat-item"><label>Run Time</label><div class="stat-val">${runTime}</div></div>
+      <div class="stat-item"><label>Program</label><div class="stat-val">${v('weeks')} wks</div></div>
     </div>
     <div class="ai-section">
-      <div class="ai-section-title">AI-Generated Swim Program</div>
-      <span class="ai-badge">AI Generated</span>
+      <div class="ai-section-title">AI-Generated Remedial Plan</div>
+      <span class="ai-badge">AI Generated — ADF PFA Standards</span>
       <div class="loading-strip" id="loadStrip"><div class="loading-fill"></div></div>
       <div class="ai-output streaming" id="aiOut"></div>
     </div>
-    <div class="disclaimer"><strong>Safety Notice:</strong> All swim training must be conducted with a qualified lifeguard present or buddy system in place. Never train breath-holding techniques alone. Hyperventilation before underwater swimming is extremely dangerous.</div>`;
+    <div class="disclaimer"><strong>Disclaimer:</strong> This remedial plan is a guide only. Ensure medical clearance is obtained before commencing. All remedial PT must comply with ADF administrative and welfare policies. Document all sessions and progress formally.</div>`;
 
-  const prompt=`You are an expert ADF Physical Training Instructor with specialist swim training knowledge. Generate a detailed swim program.
+  const prompt=`You are an expert ADF Physical Training Instructor specialising in remedial PT and PFA rehabilitation.
 
-Member: ${v('name')||'Member'} | Unit: ${v('unit')||'N/A'} | Sex: ${v('sex')}
-Goal: ${v('goal')}
-Current ability: ${v('ability')}
-Pool: ${v('pool')} | Sessions/week: ${v('sessions')} | Duration: ${v('weeks')} weeks
-Uniform swims required: ${v('uniform')}
+Member: ${v('name')||'Member'} | Service: ${v('service')} | Sex: ${v('sex')} | Age: ${v('age')||'N/A'} | Unit: ${v('unit')||'N/A'}
+Failed PFA components: ${failed}
+2.4 km run time: ${runTime}
+BEEP level: ${v('beep')||'Not provided'}
+Push-ups: ${v('pushups')||'Not provided'}
+Sit-ups/2 min: ${v('situps')||'Not provided'}
+Program duration: ${v('weeks')} weeks | Training days/week: ${v('days')}
+Medical restrictions: ${v('med')}
 Notes: ${v('notes')||'None'}
 
 Format with:
-1. PROGRAM OVERVIEW — goal, progression approach, key focus areas
-2. TARGET STANDARDS — specific ADF swim standards relevant to this goal (times, distances)
-3. TECHNIQUE FOCUS — stroke efficiency, survival swimming, uniform swimming adaptation if relevant
-4. WEEK-BY-WEEK PLAN — every session: set structure, distances, stroke type, rest intervals, target times
-5. SPECIAL SKILLS PROGRESSION — breath hold, underwater swim, uniform swimming, water confidence (where relevant)
-6. GATE TEST / ASSESSMENT PREP — specific drills for selection swim tests if applicable
-7. SAFETY PROTOCOLS — buddy system requirements, hyperventilation risks, depth rules, PTI supervision requirements
+1. PFA STANDARD REFERENCE — exact pass standards for ${v('service')}, ${v('sex')}, age ${v('age')||'N/A'} for all 4 components
+2. GAP ANALYSIS — current vs required, exact deficit in seconds/reps for each failing component
+3. PRIORITY ORDER — which to address first and why
+4. WEEKLY TRAINING PLAN — every session for every week (exercises, sets, reps/time, notes; include mandatory ADF morning PT as background)
+5. COMPONENT-SPECIFIC DRILLS — targeted exercises and progressions for each failing component
+6. WEEKLY MILESTONES — check-in targets at each week
+7. RE-TEST PREPARATION — final 2-week taper and test-day strategy
+8. PTI ADMIN NOTES — how to document, brief, and support this member. Welfare considerations, mandatory reporting steps.
 
-Be specific with distances, times and intervals. Reference ADF standards. Emphasise safety throughout.`;
+Use exact ADF standards. Be specific and compassionate — remedial PT is a welfare matter.`;
 
-  await callAI(prompt,'aiOut','loadStrip','genBtn','Generate Swim Program');
+  await callAI(prompt,'aiOut','loadStrip','genBtn','Generate Remedial Plan');
 }
-async function callAI(prompt,outputId,loadStripId,btnId,btnLabel){const aiOut=document.getElementById(outputId);const loadStrip=document.getElementById(loadStripId);const btn=document.getElementById(btnId);loadStrip.style.display="block";try{const response=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true","x-api-key":(()=>{const a='sk-ant-a'+'pi03-wIgy5q_lpc';const b='aF8J-iKAOJe4ncIbQMJqLZ6xXl';const c='fU_V65Teebj5T4Pc4szbRnOm2yPCN4k1Mp-6YF6c7tOrSZygEg-LhESzQAA';return a+b+c;})()},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:2000,stream:true,messages:[{role:"user",content:prompt}]})});const reader=response.body.getReader();const decoder=new TextDecoder();let buffer="";while(true){const{done,value}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});const lines=buffer.split("\n");buffer=lines.pop();for(const line of lines){if(line.startsWith("data: ")){const data=line.slice(6);if(data==="[DONE]")continue;try{const p=JSON.parse(data);if(p.type==="content_block_delta"&&p.delta?.text){aiOut.textContent+=p.delta.text;aiOut.scrollIntoView({behavior:"smooth",block:"end"});}}catch(e){}}}}}catch(err){aiOut.textContent="Error: "+err.message;}aiOut.classList.remove("streaming");loadStrip.style.display="none";btn.disabled=false;btn.textContent=btnLabel;}
+async function callAI(prompt,outputId,loadStripId,btnId,btnLabel){
+  const aiOut=document.getElementById(outputId);
+  const loadStrip=document.getElementById(loadStripId);
+  const btn=document.getElementById(btnId);
+  loadStrip.style.display='block';
+  let fullText='';
+  aiOut.innerHTML='<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':(()=>{const a='sk-ant-a'+'pi03-wIgy5q_lpc';const b='aF8J-iKAOJe4ncIbQMJqLZ6xXl';const c='fU_V65Teebj5T4Pc4szbRnOm2yPCN4k1Mp-6YF6c7tOrSZygEg-LhESzQAA';return a+b+c;})()},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,stream:true,messages:[{role:'user',content:prompt}]})});
+    const reader=response.body.getReader();const decoder=new TextDecoder();let buffer='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buffer+=decoder.decode(value,{stream:true});
+      const lines=buffer.split('\n');buffer=lines.pop();
+      for(const line of lines){
+        if(line.startsWith('data: ')){const data=line.slice(6);if(data==='[DONE]')continue;
+          try{const p=JSON.parse(data);if(p.type==='content_block_delta'&&p.delta?.text){
+            fullText+=p.delta.text;
+            aiOut.innerHTML=renderMD(fullText)+'<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
+            aiOut.scrollIntoView({behavior:'smooth',block:'end'});
+          }}catch(e){}
+        }
+      }
+    }
+  }catch(err){aiOut.innerHTML='<p style="color:var(--red)">Error: '+err.message+'</p>';}
+  aiOut.innerHTML=renderMD(fullText);
+  aiOut.classList.remove('streaming');
+  loadStrip.style.display='none';
+  btn.disabled=false;btn.textContent=btnLabel;
+}
+function renderMD(t){
+  const lines=t.split('\n');
+  let html='';let inList=false;
+  for(let i=0;i<lines.length;i++){
+    let l=lines[i];
+    if(l.match(/^###\s/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/^###\s/,''))+'</h3>';continue;}
+    if(l.match(/^##\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^##\s/,''))+'</h2>';continue;}
+    if(l.match(/^#\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^#\s/,''))+'</h2>';continue;}
+    if(l.match(/^\d+\.\s+[A-Z][A-Z\s\/&():-]{3,}/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^\d+\.\s+/,''))+'</h2>';continue;}
+    if(l.match(/^[-*]\s/)){if(!inList){html+='<ul>';inList=true;}html+='<li>'+inlineMD(l.replace(/^[-*]\s/,''))+'</li>';continue;}
+    if(l.trim()===''){if(inList){html+='</ul>';inList=false;}continue;}
+    if(l.match(/^\*\*[^*]+\*\*:?\s*$/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/\*\*/g,'').replace(/:$/,''))+'</h3>';continue;}
+    if(inList){html+='</ul>';inList=false;}
+    html+='<p>'+inlineMD(l)+'</p>';
+  }
+  if(inList)html+='</ul>';
+  return html;
+}
+function inlineMD(t){
+  return esc(t).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>');
+}
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
 </script>
 </body>
 </html>
