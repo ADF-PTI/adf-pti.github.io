@@ -52,7 +52,14 @@ textarea{resize:vertical;min-height:70px;}
 .ai-section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
 .ai-section-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
 .ai-badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:2px;font-weight:700;margin-bottom:.75rem;}
-.ai-output{font-size:13.5px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:'Barlow',sans-serif;}
+.ai-output{font-size:13.5px;line-height:1.7;color:var(--text);font-family:'Barlow',sans-serif;}
+.ai-output h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin:1.5rem 0 .5rem;padding-bottom:4px;border-bottom:2px solid var(--red);}
+.ai-output h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin:1rem 0 .4rem;}
+.ai-output p{margin-bottom:.6rem;}
+.ai-output ul{margin:.4rem 0 .8rem 0;padding:0;list-style:none;}
+.ai-output ul li{padding:4px 0 4px 16px;position:relative;border-bottom:1px solid rgba(0,0,0,.04);}
+.ai-output ul li::before{content:'▸';position:absolute;left:0;color:var(--red);font-size:10px;top:6px;}
+.ai-output strong{font-weight:700;color:var(--ink);}
 .ai-output.streaming::after{content:'▋';animation:blink .7s infinite;color:var(--red);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .loading-strip{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:.75rem;display:none;}
@@ -244,7 +251,59 @@ Emphasise safety throughout. Use evidence-based principles appropriate for milit
 
   await callAI(prompt,'aiOut','loadStrip','genBtn','Generate Rehab Program');
 }
-async function callAI(prompt,outputId,loadStripId,btnId,btnLabel){const aiOut=document.getElementById(outputId);const loadStrip=document.getElementById(loadStripId);const btn=document.getElementById(btnId);loadStrip.style.display="block";try{const response=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true","x-api-key":(()=>{const a='sk-ant-a'+'pi03-wIgy5q_lpc';const b='aF8J-iKAOJe4ncIbQMJqLZ6xXl';const c='fU_V65Teebj5T4Pc4szbRnOm2yPCN4k1Mp-6YF6c7tOrSZygEg-LhESzQAA';return a+b+c;})()},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:2000,stream:true,messages:[{role:"user",content:prompt}]})});const reader=response.body.getReader();const decoder=new TextDecoder();let buffer="";while(true){const{done,value}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});const lines=buffer.split("\n");buffer=lines.pop();for(const line of lines){if(line.startsWith("data: ")){const data=line.slice(6);if(data==="[DONE]")continue;try{const p=JSON.parse(data);if(p.type==="content_block_delta"&&p.delta?.text){aiOut.textContent+=p.delta.text;aiOut.scrollIntoView({behavior:"smooth",block:"end"});}}catch(e){}}}}}catch(err){aiOut.textContent="Error: "+err.message;}aiOut.classList.remove("streaming");loadStrip.style.display="none";btn.disabled=false;btn.textContent=btnLabel;}
+async function callAI(prompt,outputId,loadStripId,btnId,btnLabel){
+  const aiOut=document.getElementById(outputId);
+  const loadStrip=document.getElementById(loadStripId);
+  const btn=document.getElementById(btnId);
+  loadStrip.style.display='block';
+  let fullText='';
+  aiOut.innerHTML='<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':(()=>{const a='sk-ant-a'+'pi03-wIgy5q_lpc';const b='aF8J-iKAOJe4ncIbQMJqLZ6xXl';const c='fU_V65Teebj5T4Pc4szbRnOm2yPCN4k1Mp-6YF6c7tOrSZygEg-LhESzQAA';return a+b+c;})()},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,stream:true,messages:[{role:'user',content:prompt}]})});
+    const reader=response.body.getReader();const decoder=new TextDecoder();let buffer='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buffer+=decoder.decode(value,{stream:true});
+      const lines=buffer.split('\n');buffer=lines.pop();
+      for(const line of lines){
+        if(line.startsWith('data: ')){const data=line.slice(6);if(data==='[DONE]')continue;
+          try{const p=JSON.parse(data);if(p.type==='content_block_delta'&&p.delta?.text){
+            fullText+=p.delta.text;
+            aiOut.innerHTML=renderMD(fullText)+'<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
+            aiOut.scrollIntoView({behavior:'smooth',block:'end'});
+          }}catch(e){}
+        }
+      }
+    }
+  }catch(err){aiOut.innerHTML='<p style="color:var(--red)">Error: '+err.message+'</p>';}
+  aiOut.innerHTML=renderMD(fullText);
+  aiOut.classList.remove('streaming');
+  loadStrip.style.display='none';
+  btn.disabled=false;btn.textContent=btnLabel;
+}
+function renderMD(t){
+  const lines=t.split('\n');
+  let html='';let inList=false;
+  for(let i=0;i<lines.length;i++){
+    let l=lines[i];
+    if(l.match(/^###\s/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/^###\s/,''))+'</h3>';continue;}
+    if(l.match(/^##\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^##\s/,''))+'</h2>';continue;}
+    if(l.match(/^#\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^#\s/,''))+'</h2>';continue;}
+    if(l.match(/^\d+\.\s+[A-Z][A-Z\s\/&():-]{3,}/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^\d+\.\s+/,''))+'</h2>';continue;}
+    if(l.match(/^[-*]\s/)){if(!inList){html+='<ul>';inList=true;}html+='<li>'+inlineMD(l.replace(/^[-*]\s/,''))+'</li>';continue;}
+    if(l.trim()===''){if(inList){html+='</ul>';inList=false;}continue;}
+    if(l.match(/^\*\*[^*]+\*\*:?\s*$/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/\*\*/g,'').replace(/:$/,''))+'</h3>';continue;}
+    if(inList){html+='</ul>';inList=false;}
+    html+='<p>'+inlineMD(l)+'</p>';
+  }
+  if(inList)html+='</ul>';
+  return html;
+}
+function inlineMD(t){
+  return esc(t).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>');
+}
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
 </script>
 </body>
 </html>
