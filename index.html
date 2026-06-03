@@ -3,674 +3,513 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ADF PTI // Tool Suite</title>
+<title>ADF PTI Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
+:root {
+  --bg: #0a0c09;
+  --bg2: #111410;
+  --bg3: #181c14;
+  --panel: #1a1f15;
+  --border: #2a3022;
+  --border2: #3a4530;
+  --accent: #c8d84a;
+  --accent2: #a0b030;
+  --accent3: #6a7820;
+  --text: #e8eade;
+  --text2: #8a9478;
+  --text3: #4a5240;
+  --red: #c84a3a;
+  --tan: #c8a878;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
 
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0c07;color:#c8c4a0;font-family:'Barlow Condensed',sans-serif;overflow-x:hidden;cursor:none}
+/* PASSWORD SCREEN */
+#pwScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.pw-box{width:100%;max-width:400px;padding:2rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin:1rem;}
+.pw-stripe{width:100%;height:4px;background:var(--accent);border-radius:2px 2px 0 0;margin-bottom:2rem;}
+.pw-eyebrow{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:.5rem;}
+.pw-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--text);margin-bottom:.25rem;}
+.pw-title span{color:var(--accent);}
+.pw-sub{font-size:12px;color:var(--text2);margin-bottom:2rem;font-weight:300;}
+.pw-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:.5rem;display:block;}
+.pw-input-wrap{display:flex;gap:0;margin-bottom:.75rem;border:1px solid var(--border2);border-radius:4px;overflow:hidden;}
+.pw-input{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--bg3);border:none;padding:12px 14px;color:var(--text);flex:1;letter-spacing:2px;}
+.pw-input:focus{outline:none;}
+.pw-toggle{background:var(--bg3);border:none;border-left:1px solid var(--border);padding:12px 14px;color:var(--text3);cursor:pointer;font-size:13px;transition:color .15s;}
+.pw-toggle:hover{color:var(--accent);}
+.pw-btn{width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:4px;padding:13px;font-family:'Bebas Neue',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:background .15s;margin-bottom:.75rem;}
+.pw-btn:hover{background:var(--accent2);}
+.pw-error{font-size:12px;color:#e05a40;text-align:center;min-height:18px;margin-bottom:.5rem;}
+.pw-hint{font-size:11px;color:var(--text3);text-align:center;line-height:1.6;}
+.pw-attempts{font-size:11px;color:var(--text3);text-align:center;margin-top:.5rem;}
+#siteContent{display:none;}
 
-#cursor{position:fixed;width:24px;height:24px;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
-#cursor svg{width:24px;height:24px}
-#cursor-trail{position:fixed;width:6px;height:6px;background:#8a9a4a;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);clip-path:polygon(50% 0%,100% 100%,0% 100%)}
+/* HEADER */
+header{position:relative;z-index:10;background:var(--bg2);border-bottom:1px solid var(--border);}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:stretch;}
+.header-stripe{width:5px;background:var(--accent);flex-shrink:0;margin-right:1.5rem;}
+.header-text{padding:1.5rem 0;}
+.header-sup{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px;}
+.header-logo{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:3px;color:var(--text);line-height:1;}
+.header-logo span{color:var(--accent);}
+.header-sub{font-size:12px;color:var(--text2);margin-top:5px;font-weight:300;letter-spacing:0.5px;}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hbadge{border:1px solid var(--border2);border-radius:3px;padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;}
 
-canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
-.scanlines{position:fixed;inset:0;pointer-events:none;z-index:5;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.07) 3px,rgba(0,0,0,0.07) 4px)}
-.vignette{position:fixed;inset:0;pointer-events:none;z-index:4;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.7) 100%)}
+/* HERO */
+.hero{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:5rem 2rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.hero-eyebrow{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before{content:'';display:inline-block;width:30px;height:1px;background:var(--accent2);}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,88px);letter-spacing:2px;line-height:0.92;color:var(--text);margin-bottom:1.5rem;}
+.hero-title span{color:var(--accent);}
+.hero-desc{font-size:15px;color:var(--text2);line-height:1.8;max-width:480px;margin-bottom:2rem;font-weight:300;}
+.hero-stats{display:flex;gap:2rem;padding-top:1.5rem;border-top:1px solid var(--border);}
+.hero-stat-val{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);letter-spacing:1px;line-height:1;}
+.hero-stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-top:3px;}
+.hero-right{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hero-tile{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1.25rem;display:flex;flex-direction:column;gap:6px;}
+.hero-tile:first-child{grid-column:1/-1;border-color:var(--accent3);background:rgba(200,216,74,0.04);}
+.tile-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);font-weight:700;}
+.tile-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);letter-spacing:1px;line-height:1;}
+.tile-desc{font-size:12px;color:var(--text2);line-height:1.5;}
 
-.page{position:relative;z-index:10}
+/* DIVIDER */
+.divider{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:0 2rem;}
+.divider-line{height:1px;background:var(--border);display:flex;align-items:center;justify-content:center;}
+.divider-label{background:var(--bg);padding:0 1rem;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--text3);font-weight:700;white-space:nowrap;}
 
-/* ── NAV ── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  padding:16px 40px;
-  display:flex;justify-content:space-between;align-items:center;
-  border-bottom:1px solid rgba(138,154,74,0.2);
-  backdrop-filter:blur(12px);
-  background:rgba(8,10,5,0.85)
-}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:5px;color:#8a9a4a}
-.nav-logo span{color:#c8c4a0;font-size:13px;font-family:'Share Tech Mono',monospace;letter-spacing:3px;display:block;margin-top:-4px}
-.nav-links{display:flex;gap:32px}
-.nav-links a{
-  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;
-  color:rgba(200,196,160,0.4);text-decoration:none;text-transform:uppercase;
-  transition:color 0.3s;cursor:none;position:relative
-}
-.nav-links a::after{
-  content:'';position:absolute;bottom:-2px;left:0;right:0;
-  height:1px;background:#8a9a4a;transform:scaleX(0);transition:transform 0.3s
-}
-.nav-links a:hover{color:#8a9a4a}
-.nav-links a:hover::after{transform:scaleX(1)}
-.nav-badge{
-  display:flex;align-items:center;gap:8px;
-  font-family:'Share Tech Mono',monospace;font-size:10px;
-  color:rgba(138,154,74,0.6);letter-spacing:1px;
-  border:1px solid rgba(138,154,74,0.2);padding:6px 12px
-}
-.dot-green{width:6px;height:6px;background:#4a8a5a;border-radius:50%;animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+/* TOOLS */
+.tools{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:4rem 2rem 5rem;}
+.tools-header{margin-bottom:2.5rem;}
+.tools-title{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--text);line-height:1;margin-bottom:6px;}
+.tools-title span{color:var(--accent);}
+.tools-sub{font-size:13px;color:var(--text2);font-weight:300;}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 
-/* ── CORNER MARKS ── */
-.corner{position:fixed;pointer-events:none;z-index:200}
-.corner-tl{top:16px;left:16px;width:30px;height:30px;border-top:2px solid rgba(138,154,74,0.5);border-left:2px solid rgba(138,154,74,0.5)}
-.corner-tr{top:16px;right:16px;width:30px;height:30px;border-top:2px solid rgba(138,154,74,0.5);border-right:2px solid rgba(138,154,74,0.5)}
-.corner-bl{bottom:16px;left:16px;width:30px;height:30px;border-bottom:2px solid rgba(138,154,74,0.5);border-left:2px solid rgba(138,154,74,0.5)}
-.corner-br{bottom:16px;right:16px;width:30px;height:30px;border-bottom:2px solid rgba(138,154,74,0.5);border-right:2px solid rgba(138,154,74,0.5)}
+/* TOOL CARD */
+.tool-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;transition:border-color 0.2s,transform 0.2s;text-decoration:none;}
+.tool-card:hover{border-color:var(--accent2);transform:translateY(-3px);}
+.tool-card-top{padding:1.75rem 1.5rem 1.25rem;flex:1;}
+.tool-number{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;color:var(--text3);margin-bottom:1rem;}
+.tool-icon{width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;font-size:22px;}
+.tool-icon.green{background:rgba(200,216,74,0.12);}
+.tool-icon.red{background:rgba(200,74,58,0.12);}
+.tool-icon.tan{background:rgba(200,168,120,0.12);}
+.tool-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--text);line-height:1;margin-bottom:8px;}
+.tool-desc{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300;margin-bottom:1.25rem;}
+.tool-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:2px;}
+.tag-green{background:rgba(200,216,74,0.1);color:var(--accent2);}
+.tag-red{background:rgba(200,74,58,0.1);color:var(--red);}
+.tag-tan{background:rgba(200,168,120,0.1);color:var(--tan);}
+.tag-muted{background:rgba(255,255,255,0.05);color:var(--text3);}
+.tool-card-bottom{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.tool-cta{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;}
+.tool-arrow{width:28px;height:28px;border:1px solid var(--border2);border-radius:3px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:14px;transition:background 0.15s;}
+.tool-card:hover .tool-arrow{background:var(--accent);color:var(--bg);}
 
-/* ── HERO ── */
-.hero{
-  height:100vh;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  position:relative;overflow:hidden
-}
-.hero-grid{
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(138,154,74,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(138,154,74,0.04) 1px,transparent 1px);
-  background-size:60px 60px
-}
+/* HOW IT WORKS */
+.how{position:relative;z-index:5;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.how-inner{max-width:1200px;margin:0 auto;padding:4rem 2rem;}
+.how-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--text);margin-bottom:2.5rem;}
+.how-title span{color:var(--accent);}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.how-step{background:var(--bg2);padding:1.5rem;}
+.step-num{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--accent3);letter-spacing:1px;line-height:1;margin-bottom:0.75rem;}
+.step-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:0.5px;}
+.step-desc{font-size:12px;color:var(--text2);line-height:1.6;}
 
-/* HUD panels */
-.hud-panel{
-  position:absolute;
-  font-family:'Share Tech Mono',monospace;font-size:10px;
-  color:rgba(138,154,74,0.35);line-height:2;letter-spacing:1px;pointer-events:none
-}
-.hud-tl{top:120px;left:40px}
-.hud-tr{top:120px;right:40px;text-align:right}
-.hud-bl{bottom:120px;left:40px}
-.hud-br{bottom:120px;right:40px;text-align:right}
+/* DISCLAIMER */
+.disclaimer{position:relative;z-index:5;max-width:1200px;margin:0 auto;padding:2.5rem 2rem;}
+.disclaimer-inner{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1.25rem 1.5rem;display:flex;gap:1rem;align-items:flex-start;}
+.disclaimer-icon{font-size:18px;flex-shrink:0;margin-top:2px;color:var(--accent3);}
+.disclaimer-text{font-size:12px;color:var(--text3);line-height:1.7;font-style:italic;}
+.disclaimer-text strong{color:var(--text2);font-style:normal;}
 
-/* Crosshair decorations */
-.crosshair{position:absolute;width:80px;height:80px;pointer-events:none;opacity:0.06}
-.crosshair::before,.crosshair::after{content:'';position:absolute;background:#8a9a4a}
-.crosshair::before{width:1px;height:100%;left:50%;top:0}
-.crosshair::after{width:100%;height:1px;top:50%;left:0}
+/* FOOTER */
+footer{position:relative;z-index:5;background:var(--bg2);border-top:1px solid var(--border);}
+.footer-inner{max-width:1200px;margin:0 auto;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--text3);}
+.footer-logo span{color:var(--accent3);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-link{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);text-decoration:none;transition:color 0.15s;}
+.footer-link:hover{color:var(--accent);}
+.footer-copy{font-size:11px;color:var(--text3);}
 
-/* Hero content */
-.hero-content{text-align:center;position:relative}
-.hero-eyebrow{
-  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:6px;
-  color:rgba(138,154,74,0.5);text-transform:uppercase;display:block;
-  margin-bottom:20px;opacity:0;animation:fadeUp 0.8s 0.4s forwards
+@media(max-width:1000px){
+  .hero{grid-template-columns:1fr;gap:2rem;}
+  .hero-right{display:none;}
+  .tools-grid{grid-template-columns:1fr;}
+  .how-grid{grid-template-columns:1fr 1fr;}
 }
-.hero-title{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(72px,12vw,140px);line-height:0.85;letter-spacing:6px;
-  margin-bottom:8px;opacity:0;animation:fadeUp 0.8s 0.7s forwards
+@media(max-width:600px){
+  .header-inner{padding:0 1rem;}
+  .hero{padding:3rem 1rem 2.5rem;}
+  .tools{padding:3rem 1rem;}
+  .how-grid{grid-template-columns:1fr;}
+  .footer-inner{flex-direction:column;align-items:flex-start;}
+  .hero-stats{gap:1.5rem;}
 }
-.hero-title .line1{display:block;color:#c8c4a0}
-.hero-title .line2{display:block;color:#8a9a4a;font-size:0.55em;letter-spacing:12px}
-.hero-rule{
-  width:200px;height:1px;
-  background:linear-gradient(90deg,transparent,#8a9a4a,transparent);
-  margin:24px auto;opacity:0;animation:fadeUp 0.8s 0.9s forwards
-}
-.hero-sub{
-  font-family:'Barlow Condensed',sans-serif;font-size:15px;letter-spacing:3px;
-  color:rgba(200,196,160,0.45);margin-bottom:48px;max-width:480px;
-  line-height:2;text-transform:uppercase;opacity:0;animation:fadeUp 0.8s 1.1s forwards
-}
-
-/* CTA buttons */
-.hero-ctas{display:flex;gap:16px;justify-content:center;opacity:0;animation:fadeUp 0.8s 1.3s forwards}
-.btn-primary{
-  padding:12px 40px;border:none;background:#8a9a4a;
-  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;
-  color:#0a0c07;font-weight:700;text-transform:uppercase;cursor:none;
-  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
-  transition:all 0.3s
-}
-.btn-primary:hover{background:#a0b055;transform:translateY(-2px)}
-.btn-ghost{
-  padding:12px 40px;border:1px solid rgba(138,154,74,0.3);background:transparent;
-  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;
-  color:rgba(138,154,74,0.7);text-transform:uppercase;cursor:none;
-  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
-  transition:all 0.3s
-}
-.btn-ghost:hover{border-color:rgba(138,154,74,0.7);background:rgba(138,154,74,0.08)}
-
-/* Hero metrics strip */
-.hero-metrics{
-  position:absolute;bottom:60px;display:flex;gap:0;
-  opacity:0;animation:fadeUp 0.8s 1.6s forwards;
-  border:1px solid rgba(138,154,74,0.15)
-}
-.metric{text-align:center;padding:20px 40px;border-right:1px solid rgba(138,154,74,0.15)}
-.metric:last-child{border-right:none}
-.metric-val{font-family:'Bebas Neue',sans-serif;font-size:36px;color:#8a9a4a;display:block;line-height:1}
-.metric-label{
-  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;
-  color:rgba(200,196,160,0.3);text-transform:uppercase;margin-top:4px;display:block
-}
-
-/* ── TOOLS SECTION ── */
-.section-wrap{background:rgba(6,8,4,0.97);border-top:1px solid rgba(138,154,74,0.12)}
-.section{padding:100px 40px;max-width:1200px;margin:0 auto}
-.section-header{margin-bottom:60px}
-.section-tag{
-  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:5px;
-  color:rgba(138,154,74,0.4);text-transform:uppercase;display:block;margin-bottom:12px
-}
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,60px);letter-spacing:4px;color:#c8c4a0}
-.section-title em{font-style:normal;color:#8a9a4a}
-
-/* Tool card grid */
-.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(138,154,74,0.08)}
-.tool-card{
-  background:#0a0c07;padding:36px 28px;position:relative;
-  overflow:hidden;cursor:none;transition:background 0.3s
-}
-.tool-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:#8a9a4a;transform:scaleX(0);transform-origin:left;transition:transform 0.4s
-}
-.tool-card:hover{background:#0d1009}
-.tool-card:hover::before{transform:scaleX(1)}
-.tool-card.featured{grid-column:span 2;background:#0c0f08}
-.tool-card.featured .tool-name{font-size:22px}
-
-.tool-num{
-  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;
-  color:rgba(138,154,74,0.3);margin-bottom:20px;display:block
-}
-.tool-icon-wrap{
-  width:36px;height:36px;border:1px solid rgba(138,154,74,0.2);
-  display:flex;align-items:center;justify-content:center;margin-bottom:20px;
-  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)
-}
-.tool-icon-wrap svg{width:18px;height:18px;stroke:rgba(138,154,74,0.6);fill:none;stroke-width:1.5}
-.tool-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:#c8c4a0;margin-bottom:10px}
-.tool-desc{font-size:13px;line-height:1.8;color:rgba(200,196,160,0.35);letter-spacing:0.5px}
-.tool-link{
-  margin-top:24px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;
-  color:rgba(138,154,74,0.5);text-decoration:none;display:inline-flex;
-  align-items:center;gap:8px;transition:color 0.3s;cursor:none;text-transform:uppercase
-}
-.tool-link:hover{color:#8a9a4a}
-
-/* Service badges */
-.badges{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
-.badge{
-  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;
-  padding:4px 10px;border:1px solid rgba(138,154,74,0.25);color:rgba(138,154,74,0.5);
-  text-transform:uppercase;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%)
-}
-
-/* ── STATS STRIP ── */
-.stats-wrap{
-  border-top:1px solid rgba(138,154,74,0.1);border-bottom:1px solid rgba(138,154,74,0.1);
-  background:rgba(4,6,3,0.9);padding:0 40px
-}
-.stats-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
-.stat{text-align:center;padding:48px 20px;border-right:1px solid rgba(138,154,74,0.08)}
-.stat:last-child{border-right:none}
-.stat-n{font-family:'Bebas Neue',sans-serif;font-size:56px;color:#8a9a4a;display:block;line-height:1}
-.stat-l{
-  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;
-  color:rgba(200,196,160,0.25);text-transform:uppercase;margin-top:8px;display:block
-}
-
-/* ── FOOTER ── */
-footer{
-  padding:32px 40px;border-top:1px solid rgba(138,154,74,0.08);
-  max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center
-}
-.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:4px;color:rgba(138,154,74,0.4)}
-.footer-copy{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(200,196,160,0.15)}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
 
-<canvas id="bg"></canvas>
-<div class="scanlines"></div>
-<div class="vignette"></div>
-
-<!-- Custom crosshair cursor -->
-<div id="cursor">
-  <svg viewBox="0 0 24 24" fill="none">
-    <line x1="12" y1="2" x2="12" y2="8" stroke="#8a9a4a" stroke-width="1"/>
-    <line x1="12" y1="16" x2="12" y2="22" stroke="#8a9a4a" stroke-width="1"/>
-    <line x1="2" y1="12" x2="8" y2="12" stroke="#8a9a4a" stroke-width="1"/>
-    <line x1="16" y1="12" x2="22" y2="12" stroke="#8a9a4a" stroke-width="1"/>
-    <circle cx="12" cy="12" r="3" stroke="#8a9a4a" stroke-width="1"/>
-  </svg>
+<!-- PASSWORD SCREEN -->
+<div id="pwScreen">
+  <div class="pw-box">
+    <div class="pw-stripe"></div>
+    <div class="pw-eyebrow">Australian Defence Force</div>
+    <div class="pw-title">ADF <span>PTI</span> Tools</div>
+    <div class="pw-sub">Restricted access — ADF Physical Training Instructors only.</div>
+    <label class="pw-label" for="pwInput">Access Password</label>
+    <div class="pw-input-wrap">
+      <input class="pw-input" type="password" id="pwInput" placeholder="Enter password" autocomplete="off" onkeydown="if(event.key==='Enter')checkPW()">
+      <button class="pw-toggle" onclick="togglePWVis()" id="pwToggle" title="Show/hide password">Show</button>
+    </div>
+    <div class="pw-error" id="pwError"></div>
+    <button class="pw-btn" onclick="checkPW()">Access Tools →</button>
+    <div class="pw-hint">This platform is intended for use by qualified ADF PTIs.<br>Contact your unit PTI for access.</div>
+    <div class="pw-attempts" id="pwAttempts"></div>
+  </div>
 </div>
-<div id="cursor-trail"></div>
 
-<!-- Corner frame marks -->
-<div class="corner corner-tl"></div>
-<div class="corner corner-tr"></div>
-<div class="corner corner-bl"></div>
-<div class="corner corner-br"></div>
+<!-- SITE CONTENT -->
+<div id="siteContent">
 
-<!-- ── NAVIGATION ── -->
-<nav>
-  <div class="nav-logo">ADFA PTI<span>// TOOL SUITE</span></div>
-  <div class="nav-links">
-    <a href="run.html">Training</a>
-    <a href="remedial.html">Assessment</a>
-    <a href="selection-prep.html">Selection</a>
-    <a href="rehab.html">Rehab</a>
+<header>
+  <div class="header-inner">
+    <div class="header-stripe"></div>
+    <div class="header-text">
+      <div class="header-sup">Australian Defence Force</div>
+      <div class="header-logo">ADF <span>PTI</span> Tools</div>
+      <div class="header-sub">Physical Training Instructor Resource Platform</div>
+    </div>
+    <div class="header-right">
+      <div class="hbadge">Free</div>
+      <div class="hbadge">Offline</div>
+      <div class="hbadge">No Login</div>
+    </div>
   </div>
-  <div class="nav-badge"><div class="dot-green"></div>SYSTEMS ONLINE</div>
-</nav>
+</header>
 
-<!-- ── PAGE CONTENT ── -->
-<div class="page">
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-grid"></div>
-
-    <!-- Decorative crosshairs -->
-    <div class="crosshair" style="top:15%;left:8%"></div>
-    <div class="crosshair" style="top:70%;right:10%"></div>
-    <div class="crosshair" style="bottom:20%;left:30%"></div>
-
-    <!-- HUD data panels -->
-    <div class="hud-panel hud-tl">
-      UNIT // ADFA-PTI<br>
-      POST // CANBERRA ACT<br>
-      ACCESS // OPEN<br>
-      STATUS // ACTIVE<br>
-      REV // 2.0.6
-    </div>
-    <div class="hud-panel hud-tr">
-      TOOLS // 07<br>
-      PERS // 1,200+<br>
-      SVC // ARMY·NAVY·RAAF<br>
-      STDS // 2026 CURRENT<br>
-      NET // SECURE
-    </div>
-    <div class="hud-panel hud-bl">
-      GRID // MGA 55J 6090 5887<br>
-      ELEV // 578m AGL
-    </div>
-    <div class="hud-panel hud-br">
-      UPTIME // 99.97%<br>
-      AUTH // REQUIRED
-    </div>
-
-    <!-- Main hero content -->
-    <div class="hero-content">
-      <span class="hero-eyebrow">Australian Defence Force Academy</span>
-      <h1 class="hero-title">
-        <span class="line1">ADF PTI</span>
-        <span class="line2">TOOL SUITE</span>
-      </h1>
-      <div class="hero-rule"></div>
-      <p class="hero-sub">
-        Seven precision instruments<br>
-        for physical training instructors
-      </p>
-      <div class="hero-ctas">
-        <button class="btn-primary" onclick="document.getElementById('tools').scrollIntoView({behavior:'smooth'})">ACCESS TOOLS</button>
-        <button class="btn-ghost" onclick="window.location.href='selection-prep.html'">VIEW STANDARDS</button>
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">PTI Resource Platform</div>
+    <h1 class="hero-title">Built For<br>Those Who<br><span>Lead PT</span></h1>
+    <p class="hero-desc">
+      Seven professional planning tools for ADF Physical Training Instructors. Rehabilitation programs, selection prep, strength and conditioning, swimming, circuit sessions, run programs and remedial PT planning — all free, offline and built to ADF standards.
+    </p>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">7</div>
+        <div class="hero-stat-label">Planning Tools</div>
       </div>
-    </div>
-
-    <!-- Bottom metrics bar -->
-    <div class="hero-metrics">
-      <div class="metric">
-        <span class="metric-val" id="cnt-tools">00</span>
-        <span class="metric-label">Tools</span>
+      <div>
+        <div class="hero-stat-val">11</div>
+        <div class="hero-stat-label">Selection Tests</div>
       </div>
-      <div class="metric">
-        <span class="metric-val" id="cnt-sel">00</span>
-        <span class="metric-label">Selections</span>
-      </div>
-      <div class="metric">
-        <span class="metric-val">03</span>
-        <span class="metric-label">Services</span>
-      </div>
-      <div class="metric">
-        <span class="metric-val">2026</span>
-        <span class="metric-label">Standards</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── TOOLS GRID ── -->
-  <div class="section-wrap" id="tools">
-    <div class="section">
-      <div class="section-header">
-        <span class="section-tag">// T-01 through T-07 // Deployed</span>
-        <h2 class="section-title">Planning <em>Instruments</em></h2>
-      </div>
-
-      <div class="tools-grid">
-
-        <!-- T-01 FEATURED -->
-        <div class="tool-card featured">
-          <span class="tool-num">T-01 // PRIMARY ASSET</span>
-          <div class="tool-icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2l9 4.5V12c0 5-3.5 9.74-9 11-5.5-1.26-9-6-9-11V6.5L12 2z"/>
-              <path d="M9 12l2 2 4-4"/>
-            </svg>
-          </div>
-          <div class="tool-name">Selection Prep Planner</div>
-          <p class="tool-desc">All 11 ADF specialty selections with verified 2026 standards. SASR, 2 Commando, CDG, Clearance Diver, Infantry PESA, PTI Selection and more. Weekly programs driven by each test's specific components — not a generic template.</p>
-          <div class="badges">
-            <span class="badge">SASR</span>
-            <span class="badge">2 CDO</span>
-            <span class="badge">CDG</span>
-            <span class="badge">PESA</span>
-            <span class="badge">PTI SEL</span>
-          </div>
-          <a href="selection-prep.html" class="tool-link">→ Launch Tool</a>
-        </div>
-
-        <!-- T-02 -->
-        <div class="tool-card">
-          <span class="tool-num">T-02</span>
-          <div class="tool-icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="1"/>
-              <path d="M5 12H3M21 12h-2M12 5V3M12 21v-2"/>
-              <path d="M7.05 7.05L5.64 5.64M18.36 18.36l-1.41-1.41M7.05 16.95l-1.41 1.41M18.36 5.64l-1.41 1.41"/>
-            </svg>
-          </div>
-          <div class="tool-name">Run Program Builder</div>
-          <p class="tool-desc">Six goal types with calculated pace zones. From base fitness to PFA preparation and selection-standard running.</p>
-          <a href="run.html" class="tool-link">→ Launch Tool</a>
-        </div>
-
-        <!-- T-03 -->
-        <div class="tool-card">
-          <span class="tool-num">T-03</span>
-          <div class="tool-icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <path d="M2 12c2-4 4-6 6-6s4 4 6 4 4-2 6-6"/>
-              <path d="M2 18c2-2 4-3 6-3s4 2 6 2 4-1 6-3"/>
-            </svg>
-          </div>
-          <div class="tool-name">Swim Program Builder</div>
-          <p class="tool-desc">All pool sizes, survival swimming and selection-specific standards including all CDG gate test requirements.</p>
-          <a href="swim.html" class="tool-link">→ Launch Tool</a>
-        </div>
-
-        <!-- T-04 -->
-        <div class="tool-card">
-          <span class="tool-num">T-04</span>
-          <div class="tool-icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <path d="M6.5 6.5h11M6.5 17.5h11M6 12h12"/>
-              <circle cx="4" cy="6.5" r="1.5"/>
-              <circle cx="4" cy="17.5" r="1.5"/>
-              <circle cx="20" cy="6.5" r="1.5"/>
-              <circle cx="20" cy="17.5" r="1.5"/>
-            </svg>
-          </div>
-          <div class="tool-name">Strength Program Builder</div>
-          <p class="tool-desc">Structured lifting programs built for ADF training context and operational readiness requirements.</p>
-          <a href="strength.html" class="tool-link">→ Launch Tool</a>
-        </div>
-
-        <!-- T-05 -->
-        <div class="tool-card">
-          <span class="tool-num">T-05</span>
-          <div class="tool-icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <rect x="3" y="4" width="18" height="4" rx="1"/>
-              <rect x="3" y="10" width="18" height="4" rx="1"/>
-              <rect x="3" y="16" width="18" height="4" rx="1"/>
-            </svg>
-          </div>
-          <div class="tool-name">Circuit Generator</div>
-          <p class="tool-desc">Groups from individuals to 200+ personnel. Ten training methods with auto-scaled stations and rest periods.</p>
-          <a href="circuit.html" class="tool-link">→ Launch Tool</a>
-        </div>
-
-        <!-- T-06 -->
-        <div class="tool-card">
-          <span class="tool-num">T-06</span>
-          <div class="tool-icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <path d="M3 3v18h18"/>
-              <path d="M18 9l-5 5-4-4-3 3"/>
-            </svg>
-          </div>
-          <div class="tool-name">Remedial PT Planner</div>
-          <p class="tool-desc">PFA score assessment against ADF standards by age and sex. Targeted remedial programs generated automatically.</p>
-          <a href="remedial.html" class="tool-link">→ Launch Tool</a>
-        </div>
-
-        <!-- T-07 -->
-        <div class="tool-card">
-          <span class="tool-num">T-07</span>
-          <div class="tool-icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
-              <path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-            </svg>
-          </div>
-          <div class="tool-name">Rehab Program Generator</div>
-          <p class="tool-desc">Injury-specific rehabilitation programs designed for the ADF return-to-duty pathway.</p>
-          <a href="rehab.html" class="tool-link">→ Launch Tool</a>
-        </div>
-
+      <div>
+        <div class="hero-stat-val">$0</div>
+        <div class="hero-stat-label">Cost to Use</div>
       </div>
     </div>
   </div>
+  <div class="hero-right">
+    <div class="hero-tile">
+      <div class="tile-label">Platform Status</div>
+      <div class="tile-val">Operational</div>
+      <div class="tile-desc">All tools running. No internet connection required after page load. Works on desktop, tablet and mobile.</div>
+    </div>
+    <div class="hero-tile">
+      <div class="tile-label">Designed For</div>
+      <div class="tile-val">ADF PTIs</div>
+      <div class="tile-desc">Built to ADF standards</div>
+    </div>
+    <div class="hero-tile">
+      <div class="tile-label">Data Privacy</div>
+      <div class="tile-val">Local Only</div>
+      <div class="tile-desc">Nothing stored or transmitted</div>
+    </div>
+    <div class="hero-tile">
+      <div class="tile-label">Licence</div>
+      <div class="tile-val">MIT</div>
+      <div class="tile-desc">Free to share and adapt</div>
+    </div>
+  </div>
+</section>
 
-  <!-- ── STATS STRIP ── -->
-  <div class="stats-wrap">
-    <div class="stats-inner">
-      <div class="stat">
-        <span class="stat-n">1,200+</span>
-        <span class="stat-l">Cadets Assessed</span>
+<div class="divider">
+  <div class="divider-line">
+    <span class="divider-label">Select a Tool</span>
+  </div>
+</div>
+
+<section class="tools">
+  <div class="tools-header">
+    <div class="tools-title">The <span>Seven Tools</span></div>
+    <div class="tools-sub">Click any tool to open it. Each one runs entirely in your browser — no accounts, no data collection, no cost.</div>
+  </div>
+
+  <div class="tools-grid">
+
+    <a class="tool-card" href="rehab.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 01 / 07</div>
+        <div class="tool-icon green">+</div>
+        <div class="tool-name">Rehabilitation Program Generator</div>
+        <div class="tool-desc">Input a member's injury, restrictions, physio clearance and fitness level. Instantly generates a phased rehabilitation program with exercise tables, cardiovascular maintenance, RTD criteria and a PTI monitoring checklist.</div>
+        <div class="tool-tags">
+          <span class="tag tag-green">Injury-Specific</span>
+          <span class="tag tag-green">Phase Program</span>
+          <span class="tag tag-muted">RTD Criteria</span>
+          <span class="tag tag-muted">PTI Checklist</span>
+          <span class="tag tag-muted">Print Ready</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-n">11</span>
-        <span class="stat-l">ADF Selections</span>
+      <div class="tool-card-bottom">
+        <span class="tool-cta">Open Rehab Planner</span>
+        <div class="tool-arrow">→</div>
       </div>
-      <div class="stat">
-        <span class="stat-n">3</span>
-        <span class="stat-l">Services Covered</span>
+    </a>
+
+    <a class="tool-card" href="selection-prep.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 02 / 07</div>
+        <div class="tool-icon red">◎</div>
+        <div class="tool-name">Selection Prep Planner</div>
+        <div class="tool-desc">Choose from 11 ADF specialty selections — SASR, Commando, Clearance Diver, PTI, CDG, SOER and more. Input current scores, identify weaknesses and generate a periodised training program up to 12 months long, tailored to that specific test's verified 2026 standards.</div>
+        <div class="tool-tags">
+          <span class="tag tag-red">11 Selections</span>
+          <span class="tag tag-red">Gap Analysis</span>
+          <span class="tag tag-muted">Up to 12 Months</span>
+          <span class="tag tag-muted">Week-by-Week</span>
+          <span class="tag tag-muted">2026 Standards</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-n">$0</span>
-        <span class="stat-l">Platform Cost</span>
+      <div class="tool-card-bottom">
+        <span class="tool-cta">Open Selection Prep</span>
+        <div class="tool-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="tool-card" href="strength.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 03 / 07</div>
+        <div class="tool-icon tan">▲</div>
+        <div class="tool-name">Strength Program Builder</div>
+        <div class="tool-desc">Build a personalised strength and conditioning program for any individual. Select goal, experience level, training days, equipment access and focus areas. Generates a complete periodised program with exercise splits, nutrition targets and supplement guidance.</div>
+        <div class="tool-tags">
+          <span class="tag tag-tan">5 Goals</span>
+          <span class="tag tag-tan">Nutrition Plan</span>
+          <span class="tag tag-muted">3–6 Days/Week</span>
+          <span class="tag tag-muted">8–16 Weeks</span>
+          <span class="tag tag-muted">Equipment Adaptive</span>
+        </div>
+      </div>
+      <div class="tool-card-bottom">
+        <span class="tool-cta">Open Strength Builder</span>
+        <div class="tool-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="tool-card" href="swim.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 04 / 07</div>
+        <div class="tool-icon" style="background:rgba(26,160,180,0.12);">~</div>
+        <div class="tool-name">Swimming Program Builder</div>
+        <div class="tool-desc">Generate a tailored swim program for any member — beginner to advanced. Covers general fitness, stroke technique, survival swimming and selection preparation including CDG, Clearance Diver, SOER, PTI Bronze Medallion and Infantry PESA. Supports 25 m and 50 m pools.</div>
+        <div class="tool-tags">
+          <span class="tag" style="background:rgba(26,160,180,0.1);color:#1a7a8a;">All Levels</span>
+          <span class="tag" style="background:rgba(26,160,180,0.1);color:#1a7a8a;">8 Selections</span>
+          <span class="tag tag-muted">25 m &amp; 50 m</span>
+          <span class="tag tag-muted">Survival Skills</span>
+          <span class="tag tag-muted">Fin Swimming</span>
+        </div>
+      </div>
+      <div class="tool-card-bottom">
+        <span class="tool-cta" style="color:#1a7a8a;">Open Swim Builder</span>
+        <div class="tool-arrow" style="color:#1a7a8a;">→</div>
+      </div>
+    </a>
+
+    <a class="tool-card" href="circuit.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 05 / 07</div>
+        <div class="tool-icon" style="background:rgba(200,57,43,0.1);">⚡</div>
+        <div class="tool-name">Circuit Generator</div>
+        <div class="tool-desc">Generate group PT or individual circuit sessions for any group size — from a 4-person stick to 200+ on parade. Select from 10 training methods (AMRAP, EMOM, Tabata, Station Rotation and more), 20+ equipment types, 9 training goals, and get automatic scaling, station logistics, restriction modifications and a full PTI safety checklist.</div>
+        <div class="tool-tags">
+          <span class="tag tag-red">Group &amp; Individual</span>
+          <span class="tag tag-red">10 Methods</span>
+          <span class="tag tag-muted">Up to 200+ pax</span>
+          <span class="tag tag-muted">20+ Equipment</span>
+          <span class="tag tag-muted">Injury Modifications</span>
+        </div>
+      </div>
+      <div class="tool-card-bottom">
+        <span class="tool-cta">Open Circuit Generator</span>
+        <div class="tool-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="tool-card" href="run.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 06 / 07</div>
+        <div class="tool-icon" style="background:rgba(200,57,43,0.1);">→</div>
+        <div class="tool-name">Run Program Builder</div>
+        <div class="tool-desc">Generate a progressive running program for any member. Input current and target 2.4 km or 5 km times and choose from 6 goal types — ADF PFA prep, speed improvement, aerobic base build, selection prep (with loaded run simulation), return to running, and BEEP test prep. Includes pace zones, weekly sessions, deload weeks and injury prevention guidance.</div>
+        <div class="tool-tags">
+          <span class="tag tag-red">6 Goal Types</span>
+          <span class="tag tag-red">Pace Zones</span>
+          <span class="tag tag-muted">ADF Standards</span>
+          <span class="tag tag-muted">4–20 Weeks</span>
+          <span class="tag tag-muted">Gap Analysis</span>
+        </div>
+      </div>
+      <div class="tool-card-bottom">
+        <span class="tool-cta">Open Run Builder</span>
+        <div class="tool-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="tool-card" href="remedial.html">
+      <div class="tool-card-top">
+        <div class="tool-number">Tool 07 / 07</div>
+        <div class="tool-icon" style="background:rgba(200,130,10,0.12);">!</div>
+        <div class="tool-name">Remedial PT Planner</div>
+        <div class="tool-desc">Input a member's PFA scores and instantly identify which components are failing, marginal or passing against ADF standards for their age and sex. Generates a targeted remedial program weighted toward their weakest areas, with progress milestones, fortnightly testing checkpoints, component-specific coaching tips and PTI reporting guidance.</div>
+        <div class="tool-tags">
+          <span class="tag" style="background:rgba(200,130,10,0.12);color:#8a5010;">PFA Analysis</span>
+          <span class="tag" style="background:rgba(200,130,10,0.12);color:#8a5010;">Fail / Marginal / Pass</span>
+          <span class="tag tag-muted">Targeted Program</span>
+          <span class="tag tag-muted">Milestones</span>
+          <span class="tag tag-muted">PTI Reporting</span>
+        </div>
+      </div>
+      <div class="tool-card-bottom">
+        <span class="tool-cta" style="color:#c8820a;">Open Remedial Planner</span>
+        <div class="tool-arrow" style="color:#c8820a;">→</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<section class="how">
+  <div class="how-inner">
+    <div class="how-title">How It <span>Works</span></div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="step-num">01</div>
+        <div class="step-title">Select a Tool</div>
+        <div class="step-desc">Choose the tool that fits what you need — rehab, selection prep or strength programming.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">02</div>
+        <div class="step-title">Input Details</div>
+        <div class="step-desc">Enter the relevant information — injury, test target, current scores, goals or restrictions.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">03</div>
+        <div class="step-title">Generate Program</div>
+        <div class="step-desc">The tool instantly builds a tailored program — no waiting, no internet required.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">04</div>
+        <div class="step-title">Print or Save</div>
+        <div class="step-desc">Use the print button on any tool to save as PDF or print directly for the member's file.</div>
       </div>
     </div>
   </div>
+</section>
 
-  <footer>
-    <div class="footer-logo">ADFA PTI // 2026</div>
-    <div class="footer-copy">RESTRICTED TO AUTHORISED ADF PERSONNEL</div>
-  </footer>
+<div class="disclaimer">
+  <div class="disclaimer-inner">
+    <div class="disclaimer-icon">⚠</div>
+    <div class="disclaimer-text">
+      <strong>Disclaimer:</strong> These tools are planning aids designed to assist qualified ADF Physical Training Instructors. They do not replace the clinical judgment of a physiotherapist, Medical Officer or qualified exercise professional. Rehabilitation programs should be reviewed by appropriate medical personnel before implementation. Selection test standards may change — always verify current requirements with the relevant selection authority. If a member's condition deteriorates or new symptoms arise, cease exercise and refer to the MO immediately.
+    </div>
+  </div>
+</div>
 
-</div><!-- end .page -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">ADF <span>PTI</span> Tools</div>
+    <div class="footer-links">
+      <a class="footer-link" href="rehab.html">Rehab Planner</a>
+      <a class="footer-link" href="selection-prep.html">Selection Prep</a>
+      <a class="footer-link" href="strength.html">Strength Builder</a>
+      <a class="footer-link" href="swim.html">Swim Builder</a>
+      <a class="footer-link" href="circuit.html">Circuit Generator</a>
+      <a class="footer-link" href="run.html">Run Builder</a>
+      <a class="footer-link" href="remedial.html">Remedial PT</a>
+    </div>
+    <div class="footer-copy">MIT Licence · Free to use and share</div>
+  </div>
+</footer>
 
-<!-- ── SCRIPTS ── -->
+</div><!-- end siteContent -->
+
 <script>
-// ── CANVAS BACKGROUND ──────────────────────────────────────────
-const canvas = document.getElementById('bg');
-const ctx = canvas.getContext('2d');
-let W, H;
+const PW = 'ADFPTI20$6';
+let attempts = 0;
+const maxAttempts = 5;
+let lockoutUntil = 0;
 
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
-
-// Floating particles
-class Particle {
-  constructor() { this.reset(true); }
-  reset(init) {
-    this.x = Math.random() * W;
-    this.y = init ? Math.random() * H : H + 5;
-    this.vy = -(Math.random() * 0.3 + 0.05);
-    this.vx = (Math.random() - 0.5) * 0.1;
-    this.size = Math.random() * 1.2 + 0.2;
-    this.alpha = Math.random() * 0.4 + 0.05;
-    this.life = 0;
-    this.maxLife = Math.random() * 600 + 300;
-    this.isAmber = Math.random() > 0.85;
-  }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.life++;
-    const p = this.life / this.maxLife;
-    const fade = p < 0.1 ? p * 10 : p > 0.85 ? (1 - p) * 6.67 : 1;
-    this.ca = this.alpha * fade;
-    if (this.life > this.maxLife || this.y < -5) this.reset(false);
-  }
-  draw() {
-    ctx.globalAlpha = this.ca;
-    ctx.fillStyle = this.isAmber
-      ? `rgba(180,140,60,${this.ca})`
-      : `rgba(138,154,74,${this.ca})`;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
-  }
+// Check if already authenticated this session
+if (sessionStorage.getItem('adfpti_auth') === 'true') {
+  document.getElementById('pwScreen').style.display = 'none';
+  document.getElementById('siteContent').style.display = 'block';
 }
 
-// Drifting grid lines
-class GridLine {
-  constructor(horiz) {
-    this.horiz = horiz;
-    if (horiz) {
-      this.x = 0;
-      this.y = Math.random() * H;
-      this.speed = Math.random() * 0.3 + 0.1;
-      this.alpha = Math.random() * 0.04 + 0.01;
-    } else {
-      this.x = Math.random() * W;
-      this.y = 0;
-      this.speed = Math.random() * 0.2 + 0.05;
-      this.alpha = Math.random() * 0.03 + 0.01;
-    }
+function checkPW() {
+  const now = Date.now();
+  if (now < lockoutUntil) {
+    const secsLeft = Math.ceil((lockoutUntil - now) / 1000);
+    document.getElementById('pwError').textContent = `Too many attempts. Try again in ${secsLeft}s.`;
+    return;
   }
-  update() {
-    if (this.horiz) { this.y += this.speed; if (this.y > H) this.y = -1; }
-    else            { this.x += this.speed; if (this.x > W) this.x = -1; }
-  }
-  draw() {
-    ctx.globalAlpha = this.alpha;
-    ctx.strokeStyle = '#8a9a4a';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    if (this.horiz) { ctx.moveTo(0, this.y); ctx.lineTo(W, this.y); }
-    else            { ctx.moveTo(this.x, 0); ctx.lineTo(this.x, H); }
-    ctx.stroke();
-  }
-}
-
-const particles  = Array.from({ length: 150 }, () => new Particle());
-const gridLines  = [
-  ...Array.from({ length: 6 }, () => new GridLine(true)),
-  ...Array.from({ length: 6 }, () => new GridLine(false)),
-];
-
-let mx = 0, my = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
-function frame() {
-  ctx.clearRect(0, 0, W, H);
-
-  // Deep background
-  const bg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.9);
-  bg.addColorStop(0, 'rgba(12,16,8,1)');
-  bg.addColorStop(1, 'rgba(4,5,3,1)');
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
-
-  // Drifting grid
-  gridLines.forEach(g => { g.update(); g.draw(); });
-
-  // Particles
-  particles.forEach(p => { p.update(); p.draw(); });
-
-  // Subtle mouse glow
-  const mg = ctx.createRadialGradient(mx, my, 0, mx, my, 250);
-  mg.addColorStop(0, 'rgba(138,154,74,0.04)');
-  mg.addColorStop(1, 'transparent');
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = mg;
-  ctx.fillRect(0, 0, W, H);
-
-  requestAnimationFrame(frame);
-}
-frame();
-
-
-// ── CUSTOM CROSSHAIR CURSOR ─────────────────────────────────────
-const cur   = document.getElementById('cursor');
-const trail = document.getElementById('cursor-trail');
-let cx = 0, cy = 0, tx = 0, ty = 0;
-
-document.addEventListener('mousemove', e => {
-  cx = e.clientX; cy = e.clientY;
-  cur.style.left = cx + 'px';
-  cur.style.top  = cy + 'px';
-});
-
-function animCursor() {
-  tx += (cx - tx) * 0.12;
-  ty += (cy - ty) * 0.12;
-  trail.style.left = tx + 'px';
-  trail.style.top  = ty + 'px';
-  requestAnimationFrame(animCursor);
-}
-animCursor();
-
-// Scale cursor up on interactive elements
-document.querySelectorAll('.tool-card, .btn-primary, .btn-ghost, .nav-links a, .tool-link').forEach(el => {
-  el.addEventListener('mouseenter', () => cur.style.transform = 'translate(-50%,-50%) scale(1.6)');
-  el.addEventListener('mouseleave', () => cur.style.transform = 'translate(-50%,-50%) scale(1)');
-});
-
-
-// ── SCROLL-IN ANIMATION FOR CARDS ──────────────────────────────
-const obs = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
+  const input = document.getElementById('pwInput').value;
+  if (input === PW) {
+    sessionStorage.setItem('adfpti_auth', 'true');
+    document.getElementById('pwScreen').style.display = 'none';
+    document.getElementById('siteContent').style.display = 'block';
+    attempts = 0;
+  } else {
+    attempts++;
+    document.getElementById('pwInput').value = '';
+    if (attempts >= maxAttempts) {
+      lockoutUntil = Date.now() + 30000;
+      document.getElementById('pwError').textContent = 'Too many incorrect attempts. Locked for 30 seconds.';
+      document.getElementById('pwAttempts').textContent = '';
       setTimeout(() => {
-        e.target.style.opacity    = '1';
-        e.target.style.transform  = 'none';
-      }, i * 70);
-      obs.unobserve(e.target);
+        document.getElementById('pwError').textContent = '';
+        attempts = 0;
+      }, 30000);
+    } else {
+      const remaining = maxAttempts - attempts;
+      document.getElementById('pwError').textContent = 'Incorrect password. Please try again.';
+      document.getElementById('pwAttempts').textContent = `${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`;
     }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.tool-card').forEach(c => {
-  c.style.opacity    = '0';
-  c.style.transform  = 'translateY(16px)';
-  c.style.transition = 'opacity 0.5s, transform 0.5s, background 0.3s';
-  obs.observe(c);
-});
-
-
-// ── HERO COUNTER ANIMATION ──────────────────────────────────────
-function countUp(el, to, duration) {
-  const start = Date.now();
-  const tick = () => {
-    const progress = Math.min((Date.now() - start) / duration, 1);
-    el.textContent = String(Math.round(progress * to)).padStart(2, '0');
-    if (progress < 1) requestAnimationFrame(tick);
-  };
-  tick();
+    document.getElementById('pwInput').focus();
+  }
 }
 
-setTimeout(() => {
-  countUp(document.getElementById('cnt-tools'), 7,  1200);
-  countUp(document.getElementById('cnt-sel'),   11, 1600);
-}, 1500);
+function togglePWVis() {
+  const input = document.getElementById('pwInput');
+  const btn = document.getElementById('pwToggle');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = 'Hide';
+  } else {
+    input.type = 'password';
+    btn.textContent = 'Show';
+  }
+}
 </script>
 
 </body>
