@@ -17,23 +17,19 @@ header h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:7
 header h1 span{color:var(--red2);}
 .hsub{font-size:12px;color:#aaa;margin-top:4px;font-weight:300;}
 .hright{margin-left:auto;display:flex;align-items:center;gap:8px;}
-.hbadge{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:700;}
-.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;transition:background .15s;}
-.hlink:hover{background:rgba(255,255,255,0.12);}
+.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;}
 .layout{display:grid;grid-template-columns:400px 1fr;min-height:calc(100vh - 72px);}
 .sidebar{background:var(--sand);border-right:1px solid var(--border);padding:1.5rem;overflow-y:auto;}
 .slabel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.75rem;}
 .fg label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink2);}
-input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;transition:border-color .15s;}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 2px rgba(200,57,43,.1);}
+input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;}
+input:focus,select:focus{outline:none;border-color:var(--red);}
 textarea{resize:vertical;min-height:60px;}
 .fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
-.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:.75rem;}
-.fgrid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:.75rem;}
-.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:.75rem;}
+.fgrid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:.75rem;}
+.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:.75rem;}
 .btn-gen:hover{background:var(--red);}
-.btn-gen:disabled{background:#999;cursor:not-allowed;}
 .output{padding:2rem;overflow-y:auto;}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;opacity:.45;}
 .empty-icon{width:64px;height:64px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:28px;}
@@ -43,30 +39,23 @@ textarea{resize:vertical;min-height:60px;}
 .rpt-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1.1;}
 .rpt-title span{color:var(--red);}
 .rpt-meta{font-size:12px;color:var(--muted);margin-top:4px;}
-.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
-.btn-sec:hover{background:var(--sand);}
-.stats-row{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
-.stat-item label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:3px;}
+.stats-bar{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
+.stat-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:3px;}
 .stat-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--orange);}
-.ai-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem;}
-.ai-section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-.ai-section-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
-.ai-badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:2px;font-weight:700;margin-bottom:.75rem;}
-.ai-output{font-size:13.5px;line-height:1.7;color:var(--text);font-family:'Barlow',sans-serif;}
-.ai-output h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin:1.5rem 0 .5rem;padding-bottom:4px;border-bottom:2px solid var(--red);}
-.ai-output h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin:1rem 0 .4rem;}
-.ai-output p{margin-bottom:.6rem;}
-.ai-output ul{margin:.4rem 0 .8rem 0;padding:0;list-style:none;}
-.ai-output ul li{padding:4px 0 4px 16px;position:relative;border-bottom:1px solid rgba(0,0,0,.04);}
-.ai-output ul li::before{content:'▸';position:absolute;left:0;color:var(--red);font-size:10px;top:6px;}
-.ai-output strong{font-weight:700;color:var(--ink);}
-.ai-output.streaming::after{content:'▋';animation:blink .7s infinite;color:var(--red);}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.loading-strip{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:.75rem;display:none;}
-.loading-fill{height:100%;background:var(--red);animation:sweep 1.5s ease-in-out infinite;}
-@keyframes sweep{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
-.disclaimer{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-top:2rem;font-size:12px;color:var(--muted);font-style:italic;}
+.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;}
+.section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;}
+.day-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--red);margin-bottom:.5rem;padding:6px 10px;background:var(--sand);border-radius:var(--radius);}
+.ex-row{display:grid;grid-template-columns:1fr 80px 80px 80px;gap:10px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;align-items:center;}
+.ex-row:last-child{border-bottom:none;}
+.ex-header{display:grid;grid-template-columns:1fr 80px 80px 80px;gap:10px;padding:5px 10px;background:var(--sand);font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border-radius:var(--radius);margin-bottom:4px;}
+.ex-name{font-weight:600;}
+.ex-note{font-size:11px;color:var(--muted);margin-top:2px;}
+.prog-row{display:grid;grid-template-columns:60px 1fr 1fr 1fr;gap:10px;padding:6px 10px;border-bottom:1px solid var(--border);font-size:13px;}
+.disclaimer{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-top:1rem;font-size:12px;color:var(--muted);font-style:italic;}
 @media(max-width:900px){.layout{grid-template-columns:1fr;}}
+@media print{.sidebar,.hright{display:none!important;}.layout{display:block;}.output{padding:1rem;}}
 </style>
 </head>
 <body>
@@ -75,188 +64,218 @@ textarea{resize:vertical;min-height:60px;}
   <div class="htext">
     <div class="hey">Australian Defence Force</div>
     <h1>PTI <span>Strength</span> Program Builder</h1>
-    <div class="hsub">AI-Powered Strength & Conditioning Program Generator</div>
+    <div class="hsub">Structured Strength & Conditioning Program Generator</div>
   </div>
-  <div class="hright">
-    <a class="hlink" href="index.html">← Back to Tools</a>
-    <div class="hbadge">AI Powered</div>
-  </div>
+  <div class="hright"><a class="hlink" href="index.html">← Back to Tools</a></div>
 </header>
 <div class="layout">
   <div class="sidebar">
     <div class="slabel">Member Details</div>
-    <div class="fgrid3">
-      <div class="fg"><label>Name</label><input type="text" id="name" placeholder="e.g. CPL Smith"></div>
-      <div class="fg"><label>Age</label><input type="number" id="age" placeholder="26" min="17" max="65"></div>
-      <div class="fg"><label>Bodyweight (kg)</label><input type="number" id="bw" placeholder="85"></div>
-    </div>
-
-    <div class="slabel">Training Goal</div>
-    <div class="fg">
-      <select id="goal">
-        <option>General Military Fitness</option>
-        <option>Strength Foundation (novice lifter)</option>
-        <option>Hypertrophy / Mass Gain</option>
-        <option>Strength-Endurance</option>
-        <option>Maximal Strength</option>
-        <option>Selection Preparation</option>
-        <option>Return to Training Post-Injury</option>
-      </select>
-    </div>
-
-    <div class="slabel">Program Setup</div>
-    <div class="fgrid3">
-      <div class="fg"><label>Experience</label>
-        <select id="exp"><option>Beginner (&lt;1 yr)</option><option selected>Intermediate (1–3 yr)</option><option>Advanced (3+ yr)</option></select>
-      </div>
-      <div class="fg"><label>Duration</label>
-        <select id="weeks"><option>4</option><option selected>6</option><option>8</option><option>10</option><option>12</option></select>
-      </div>
-      <div class="fg"><label>Sessions/Wk</label>
-        <select id="sessions"><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
-      </div>
-    </div>
     <div class="fgrid2">
-      <div class="fg"><label>Equipment</label>
-        <select id="equip"><option>Bodyweight only</option><option>Dumbbells / basic</option><option selected>Full barbell gym</option><option>Commercial gym (all)</option></select>
-      </div>
-      <div class="fg"><label>Split Preference</label>
-        <select id="split"><option>Full Body</option><option selected>Upper / Lower</option><option>Push / Pull / Legs</option><option>AI decides best split</option></select>
+      <div class="fg"><label>Full Name</label><input type="text" id="name" placeholder="e.g. CPL Smith, J."></div>
+      <div class="fg"><label>Age</label><input type="number" id="age" placeholder="e.g. 26" min="17" max="65"></div>
+      <div class="fg"><label>Bodyweight (kg)</label><input type="number" id="bw" placeholder="e.g. 80" min="40" max="150"></div>
+      <div class="fg"><label>Experience</label>
+        <select id="exp"><option value="beginner">Beginner (0–1 yr)</option><option value="intermediate" selected>Intermediate (1–3 yr)</option><option value="advanced">Advanced (3+ yr)</option></select>
       </div>
     </div>
-
-    <div class="slabel">Current Lifts (leave blank if unknown)</div>
+    <div class="slabel">Training Goal</div>
+    <div class="fg"><select id="goal">
+      <option value="strength">Max Strength</option>
+      <option value="hypertrophy">Hypertrophy / Size</option>
+      <option value="military" selected>Military Fitness (S&C)</option>
+      <option value="endurance">Strength Endurance</option>
+      <option value="power">Power / Explosiveness</option>
+    </select></div>
+    <div class="slabel">Program Setup</div>
+    <div class="fgrid2">
+      <div class="fg"><label>Duration (weeks)</label>
+        <select id="weeks"><option value="4">4 weeks</option><option value="6">6 weeks</option><option value="8" selected>8 weeks</option><option value="12">12 weeks</option></select>
+      </div>
+      <div class="fg"><label>Sessions/Week</label>
+        <select id="sessions"><option value="2">2/week</option><option value="3" selected>3/week</option><option value="4">4/week</option><option value="5">5/week</option></select>
+      </div>
+    </div>
+    <div class="fg"><label>Equipment</label>
+      <select id="equip"><option value="full" selected>Full Gym</option><option value="barbell">Barbell + Rack Only</option><option value="dumbbells">Dumbbells Only</option><option value="bodyweight">Bodyweight Only</option></select>
+    </div>
+    <div class="fg"><label>Program Split</label>
+      <select id="split"><option value="fullbody" selected>Full Body</option><option value="upperlower">Upper / Lower</option><option value="push_pull_legs">Push / Pull / Legs</option></select>
+    </div>
+    <div class="slabel">Current Lifts (optional)</div>
     <div class="fgrid2">
       <div class="fg"><label>Squat 1RM (kg)</label><input type="number" id="squat" placeholder="e.g. 100"></div>
       <div class="fg"><label>Bench 1RM (kg)</label><input type="number" id="bench" placeholder="e.g. 80"></div>
       <div class="fg"><label>Deadlift 1RM (kg)</label><input type="number" id="deadlift" placeholder="e.g. 120"></div>
       <div class="fg"><label>OHP 1RM (kg)</label><input type="number" id="ohp" placeholder="e.g. 60"></div>
     </div>
-
-    <div class="fg"><label>Injuries / Notes / Constraints</label>
-      <textarea id="notes" placeholder="e.g. Lower back sensitivity, no overhead press, ADF morning PT 3x/week already, limited to 60 min sessions"></textarea>
+    <div class="fg"><label>Injuries / Notes</label>
+      <textarea id="notes" placeholder="e.g. Lower back history, avoid heavy deadlifts"></textarea>
     </div>
-    <button class="btn-gen" id="genBtn" onclick="generate()">Generate Strength Program</button>
+    <button class="btn-gen" onclick="generate()">Generate Strength Program</button>
   </div>
-
   <div class="output">
     <div class="empty" id="emptyState">
-      <div class="empty-icon">⚙️</div>
+      <div class="empty-icon">🏋️</div>
       <h2>No Program Generated</h2>
-      <p>Enter your details and press<br>Generate Strength Program.</p>
+      <p>Fill in the details and press<br>Generate Strength Program.</p>
     </div>
     <div id="reportArea" style="display:none;"></div>
   </div>
 </div>
-
 <script>
-function v(id){return document.getElementById(id).value;}
-async function generate(){
-  const btn=document.getElementById('genBtn');
-  btn.disabled=true;btn.textContent='Generating...';
+const PROGRAMS={
+  fullbody:{
+    military:[
+      {name:'Squat (Back or Goblet)',sets:'4',reps:'5–6',load:'80–85% 1RM',note:'Full depth, brace core'},
+      {name:'Romanian Deadlift',sets:'3',reps:'8',load:'70% 1RM',note:'Hinge at hips, soft knee'},
+      {name:'Bench Press / Push-Up Variation',sets:'4',reps:'6–8',load:'75–80% 1RM',note:'Controlled descent'},
+      {name:'Barbell / DB Row',sets:'4',reps:'8',load:'75% 1RM',note:'Retract scapula at top'},
+      {name:'Overhead Press',sets:'3',reps:'8',load:'70% 1RM',note:'Neutral spine, no lumbar hyperextension'},
+      {name:'Pull-Ups / Lat Pulldown',sets:'3',reps:'Max/10',load:'Bodyweight/moderate',note:'Full ROM, dead hang start'},
+      {name:'Plank',sets:'3',reps:'45s',load:'Bodyweight',note:'Posterior pelvic tilt, squeeze glutes'},
+    ],
+    strength:[
+      {name:'Back Squat',sets:'5',reps:'3–5',load:'85–90% 1RM',note:'Competition depth, belt optional'},
+      {name:'Deadlift',sets:'4',reps:'3–4',load:'85% 1RM',note:'Lat tension before pull'},
+      {name:'Bench Press',sets:'5',reps:'3–5',load:'85–90% 1RM',note:'Arch, leg drive, full pause optional'},
+      {name:'Barbell Row',sets:'4',reps:'5',load:'70% 1RM',note:'Explosive pull, controlled lower'},
+      {name:'Overhead Press',sets:'3',reps:'5',load:'80% 1RM',note:'Strict form, no leg drive'},
+      {name:'Romanian Deadlift',sets:'3',reps:'6',load:'65% 1RM',note:'Accessory — hamstring focus'},
+    ],
+    hypertrophy:[
+      {name:'Squat Variation',sets:'4',reps:'8–12',load:'65–75% 1RM',note:'Full ROM, controlled tempo'},
+      {name:'Hip Hinge (RDL or Deadlift)',sets:'4',reps:'10–12',load:'60–70% 1RM',note:'Feel the stretch, squeeze at top'},
+      {name:'Horizontal Push (Bench/DB Press)',sets:'4',reps:'10–12',load:'65–75% 1RM',note:'2-second descent'},
+      {name:'Horizontal Pull (Row)',sets:'4',reps:'10–12',load:'65–75% 1RM',note:'Squeeze at contraction'},
+      {name:'Vertical Push (OHP)',sets:'3',reps:'10–12',load:'60–70% 1RM',note:'Full extension at top'},
+      {name:'Vertical Pull (Pull-Up/Pulldown)',sets:'3',reps:'10–12',load:'Moderate',note:'Full stretch at bottom'},
+      {name:'Isolation: Biceps + Triceps',sets:'2–3',reps:'12–15',load:'Light–moderate',note:'Superset for time efficiency'},
+    ],
+    endurance:[
+      {name:'Squat',sets:'3',reps:'15–20',load:'50–60% 1RM',note:'Minimal rest between sets'},
+      {name:'Deadlift or KB Swing',sets:'3',reps:'15',load:'50–60% 1RM',note:'Explosive hip drive'},
+      {name:'Push-Ups',sets:'3',reps:'Max',load:'Bodyweight',note:'Chest to floor each rep'},
+      {name:'TRX Row or DB Row',sets:'3',reps:'15',load:'Light–moderate',note:'Full ROM, steady tempo'},
+      {name:'Dumbbell Thruster',sets:'3',reps:'12',load:'Light–moderate',note:'Squat to press in one movement'},
+      {name:'Burpees',sets:'3',reps:'10',load:'Bodyweight',note:'Full extension at jump'},
+      {name:'Core Circuit (Plank/Sit-Up/Leg Raise)',sets:'2',reps:'30s each',load:'Bodyweight',note:'Minimal rest'},
+    ],
+    power:[
+      {name:'Power Clean or DB Hang Clean',sets:'5',reps:'3',load:'70–75% 1RM',note:'Explosive triple extension'},
+      {name:'Box Jump',sets:'4',reps:'5',load:'Bodyweight',note:'Soft landing, full hip extension at top'},
+      {name:'Back Squat',sets:'4',reps:'4',load:'80% 1RM',note:'Fast concentric intent'},
+      {name:'Bench Press (Compensatory Accel.)',sets:'4',reps:'4',load:'70% 1RM',note:'Explosive push phase'},
+      {name:'Medicine Ball Slam',sets:'4',reps:'8',load:'Moderate',note:'Full overhead extension before slam'},
+      {name:'Deadlift',sets:'4',reps:'3',load:'80% 1RM',note:'Aggressive pull, reset each rep'},
+    ]
+  }
+};
+
+function pct(oneRM,pctVal){return oneRM?Math.round(oneRM*pctVal/10)*10:null;}
+
+function generate(){
+  const name=document.getElementById('name').value.trim()||'Member';
+  const age=document.getElementById('age').value||'25';
+  const bw=document.getElementById('bw').value||'80';
+  const exp=document.getElementById('exp').value;
+  const goal=document.getElementById('goal').value;
+  const weeks=parseInt(document.getElementById('weeks').value)||8;
+  const sessPerWeek=parseInt(document.getElementById('sessions').value)||3;
+  const equip=document.getElementById('equip').value;
+  const split=document.getElementById('split').value;
+  const squat=parseInt(document.getElementById('squat').value)||0;
+  const bench=parseInt(document.getElementById('bench').value)||0;
+  const deadlift=parseInt(document.getElementById('deadlift').value)||0;
+  const ohp=parseInt(document.getElementById('ohp').value)||0;
+  const notes=document.getElementById('notes').value.trim();
+
+  const goalLabels={strength:'Max Strength',hypertrophy:'Hypertrophy',military:'Military Fitness',endurance:'Strength Endurance',power:'Power'};
+  const exercises=PROGRAMS.fullbody[goal]||PROGRAMS.fullbody.military;
+
+  const dayNames=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const restDays={2:['Monday','Thursday'],3:['Monday','Wednesday','Friday'],4:['Monday','Tuesday','Thursday','Friday'],5:['Monday','Tuesday','Wednesday','Thursday','Friday']};
+  const trainingDays=restDays[sessPerWeek]||restDays[3];
+
+  // Progression per week
+  function getWeekLoad(week,baseLoad){
+    const pctArr={strength:[75,80,85,90,80,85,90,95],military:[65,70,75,80,70,75,80,85],hypertrophy:[65,70,72,75,65,70,75,77],endurance:[55,60,62,65,55,60,62,65],power:[70,75,78,80,72,76,80,82]};
+    const arr=pctArr[goal]||pctArr.military;
+    const p=arr[Math.min(week-1,arr.length-1)]/100;
+    return Math.round(p*100)+'% 1RM';
+  }
+
+  // Build session days
+  let sessionsHTML='';
+  trainingDays.forEach((day,i)=>{
+    const isDeload=weeks>6&&i===Math.floor(trainingDays.length/2);
+    sessionsHTML+=`<div style="margin-bottom:1.5rem;">
+      <div class="day-title">${day}${isDeload?' — Technique Focus':''}</div>
+      <div class="ex-header"><div>Exercise</div><div>Sets</div><div>Reps</div><div>Load</div></div>
+      ${exercises.map(ex=>`<div class="ex-row">
+        <div><div class="ex-name">${ex.name}</div><div class="ex-note">${ex.note}</div></div>
+        <div style="text-align:center;">${ex.sets}</div>
+        <div style="text-align:center;">${ex.reps}</div>
+        <div style="text-align:center;font-weight:600;color:var(--red);">${ex.load}</div>
+      </div>`).join('')}
+    </div>`;
+  });
+
+  // Progression table
+  let progHTML='<div style="display:grid;grid-template-columns:60px repeat('+weeks+',1fr);gap:4px;font-size:11px;">';
+  progHTML+=`<div style="font-weight:700;padding:4px;">Week</div>`;
+  for(let w=1;w<=weeks;w++) progHTML+=`<div style="text-align:center;padding:4px;background:var(--sand);border-radius:3px;font-weight:700;">${w}${w%4===0&&w<weeks?' 🔄':''}</div>`;
+  const liftNames=['Squat','Bench','DL','OHP'];
+  const liftVals=[squat,bench,deadlift,ohp];
+  const pctArr={strength:[75,80,85,90,80,85,90,95],military:[65,70,75,80,70,75,80,85],hypertrophy:[65,70,72,75,65,70,75,77],endurance:[55,60,62,65,55,60,62,65],power:[70,75,78,80,72,76,80,82]};
+  const pArr=pctArr[goal]||pctArr.military;
+  liftNames.forEach((ln,li)=>{
+    if(!liftVals[li]) return;
+    progHTML+=`<div style="padding:4px;font-weight:600;">${ln}</div>`;
+    for(let w=1;w<=weeks;w++){
+      const p=pArr[Math.min(w-1,pArr.length-1)]/100;
+      const kg=Math.round(liftVals[li]*p/2.5)*2.5;
+      progHTML+=`<div style="text-align:center;padding:4px;background:${w%4===0?'#fdf0ee':'var(--card)'};border:1px solid var(--border);border-radius:3px;">${kg}kg</div>`;
+    }
+  });
+  progHTML+='</div>';
+
   const now=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const html=`
+    <div class="rpt-header">
+      <div>
+        <div class="rpt-title">Strength <span>Program</span></div>
+        <div class="rpt-meta">Generated ${now} — ${name} — ${weeks} weeks — ${goalLabels[goal]}</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';">Reset</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div><div class="stat-label">Member</div><div class="stat-val" style="font-size:15px;">${name}</div></div>
+      <div><div class="stat-label">Goal</div><div class="stat-val" style="font-size:14px;">${goalLabels[goal]}</div></div>
+      <div><div class="stat-label">Duration</div><div class="stat-val">${weeks} wks</div></div>
+      <div><div class="stat-label">Sessions/Week</div><div class="stat-val">${sessPerWeek}</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Weekly Session Template</div>
+      ${sessionsHTML}
+    </div>
+    ${(squat||bench||deadlift||ohp)?`<div class="section"><div class="section-title">Weekly Loading Progression</div><p style="font-size:12px;color:var(--muted);margin-bottom:.75rem;">🔄 = Deload week (reduce to ~60%). Add 2.5–5kg to lifts when completing all sets/reps successfully.</p>${progHTML}</div>`:''}
+    <div class="section">
+      <div class="section-title">Progression Rules</div>
+      ${['Add weight only when all sets and reps are completed with good form.','Beginner: add 2.5 kg/session to main lifts. Intermediate: 2.5 kg/week. Advanced: 1.25 kg/week or focus on reps.','Take a deload week every 4–6 weeks: reduce load by 30–40%, focus on technique.','If you miss a session, continue from where you left off — do not try to catch up.','If a lift stalls for 2 consecutive weeks, reduce load by 10% and rebuild.','Track all sessions: weight, sets, reps, and RPE (Rate of Perceived Exertion).'].map(r=>`<div style="padding:7px 0 7px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);position:relative;"><span style="position:absolute;left:0;color:var(--red);">▸</span>${r}</div>`).join('')}
+    </div>
+    ${notes?`<div class="section"><div class="section-title">Notes / Injury Considerations</div><p style="font-size:13px;color:var(--text2);">${notes}</p></div>`:''}
+    <div class="disclaimer"><strong>Disclaimer:</strong> This program is a planning aid. Personnel with injuries or medical restrictions must be cleared by a Medical Officer before commencing strength training.</div>`;
+
   document.getElementById('emptyState').style.display='none';
   const ra=document.getElementById('reportArea');
   ra.style.display='block';
-  ra.innerHTML=`
-    <div class="rpt-header">
-      <div><div class="rpt-title">Strength <span>Program</span></div><div class="rpt-meta">Generated ${now} — ${v('name')||'Member'} — ${v('weeks')} weeks — ${v('goal')}</div></div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
-        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='Generate Strength Program';">Reset</button>
-      </div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-item"><label>Goal</label><div class="stat-val" style="font-size:13px;">${v('goal')}</div></div>
-      <div class="stat-item"><label>Duration</label><div class="stat-val">${v('weeks')} wks</div></div>
-      <div class="stat-item"><label>Sessions/Wk</label><div class="stat-val">${v('sessions')}</div></div>
-      <div class="stat-item"><label>Experience</label><div class="stat-val" style="font-size:13px;">${v('exp')}</div></div>
-    </div>
-    <div class="ai-section">
-      <div class="ai-section-title">AI-Generated Program</div>
-      <span class="ai-badge">AI Generated</span>
-      <div class="loading-strip" id="loadStrip"><div class="loading-fill"></div></div>
-      <div class="ai-output streaming" id="aiOut"></div>
-    </div>
-    <div class="disclaimer"><strong>Disclaimer:</strong> This program is a planning aid. Ensure technique is assessed before increasing loads. Seek medical clearance if returning from injury. Integrate with mandatory ADF PT requirements.</div>`;
-
-  const prompt=`You are an expert ADF PTI and strength & conditioning coach. Generate a detailed, periodised strength program.
-
-Member: ${v('name')||'Member'} | Age: ${v('age')||'N/A'} | Bodyweight: ${v('bw')||'N/A'} kg
-Goal: ${v('goal')}
-Experience: ${v('exp')}
-Duration: ${v('weeks')} weeks | Sessions/week: ${v('sessions')}
-Equipment: ${v('equip')} | Preferred split: ${v('split')}
-Squat 1RM: ${v('squat')||'Unknown'} kg | Bench 1RM: ${v('bench')||'Unknown'} kg | Deadlift 1RM: ${v('deadlift')||'Unknown'} kg | OHP 1RM: ${v('ohp')||'Unknown'} kg
-Notes: ${v('notes')||'None'}
-
-Format with:
-1. PROGRAM OVERVIEW — training philosophy, adaptations targeted, how it fits ADF context
-2. LOADING PARAMETERS — sets, reps, %1RM ranges, rest periods per phase
-3. WEEK-BY-WEEK PROGRAM — every session for every week: exercise, sets x reps, load (use specific kg if 1RMs provided), rest
-4. KEY TECHNIQUE CUES — main cues for the primary compound lifts
-5. PROGRESSION RULES — how/when to add weight, what to do if missing reps
-6. INTEGRATION WITH ADF PT — how to fit around mandatory morning PT and parade schedules
-7. DELOAD WEEK — protocol if applicable
-
-If 1RMs are provided, give specific working weights in kg. Be precise and immediately actionable.`;
-
-  await callAI(prompt,'aiOut','loadStrip','genBtn','Generate Strength Program');
+  ra.innerHTML=html;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
 }
-async function callAI(prompt,outputId,loadStripId,btnId,btnLabel){
-  const aiOut=document.getElementById(outputId);
-  const loadStrip=document.getElementById(loadStripId);
-  const btn=document.getElementById(btnId);
-  loadStrip.style.display='block';
-  let fullText='';
-  aiOut.innerHTML='<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
-  try{
-    const response=await fetch('https://pti-ai-proxy.brendon-meredith3.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,stream:true,messages:[{role:'user',content:prompt}]})});
-    if(!response.ok){const errText=await response.text();aiOut.innerHTML='<p style="color:var(--red)"><strong>API Error '+response.status+':</strong> '+errText.slice(0,200)+'</p>';loadStrip.style.display='none';btn.disabled=false;btn.textContent=btnLabel;return;}
-    const reader=response.body.getReader();const decoder=new TextDecoder();let buffer='';
-    while(true){
-      const{done,value}=await reader.read();if(done)break;
-      buffer+=decoder.decode(value,{stream:true});
-      const lines=buffer.split('\n');buffer=lines.pop();
-      for(const line of lines){
-        if(line.startsWith('data: ')){const data=line.slice(6);if(data==='[DONE]')continue;
-          try{const p=JSON.parse(data);if(p.type==='content_block_delta'&&p.delta?.text){
-            fullText+=p.delta.text;
-            aiOut.innerHTML=renderMD(fullText)+'<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
-            aiOut.scrollIntoView({behavior:'smooth',block:'end'});
-          }}catch(e){}
-        }
-      }
-    }
-  }catch(err){aiOut.innerHTML='<p style="color:var(--red)"><strong>Error:</strong> '+err.message+'<br><small>Open browser DevTools (F12) → Console for details.</small></p>';}
-  aiOut.innerHTML=renderMD(fullText);
-  aiOut.classList.remove('streaming');
-  loadStrip.style.display='none';
-  btn.disabled=false;btn.textContent=btnLabel;
-}
-function renderMD(t){
-  const lines=t.split('\n');
-  let html='';let inList=false;
-  for(let i=0;i<lines.length;i++){
-    let l=lines[i];
-    if(l.match(/^###\s/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/^###\s/,''))+'</h3>';continue;}
-    if(l.match(/^##\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^##\s/,''))+'</h2>';continue;}
-    if(l.match(/^#\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^#\s/,''))+'</h2>';continue;}
-    if(l.match(/^\d+\.\s+[A-Z][A-Z\s\/&():-]{3,}/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^\d+\.\s+/,''))+'</h2>';continue;}
-    if(l.match(/^[-*]\s/)){if(!inList){html+='<ul>';inList=true;}html+='<li>'+inlineMD(l.replace(/^[-*]\s/,''))+'</li>';continue;}
-    if(l.trim()===''){if(inList){html+='</ul>';inList=false;}continue;}
-    if(l.match(/^\*\*[^*]+\*\*:?\s*$/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/\*\*/g,'').replace(/:$/,''))+'</h3>';continue;}
-    if(inList){html+='</ul>';inList=false;}
-    html+='<p>'+inlineMD(l)+'</p>';
-  }
-  if(inList)html+='</ul>';
-  return html;
-}
-function inlineMD(t){
-  return esc(t).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>');
-}
-function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 </script>
 </body>
 </html>
