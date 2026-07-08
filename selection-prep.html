@@ -17,31 +17,25 @@ header h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:7
 header h1 span{color:var(--red2);}
 .hsub{font-size:12px;color:#aaa;margin-top:4px;font-weight:300;}
 .hright{margin-left:auto;display:flex;align-items:center;gap:8px;}
-.hbadge{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:700;}
-.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;transition:background .15s;}
-.hlink:hover{background:rgba(255,255,255,0.12);}
-.layout{display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - 72px);}
+.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;}
+.layout{display:grid;grid-template-columns:400px 1fr;min-height:calc(100vh - 72px);}
 .sidebar{background:var(--sand);border-right:1px solid var(--border);padding:1.5rem;overflow-y:auto;}
 .slabel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.75rem;}
 .fg label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink2);}
-input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;transition:border-color .15s;}
-input:focus,select:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 2px rgba(200,57,43,.1);}
+input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;}
+input:focus,select:focus{outline:none;border-color:var(--red);}
 textarea{resize:vertical;min-height:60px;}
 .fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
-.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:.75rem;}
+.sel-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:.75rem;}
+.schip{border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 10px;cursor:pointer;background:var(--card);}
+.schip.sel{border-color:var(--red);background:#fdf0ee;}
+.schip-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--ink);}
+.schip.sel .schip-name{color:var(--red);}
+.schip-desc{font-size:10px;color:var(--muted);margin-top:2px;}
 .time-row{display:grid;grid-template-columns:1fr 1fr 20px;gap:6px;align-items:center;}
-.time-sep{font-size:16px;font-weight:700;color:var(--muted);text-align:center;}
-.sel-chip-grid{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:1rem;}
-.sel-chip{border:1.5px solid var(--border);border-radius:var(--radius);padding:9px 12px;cursor:pointer;background:var(--card);transition:all .15s;}
-.sel-chip:hover{border-color:var(--red);}
-.sel-chip.active{border-color:var(--red);background:#fdf0ee;}
-.sel-chip-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);}
-.sel-chip.active .sel-chip-name{color:var(--red);}
-.sel-chip-std{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.5;}
-.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:.75rem;}
+.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:.75rem;}
 .btn-gen:hover{background:var(--red);}
-.btn-gen:disabled{background:#999;cursor:not-allowed;}
 .output{padding:2rem;overflow-y:auto;}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;opacity:.45;}
 .empty-icon{width:64px;height:64px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:28px;}
@@ -51,29 +45,24 @@ textarea{resize:vertical;min-height:60px;}
 .rpt-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1.1;}
 .rpt-title span{color:var(--red);}
 .rpt-meta{font-size:12px;color:var(--muted);margin-top:4px;}
-.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
-.btn-sec:hover{background:var(--sand);}
-.stats-row{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
-.stat-item label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:3px;}
+.stats-bar{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
+.stat-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:3px;}
 .stat-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--orange);}
-.ai-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem;}
-.ai-section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-.ai-section-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
-.ai-badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:2px;font-weight:700;margin-bottom:.75rem;}
-.ai-output{font-size:13.5px;line-height:1.7;color:var(--text);font-family:'Barlow',sans-serif;}
-.ai-output h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin:1.5rem 0 .5rem;padding-bottom:4px;border-bottom:2px solid var(--red);}
-.ai-output h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin:1rem 0 .4rem;}
-.ai-output p{margin-bottom:.6rem;}
-.ai-output ul{margin:.4rem 0 .8rem 0;padding:0;list-style:none;}
-.ai-output ul li{padding:4px 0 4px 16px;position:relative;border-bottom:1px solid rgba(0,0,0,.04);}
-.ai-output ul li::before{content:'▸';position:absolute;left:0;color:var(--red);font-size:10px;top:6px;}
-.ai-output strong{font-weight:700;color:var(--ink);}
-.ai-output.streaming::after{content:'▋';animation:blink .7s infinite;color:var(--red);}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.loading-strip{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:.75rem;display:none;}
-.loading-fill{height:100%;background:var(--red);animation:sweep 1.5s ease-in-out infinite;}
-@keyframes sweep{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
-.disclaimer{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-top:2rem;font-size:12px;color:var(--muted);font-style:italic;}
+.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;}
+.section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;}
+.week-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--red);margin-bottom:.5rem;padding:6px 10px;background:var(--sand);border-radius:var(--radius);}
+.sess-row{display:grid;grid-template-columns:70px 1fr 120px;gap:10px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;align-items:start;}
+.sess-row:last-child{border-bottom:none;}
+.sess-day{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+.sess-type{font-weight:600;color:var(--ink);}
+.sess-detail{font-size:12px;color:var(--text2);margin-top:2px;}
+.sess-load{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--red);text-align:right;}
+.req-card{background:var(--sand);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;}
+.req-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--ink);margin-bottom:4px;}
+.req-item{font-size:12px;color:var(--text2);padding:2px 0;}
+.disclaimer{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-top:1rem;font-size:12px;color:var(--muted);font-style:italic;}
 @media(max-width:900px){.layout{grid-template-columns:1fr;}}
 @media print{.sidebar,.hright{display:none!important;}.layout{display:block;}.output{padding:1rem;}}
 </style>
@@ -84,198 +73,198 @@ textarea{resize:vertical;min-height:60px;}
   <div class="htext">
     <div class="hey">Australian Defence Force</div>
     <h1>PTI <span>Selection Prep</span> Planner</h1>
-    <div class="hsub">AI-Powered Selection Preparation — 2026 ADF Standards</div>
+    <div class="hsub">ADF Special Operations & Corps Selection Preparation</div>
   </div>
-  <div class="hright">
-    <a class="hlink" href="index.html">← Back to Tools</a>
-    <div class="hbadge">AI Powered</div>
-  </div>
+  <div class="hright"><a class="hlink" href="index.html">← Back to Tools</a></div>
 </header>
 <div class="layout">
   <div class="sidebar">
     <div class="slabel">Target Selection</div>
-    <div class="sel-chip-grid" id="selGrid">
-      <div class="sel-chip active" data-sel="SASR Selection" onclick="selSel(this)"><div class="sel-chip-name">SASR Selection</div><div class="sel-chip-std">2 Sqn SASR · 3.2 km run, load carry, swim, psych</div></div>
-      <div class="sel-chip" data-sel="2 Commando Selection" onclick="selSel(this)"><div class="sel-chip-name">2 Commando Selection</div><div class="sel-chip-std">3.2 km run, load carry, obstacle, swim, psych</div></div>
-      <div class="sel-chip" data-sel="ADF Special Operations Officer (SSO)" onclick="selSel(this)"><div class="sel-chip-name">ADF SSO</div><div class="sel-chip-std">Officer selection · multi-event physical battery</div></div>
-      <div class="sel-chip" data-sel="Navy Clearance Diver / CDG" onclick="selSel(this)"><div class="sel-chip-name">Navy Clearance Diver / CDG</div><div class="sel-chip-std">Gate tests: swim, run, strength, CDAT, underwater</div></div>
-      <div class="sel-chip" data-sel="Army Work Diver" onclick="selSel(this)"><div class="sel-chip-name">Army Work Diver</div><div class="sel-chip-std">Run, swim, strength standards, water confidence</div></div>
-      <div class="sel-chip" data-sel="SFET / SFAP SOER Integrator" onclick="selSel(this)"><div class="sel-chip-name">SOER Integrator</div><div class="sel-chip-std">SFET/SFAP physical battery</div></div>
-      <div class="sel-chip" data-sel="Infantry PESA" onclick="selSel(this)"><div class="sel-chip-name">Infantry PESA</div><div class="sel-chip-std">Sprint, strength, loaded march, obstacle</div></div>
-      <div class="sel-chip" data-sel="Basic Parachutist Course" onclick="selSel(this)"><div class="sel-chip-name">Basic Parachutist Course</div><div class="sel-chip-std">Run time, push-ups, sit-ups, general fitness standards</div></div>
-      <div class="sel-chip" data-sel="Parachute Rigger Course" onclick="selSel(this)"><div class="sel-chip-name">Parachute Rigger Course</div><div class="sel-chip-std">PFA standard + additional physical requirements</div></div>
-      <div class="sel-chip" data-sel="PTI Selection" onclick="selSel(this)"><div class="sel-chip-name">PTI Selection</div><div class="sel-chip-std">Run, swim, strength, teaching ability assessment</div></div>
+    <div class="sel-grid" id="selGrid">
+      <div class="schip sel" id="sc_SASR" onclick="selSel('SASR')"><div class="schip-name">SASR</div><div class="schip-desc">22 SAS Regiment</div></div>
+      <div class="schip" id="sc_2CDO" onclick="selSel('2CDO')"><div class="schip-name">2 CDO</div><div class="schip-desc">2nd Commando Regiment</div></div>
+      <div class="schip" id="sc_NORFORCE" onclick="selSel('NORFORCE')"><div class="schip-name">NORFORCE</div><div class="schip-desc">North-West Mobile Force</div></div>
+      <div class="schip" id="sc_SOCOMD" onclick="selSel('SOCOMD')"><div class="schip-name">SOCOMD Support</div><div class="schip-desc">SOCOMD Support Units</div></div>
+      <div class="schip" id="sc_INFANTRY" onclick="selSel('INFANTRY')"><div class="schip-name">Infantry Corps</div><div class="schip-desc">Royal Australian Infantry</div></div>
+      <div class="schip" id="sc_OFFICER" onclick="selSel('OFFICER')"><div class="schip-name">Officer Selection</div><div class="schip-desc">ADFA / RMC / OCS</div></div>
     </div>
-
-    <div class="slabel">Member Details</div>
-    <div class="fgrid3">
+    <div class="slabel">Personal Details</div>
+    <div class="fgrid2">
       <div class="fg"><label>Sex</label><select id="sex"><option>Male</option><option>Female</option></select></div>
-      <div class="fg"><label>Age</label><input type="number" id="age" placeholder="e.g. 24" min="17" max="50"></div>
-      <div class="fg"><label>Weeks to Selection</label><select id="weeks"><option>8</option><option selected>12</option><option>16</option><option>20</option><option>24</option></select></div>
+      <div class="fg"><label>Age</label><input type="number" id="age" placeholder="e.g. 24" min="17" max="45"></div>
     </div>
-
-    <div class="slabel">Current Performance</div>
-    <div class="fg"><label>2.4 km Run Time (min : sec)</label>
+    <div class="slabel">Current Fitness</div>
+    <div class="fg"><label>2.4 km Time (min:sec)</label>
       <div class="time-row">
-        <input type="number" id="runmin" placeholder="Min" min="6" max="20">
-        <input type="number" id="runsec" placeholder="Sec" min="0" max="59">
-        <div class="time-sep">:</div>
+        <input type="number" id="runmin" placeholder="Min"><input type="number" id="runsec" placeholder="Sec">
+        <span style="font-size:16px;font-weight:700;color:var(--muted);text-align:center;">:</span>
       </div>
-    </div>
-    <div class="fgrid3">
-      <div class="fg"><label>Push-ups (max)</label><input type="number" id="pushups" placeholder="e.g. 45"></div>
-      <div class="fg"><label>Sit-ups / 2min</label><input type="number" id="situps" placeholder="e.g. 55"></div>
-      <div class="fg"><label>Training days/wk</label><select id="days"><option>4</option><option selected>5</option><option>6</option></select></div>
     </div>
     <div class="fgrid2">
-      <div class="fg"><label>Swim Ability</label>
-        <select id="swim"><option>Non-swimmer</option><option>Basic (400m slow)</option><option selected>Competent (400m sub 12min)</option><option>Strong swimmer</option></select>
+      <div class="fg"><label>Push-Ups (max)</label><input type="number" id="pushups" placeholder="e.g. 40"></div>
+      <div class="fg"><label>Sit-Ups (2 min)</label><input type="number" id="situps" placeholder="e.g. 55"></div>
+    </div>
+    <div class="fg"><label>Can you swim 400m?</label>
+      <select id="swim"><option value="yes">Yes</option><option value="no">No</option></select>
+    </div>
+    <div class="slabel">Program Setup</div>
+    <div class="fgrid2">
+      <div class="fg"><label>Weeks to Selection</label>
+        <select id="weeks"><option value="8">8 weeks</option><option value="12" selected>12 weeks</option><option value="16">16 weeks</option><option value="20">20 weeks</option><option value="24">24 weeks</option></select>
       </div>
-      <div class="fg"><label>Current Fitness Level</label>
-        <select id="fitlvl"><option>Below standard</option><option selected>Near standard</option><option>At standard</option></select>
+      <div class="fg"><label>Training Days/Week</label>
+        <select id="days"><option value="4">4/week</option><option value="5" selected>5/week</option><option value="6">6/week</option></select>
       </div>
     </div>
-    <div class="fg"><label>Injuries / Notes</label>
-      <textarea id="notes" placeholder="e.g. Recovering ACL, no rucking yet. Based in Brisbane. PTI is supporting candidate."></textarea>
+    <div class="fg"><label>Fitness Level</label>
+      <select id="fitlvl"><option value="average">Average (currently PFA pass)</option><option value="good" selected>Good (above average)</option><option value="high">High (strong base)</option></select>
     </div>
-    <button class="btn-gen" id="genBtn" onclick="generate()">Generate Prep Plan</button>
+    <div class="fg"><label>Notes / Injuries</label>
+      <textarea id="notes" placeholder="e.g. Right knee tendinopathy — cleared for running at reduced volume"></textarea>
+    </div>
+    <button class="btn-gen" onclick="generate()">Generate Selection Prep Plan</button>
   </div>
-
   <div class="output">
     <div class="empty" id="emptyState">
       <div class="empty-icon">🎯</div>
       <h2>No Plan Generated</h2>
-      <p>Select a target selection, enter<br>current performance and generate.</p>
+      <p>Select your target and fill in details,<br>then generate your prep plan.</p>
     </div>
     <div id="reportArea" style="display:none;"></div>
   </div>
 </div>
-
 <script>
-let selectedSel = 'SASR Selection';
-function selSel(el){selectedSel=el.dataset.sel;document.querySelectorAll('.sel-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
-function toMMSS(min,sec){const m=parseInt(min)||0;const s=parseInt(sec)||0;if(!m&&!s)return'Not provided';return m+':'+(s.toString().padStart(2,'0'));}
+let selectedSel='SASR';
+function selSel(s){selectedSel=s;document.querySelectorAll('.schip').forEach(c=>c.classList.remove('sel'));document.getElementById('sc_'+s).classList.add('sel');}
+function toSec(m,s){return(parseInt(m)||0)*60+(parseInt(s)||0);}
+function toMMSS(s){if(!s||s<=0)return'--:--';return Math.floor(s/60)+':'+String(Math.round(s%60)).padStart(2,'0');}
 
-async function generate(){
-  const btn=document.getElementById('genBtn');
-  btn.disabled=true;btn.textContent='Generating...';
+const SELECTIONS={
+  SASR:{name:'SASR Selection',duration:'3 weeks',location:'Campbell Barracks, Swanbourne WA',reqs:['2.4 km run: sub-9:30 (Male) / sub-11:00 (Female)','Push-ups: 70+ in 2 min','Sit-ups: 70+ in 2 min','Pull-ups: 10+ strict','Swim: 400m in uniform','Pack march: 20 km with 40+ kg load']},
+  '2CDO':{name:'2 CDO Selection',duration:'2 weeks',location:'HQ SOCOMD, various',reqs:['2.4 km run: sub-10:00 (Male) / sub-11:30 (Female)','Push-ups: 60+ in 2 min','Sit-ups: 65+ in 2 min','Pull-ups: 8+ strict','Swim: 200m in uniform','Pack march: 15 km with 30+ kg']},
+  NORFORCE:{name:'NORFORCE Selection',duration:'2 weeks',location:'Darwin / Northern Territory',reqs:['2.4 km run: sub-11:00','Push-ups: 40+ in 2 min','Sit-ups: 50+ in 2 min','Swim: 200m','Bush navigation and patrol tasks']},
+  SOCOMD:{name:'SOCOMD Support Selection',duration:'1–2 weeks',location:'Holsworthy / Swanbourne',reqs:['2.4 km run: sub-10:30','Push-ups: 50+ in 2 min','Sit-ups: 55+ in 2 min','Swim: 200m in PT uniform','Trade qualification required']},
+  INFANTRY:{name:'Infantry Corps Training',duration:'Ongoing — RAP',location:'Kapooka / Singleton / Townsville',reqs:['2.4 km run: sub-11:24 (Male) / sub-13:00 (Female)','Push-ups: 15+ in 2 min','Sit-ups: 45+ in 2 min','Pack march: 10 km with 25 kg','All combat fitness tests']},
+  OFFICER:{name:'Officer Selection Board',duration:'4 days',location:'Canberra (ADFA/RMC)',reqs:['2.4 km run: within PFA standard for age/sex','Push-ups: PFA standard','Sit-ups: PFA standard','Academic and leadership tasks','Medical, psych, and interview assessment']}
+};
+
+function generate(){
   const sex=document.getElementById('sex').value;
-  const age=document.getElementById('age').value||'25';
-  const weeks=document.getElementById('weeks').value;
-  const runTime=toMMSS(document.getElementById('runmin').value,document.getElementById('runsec').value);
-  const pushups=document.getElementById('pushups').value||'Not provided';
-  const situps=document.getElementById('situps').value||'Not provided';
-  const days=document.getElementById('days').value;
+  const age=parseInt(document.getElementById('age').value)||24;
+  const runSec=toSec(document.getElementById('runmin').value,document.getElementById('runsec').value);
+  const pushups=parseInt(document.getElementById('pushups').value)||0;
+  const situps=parseInt(document.getElementById('situps').value)||0;
   const swim=document.getElementById('swim').value;
+  const weeks=parseInt(document.getElementById('weeks').value)||12;
+  const daysPerWeek=parseInt(document.getElementById('days').value)||5;
   const fitlvl=document.getElementById('fitlvl').value;
-  const notes=document.getElementById('notes').value||'None';
+  const notes=document.getElementById('notes').value.trim();
+
+  const sel=SELECTIONS[selectedSel];
   const now=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+
+  // Base volumes by fitness level
+  const baseRun={average:25,good:35,high:45};
+  const startKm=baseRun[fitlvl]||35;
+
+  const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const slotMap={4:[0,1,3,4],5:[0,1,2,3,4],6:[0,1,2,3,4,5]};
+  const slots=slotMap[daysPerWeek]||slotMap[5];
+
+  // Phase structure
+  const phases=[
+    {name:'Foundation',end:Math.floor(weeks*0.3),focus:'Aerobic base, movement quality, muscular endurance'},
+    {name:'Build',end:Math.floor(weeks*0.6),focus:'Progressive overload, pack work introduction, VO2 max'},
+    {name:'Peak',end:Math.floor(weeks*0.85),focus:'Specificity, high volume pack marches, max effort tests'},
+    {name:'Taper',end:weeks,focus:'Volume reduction, sharpen, rest and recovery before selection'}
+  ];
+  function getPhase(w){for(const p of phases){if(w<=p.end)return p;}return phases[phases.length-1];}
+
+  function getSession(w,slotIdx){
+    const ph=getPhase(w);
+    const progress=w/weeks;
+    const weekKm=Math.round(startKm*(1+progress*0.6));
+    const isPeak=ph.name==='Peak';
+    const isTaper=ph.name==='Taper';
+    const dayMod=slotIdx%daysPerWeek;
+
+    if(isTaper){
+      if(dayMod===0)return{type:'Easy Run',detail:`${Math.round(weekKm*0.25)} km easy pace — stay fresh, good form`,load:`${Math.round(weekKm*0.25)} km`};
+      if(dayMod===1)return{type:'PT Standards',detail:`Max push-ups × 3 sets (90s rest), max sit-ups × 3 sets, 10 pull-ups × 3 sets`,load:'Quality'};
+      return{type:'Rest / Light Walk',detail:'Active recovery only — 20–30 min walk or mobility work',load:'REST'};
+    }
+    if(dayMod===0)return{type:'Long Run',detail:`${Math.round(weekKm*0.4)} km easy-moderate pace — aerobic base`,load:`${Math.round(weekKm*0.4)} km`};
+    if(dayMod===1)return{type:'PT Standards',detail:`Push-ups: ${Math.round(pushups+(70-pushups)*progress)} target × 4 sets. Sit-ups: ${Math.round(situps+(70-situps)*progress)} target × 4 sets. Pull-ups: max × 3 sets. Core finisher 10 min.`,load:'Max effort'};
+    if(dayMod===2)return{type:isPeak?'Pack March (Loaded)':'Interval Running',detail:isPeak?`${Math.round(8+progress*12)} km with ${Math.round(20+progress*20)} kg pack — maintain march pace`:`8×400m at high intensity — 90s jog recovery. Warm-up/cool-down 10 min each.`,load:isPeak?`${Math.round(8+progress*12)} km`:'Track'};
+    if(dayMod===3)return{type:'Tempo + Strength',detail:`5 km at tempo pace → gym: squat 4×8, deadlift 3×8, bench 4×8, row 4×10`,load:`5 km + S&C`};
+    return{type:'Fartlek / Hill Run',detail:`${Math.round(weekKm*0.3)} km with ${Math.round(4+progress*8)} × 30s hard efforts on hills or flat — build capacity`,load:`${Math.round(weekKm*0.3)} km`};
+  }
+
+  let weeksHTML='';
+  for(let w=1;w<=weeks;w++){
+    const ph=getPhase(w);
+    const weekSessions=slots.map((slot,i)=>({day:dayNames[slot],sess:getSession(w,i)}));
+    weeksHTML+=`<div style="margin-bottom:1.25rem;">
+      <div class="week-title">Week ${w} — ${ph.name}</div>
+      ${weekSessions.map(s=>`<div class="sess-row">
+        <div class="sess-day">${s.day}</div>
+        <div><div class="sess-type">${s.sess.type}</div><div class="sess-detail">${s.sess.detail}</div></div>
+        <div class="sess-load">${s.sess.load}</div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  const html=`
+    <div class="rpt-header">
+      <div>
+        <div class="rpt-title">Selection <span>Prep Plan</span></div>
+        <div class="rpt-meta">Generated ${now} — ${sel.name} — ${weeks} weeks out</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';">Reset</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div><div class="stat-label">Selection</div><div class="stat-val" style="font-size:12px;">${sel.name}</div></div>
+      <div><div class="stat-label">Current 2.4 km</div><div class="stat-val">${runSec?toMMSS(runSec):'N/A'}</div></div>
+      <div><div class="stat-label">Weeks Out</div><div class="stat-val">${weeks}</div></div>
+      <div><div class="stat-label">Days/Week</div><div class="stat-val">${daysPerWeek}</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Selection Requirements — ${sel.name}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.75rem;">
+        <div style="background:var(--sand);border-radius:var(--radius);padding:8px 12px;font-size:12px;"><strong>Duration:</strong> ${sel.duration}</div>
+        <div style="background:var(--sand);border-radius:var(--radius);padding:8px 12px;font-size:12px;"><strong>Location:</strong> ${sel.location}</div>
+      </div>
+      ${sel.reqs.map(r=>`<div style="padding:6px 0 6px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);position:relative;"><span style="position:absolute;left:0;color:var(--red);">▸</span>${r}</div>`).join('')}
+    </div>
+
+    <div class="section">
+      <div class="section-title">Phase Overview</div>
+      ${phases.map(p=>`<div style="display:grid;grid-template-columns:100px 80px 1fr;gap:10px;padding:8px 10px;background:var(--sand);border-radius:var(--radius);margin-bottom:6px;font-size:13px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;color:var(--red);">${p.name}</div>
+        <div style="color:var(--muted);">Wks 1–${p.end}</div>
+        <div style="color:var(--text2);">${p.focus}</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="section">
+      <div class="section-title">Week-by-Week Program</div>
+      ${weeksHTML}
+    </div>
+
+    ${notes?`<div class="section"><div class="section-title">Notes / Injury Considerations</div><p style="font-size:13px;color:var(--text2);">${notes}</p></div>`:''}
+
+    <div class="disclaimer"><strong>Note:</strong> Selection requirements change periodically. Verify current standards directly with the relevant unit. This plan is a guide only — individual programs should be tailored by a qualified PTI. Consult a medical officer if you have any injuries or health concerns.</div>`;
 
   document.getElementById('emptyState').style.display='none';
   const ra=document.getElementById('reportArea');
   ra.style.display='block';
-  ra.innerHTML=`
-    <div class="rpt-header">
-      <div><div class="rpt-title">Selection <span>Prep Plan</span></div><div class="rpt-meta">Generated ${now} — ${selectedSel} — ${weeks} weeks — ${sex}, age ${age}</div></div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
-        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='Generate Prep Plan';">Reset</button>
-      </div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-item"><label>Target Selection</label><div class="stat-val" style="font-size:13px;">${selectedSel}</div></div>
-      <div class="stat-item"><label>Weeks Remaining</label><div class="stat-val">${weeks}</div></div>
-      <div class="stat-item"><label>Current Run</label><div class="stat-val">${runTime}</div></div>
-      <div class="stat-item"><label>Fitness Level</label><div class="stat-val" style="font-size:13px;">${fitlvl}</div></div>
-    </div>
-    <div class="ai-section">
-      <div class="ai-section-title">AI-Generated Preparation Plan</div>
-      <span class="ai-badge">AI Generated — 2026 ADF Standards</span>
-      <div class="loading-strip" id="loadStrip"><div class="loading-fill"></div></div>
-      <div class="ai-output streaming" id="aiOut"></div>
-    </div>
-    <div class="disclaimer"><strong>Disclaimer:</strong> This prep plan is a guide only. Selection standards may change — always verify current requirements with the relevant unit or chain of command. Seek medical clearance before commencing high-intensity preparation.</div>`;
-
-  const prompt=`You are an expert ADF Physical Training Instructor and selection preparation specialist. Generate a detailed preparation plan using 2026 ADF standards.
-
-Target Selection: ${selectedSel}
-Sex: ${sex} | Age: ${age} | Weeks to selection: ${weeks}
-Current 2.4 km run: ${runTime}
-Current push-ups (max): ${pushups}
-Current sit-ups/2 min: ${situps}
-Training days per week: ${days}
-Swim ability: ${swim}
-Current fitness level: ${fitlvl}
-Injuries/Notes: ${notes}
-
-Format with:
-1. SELECTION OVERVIEW — what the selection involves, key physical demands, 2026 minimum standards for ${sex}
-2. GAP ANALYSIS — current vs required for each component, priority areas
-3. PHASE BREAKDOWN — divide ${weeks} weeks: Base / Build / Peak / Taper with week ranges
-4. WEEKLY TRAINING TEMPLATE — example week for each phase (day-by-day: session type, exercises, duration, intensity)
-5. WEEKLY MILESTONES — checkpoint targets at each phase
-6. SELECTION-SPECIFIC PREPARATION — unique demands: load carry, water confidence, psychological prep, specific drills
-7. FINAL 2 WEEKS — taper protocol and selection week strategy
-
-Be specific with numbers, times, reps, distances. Reference actual 2026 selection standards. Make it immediately actionable.`;
-
-  await callAI(prompt, 'aiOut', 'loadStrip', 'genBtn', 'Generate Prep Plan');
+  ra.innerHTML=html;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
 }
-
-async function callAI(prompt,outputId,loadStripId,btnId,btnLabel){
-  const aiOut=document.getElementById(outputId);
-  const loadStrip=document.getElementById(loadStripId);
-  const btn=document.getElementById(btnId);
-  loadStrip.style.display='block';
-  let fullText='';
-  aiOut.innerHTML='<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
-  try{
-    const response=await fetch('https://pti-ai-proxy.brendon-meredith3.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,stream:true,messages:[{role:'user',content:prompt}]})});
-    if(!response.ok){const errText=await response.text();aiOut.innerHTML='<p style="color:var(--red)"><strong>API Error '+response.status+':</strong> '+errText.slice(0,200)+'</p>';loadStrip.style.display='none';btn.disabled=false;btn.textContent=btnLabel;return;}
-    const reader=response.body.getReader();const decoder=new TextDecoder();let buffer='';
-    while(true){
-      const{done,value}=await reader.read();if(done)break;
-      buffer+=decoder.decode(value,{stream:true});
-      const lines=buffer.split('\n');buffer=lines.pop();
-      for(const line of lines){
-        if(line.startsWith('data: ')){const data=line.slice(6);if(data==='[DONE]')continue;
-          try{const p=JSON.parse(data);if(p.type==='content_block_delta'&&p.delta?.text){
-            fullText+=p.delta.text;
-            aiOut.innerHTML=renderMD(fullText)+'<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
-            aiOut.scrollIntoView({behavior:'smooth',block:'end'});
-          }}catch(e){}
-        }
-      }
-    }
-  }catch(err){aiOut.innerHTML='<p style="color:var(--red)"><strong>Error:</strong> '+err.message+'<br><small>Open browser DevTools (F12) → Console for details.</small></p>';}
-  aiOut.innerHTML=renderMD(fullText);
-  aiOut.classList.remove('streaming');
-  loadStrip.style.display='none';
-  btn.disabled=false;btn.textContent=btnLabel;
-}
-function renderMD(t){
-  const lines=t.split('\n');
-  let html='';let inList=false;
-  for(let i=0;i<lines.length;i++){
-    let l=lines[i];
-    if(l.match(/^###\s/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/^###\s/,''))+'</h3>';continue;}
-    if(l.match(/^##\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^##\s/,''))+'</h2>';continue;}
-    if(l.match(/^#\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^#\s/,''))+'</h2>';continue;}
-    if(l.match(/^\d+\.\s+[A-Z][A-Z\s\/&():-]{3,}/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^\d+\.\s+/,''))+'</h2>';continue;}
-    if(l.match(/^[-*]\s/)){if(!inList){html+='<ul>';inList=true;}html+='<li>'+inlineMD(l.replace(/^[-*]\s/,''))+'</li>';continue;}
-    if(l.trim()===''){if(inList){html+='</ul>';inList=false;}continue;}
-    if(l.match(/^\*\*[^*]+\*\*:?\s*$/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/\*\*/g,'').replace(/:$/,''))+'</h3>';continue;}
-    if(inList){html+='</ul>';inList=false;}
-    html+='<p>'+inlineMD(l)+'</p>';
-  }
-  if(inList)html+='</ul>';
-  return html;
-}
-function inlineMD(t){
-  return esc(t).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>');
-}
-function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 </script>
 </body>
 </html>
