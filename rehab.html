@@ -17,23 +17,18 @@ header h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:7
 header h1 span{color:var(--red2);}
 .hsub{font-size:12px;color:#aaa;margin-top:4px;font-weight:300;}
 .hright{margin-left:auto;display:flex;align-items:center;gap:8px;}
-.hbadge{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:4px 10px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:700;}
-.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;transition:background .15s;}
-.hlink:hover{background:rgba(255,255,255,0.12);}
-.med-warning{background:#7a1010;color:#ffd0d0;font-size:11px;letter-spacing:1px;padding:10px 2rem;border-bottom:1px solid #9a2020;}
-.layout{display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - 72px);}
+.hlink{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:4px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#aaa;font-weight:600;text-decoration:none;}
+.layout{display:grid;grid-template-columns:400px 1fr;min-height:calc(100vh - 72px);}
 .sidebar{background:var(--sand);border-right:1px solid var(--border);padding:1.5rem;overflow-y:auto;}
 .slabel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.75rem;}
 .fg label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink2);}
-input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;transition:border-color .15s;}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 2px rgba(200,57,43,.1);}
-textarea{resize:vertical;min-height:70px;}
+input,select,textarea{font-family:'Barlow',sans-serif;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);width:100%;}
+input:focus,select:focus{outline:none;border-color:var(--red);}
+textarea{resize:vertical;min-height:60px;}
 .fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
-.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:.75rem;}
-.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:.75rem;}
+.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:.75rem;}
 .btn-gen:hover{background:var(--red);}
-.btn-gen:disabled{background:#999;cursor:not-allowed;}
 .output{padding:2rem;overflow-y:auto;}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;opacity:.45;}
 .empty-icon{width:64px;height:64px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:28px;}
@@ -43,30 +38,26 @@ textarea{resize:vertical;min-height:70px;}
 .rpt-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1.1;}
 .rpt-title span{color:var(--red);}
 .rpt-meta{font-size:12px;color:var(--muted);margin-top:4px;}
-.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
-.btn-sec:hover{background:var(--sand);}
-.stats-row{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
-.stat-item label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:3px;}
+.stats-bar{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
+.stat-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:3px;}
 .stat-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--orange);}
-.ai-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem;}
-.ai-section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-.ai-section-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
-.ai-badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:2px;font-weight:700;margin-bottom:.75rem;}
-.ai-output{font-size:13.5px;line-height:1.7;color:var(--text);font-family:'Barlow',sans-serif;}
-.ai-output h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin:1.5rem 0 .5rem;padding-bottom:4px;border-bottom:2px solid var(--red);}
-.ai-output h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin:1rem 0 .4rem;}
-.ai-output p{margin-bottom:.6rem;}
-.ai-output ul{margin:.4rem 0 .8rem 0;padding:0;list-style:none;}
-.ai-output ul li{padding:4px 0 4px 16px;position:relative;border-bottom:1px solid rgba(0,0,0,.04);}
-.ai-output ul li::before{content:'▸';position:absolute;left:0;color:var(--red);font-size:10px;top:6px;}
-.ai-output strong{font-weight:700;color:var(--ink);}
-.ai-output.streaming::after{content:'▋';animation:blink .7s infinite;color:var(--red);}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.loading-strip{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:.75rem;display:none;}
-.loading-fill{height:100%;background:var(--red);animation:sweep 1.5s ease-in-out infinite;}
-@keyframes sweep{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
-.disclaimer{background:#fdf0ee;border:1px solid #f0b0a0;border-radius:var(--radius);padding:12px 16px;margin-top:2rem;font-size:12px;color:#7a2010;}
+.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;}
+.section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'';display:inline-block;width:4px;height:13px;background:var(--red);border-radius:2px;}
+.phase-block{margin-bottom:1.25rem;}
+.phase-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--red);margin-bottom:.5rem;padding:8px 10px;background:var(--sand);border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center;}
+.phase-weeks{font-size:12px;font-weight:400;color:var(--muted);}
+.ex-row{display:grid;grid-template-columns:1fr 80px 100px;gap:10px;padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;align-items:start;}
+.ex-row:last-child{border-bottom:none;}
+.ex-name{font-weight:600;color:var(--ink);}
+.ex-note{font-size:11px;color:var(--muted);margin-top:2px;}
+.ex-sets{text-align:center;font-weight:600;}
+.ex-load{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--red);}
+.warning-box{background:#fff8f0;border:1px solid var(--orange);border-radius:var(--radius);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:#7a5a10;}
+.disclaimer{background:#fdf0ee;border:1px solid var(--red);border-radius:var(--radius);padding:10px 14px;margin-top:1rem;font-size:12px;color:var(--red);}
 @media(max-width:900px){.layout{grid-template-columns:1fr;}}
+@media print{.sidebar,.hright{display:none!important;}.layout{display:block;}.output{padding:1rem;}}
 </style>
 </head>
 <body>
@@ -75,236 +66,182 @@ textarea{resize:vertical;min-height:70px;}
   <div class="htext">
     <div class="hey">Australian Defence Force</div>
     <h1>PTI <span>Rehab</span> Program Generator</h1>
-    <div class="hsub">AI-Powered Injury Rehabilitation — Return to Duty Planning</div>
+    <div class="hsub">Return-to-Duty Exercise Rehabilitation Planner</div>
   </div>
-  <div class="hright">
-    <a class="hlink" href="index.html">← Back to Tools</a>
-    <div class="hbadge">AI Powered</div>
-  </div>
+  <div class="hright"><a class="hlink" href="index.html">← Back to Tools</a></div>
 </header>
-<div class="med-warning">⚕ MEDICAL DISCLAIMER: This tool generates general rehabilitation guidance only. All programs must be reviewed by a Medical Officer or Physiotherapist before use. Not a substitute for clinical assessment.</div>
 <div class="layout">
   <div class="sidebar">
     <div class="slabel">Member Details</div>
-    <div class="fgrid3">
-      <div class="fg"><label>Name</label><input type="text" id="name" placeholder="e.g. CPL Davis"></div>
-      <div class="fg"><label>Age</label><input type="number" id="age" placeholder="30" min="17" max="65"></div>
-      <div class="fg"><label>Unit</label><input type="text" id="unit" placeholder="e.g. 1 ESR"></div>
+    <div class="fgrid2">
+      <div class="fg"><label>Full Name</label><input type="text" id="name" placeholder="e.g. CPL Smith, J."></div>
+      <div class="fg"><label>Age</label><input type="number" id="age" placeholder="e.g. 28"></div>
+      <div class="fg"><label>Unit</label><input type="text" id="unit" placeholder="e.g. 3 RAR"></div>
+      <div class="fg"><label>Duty Status</label>
+        <select id="duty"><option value="light">Light Duties</option><option value="modified">Modified Duties</option><option value="full" selected>Full Duties</option></select>
+      </div>
     </div>
-
-    <div class="slabel">Injury / Condition</div>
-    <div class="fg">
+    <div class="slabel">Injury Details</div>
+    <div class="fg"><label>Injury / Condition</label>
       <select id="injury">
-        <optgroup label="Knee">
-          <option>Anterior Knee Pain (patellofemoral)</option>
-          <option>ACL — post-surgery return to training</option>
-          <option>Patella Tendinopathy</option>
-          <option>Iliotibial Band Syndrome</option>
-        </optgroup>
-        <optgroup label="Leg / Foot">
-          <option>Shin Splints (MTSS)</option>
-          <option>Plantar Fasciitis</option>
-          <option>Achilles Tendinopathy</option>
-          <option>Ankle Sprain — Grade I/II</option>
-          <option>Stress Fracture — return to run</option>
-          <option>Hamstring Strain</option>
-          <option>Groin / Hip Flexor Strain</option>
-        </optgroup>
-        <optgroup label="Upper Body">
-          <option>Shoulder Impingement</option>
-          <option>Rotator Cuff Strain</option>
-          <option>Shoulder Labrum — conservative management</option>
-          <option>Elbow Tendinopathy (lateral/medial)</option>
-        </optgroup>
-        <optgroup label="Spine / Core">
-          <option>Lower Back Pain (non-specific)</option>
-          <option>Thoracic / Upper Back Pain</option>
-        </optgroup>
-        <optgroup label="General">
-          <option>General Deconditioning Post-Injury</option>
-          <option>Post-Surgical Return to Training (general)</option>
-        </optgroup>
+        <option value="lower_back">Lower Back Pain</option>
+        <option value="knee">Knee (general)</option>
+        <option value="ankle">Ankle Sprain</option>
+        <option value="shoulder">Shoulder (general)</option>
+        <option value="hamstring">Hamstring Strain</option>
+        <option value="calf">Calf / Achilles</option>
+        <option value="hip">Hip Flexor / Groin</option>
+        <option value="shin">Shin Splints (MTSS)</option>
+        <option value="stress_fx">Stress Fracture (lower limb)</option>
+        <option value="rotator_cuff">Rotator Cuff</option>
+        <option value="plantar">Plantar Fasciitis</option>
+        <option value="patellar">Patellar Tendinopathy</option>
       </select>
     </div>
-
-    <div class="slabel">Injury Status</div>
     <div class="fgrid2">
-      <div class="fg"><label>Injury Phase</label>
+      <div class="fg"><label>Rehab Phase</label>
         <select id="phase">
-          <option>Acute (0–2 weeks post injury)</option>
-          <option selected>Sub-acute (2–6 weeks)</option>
-          <option>Rehabilitation (6+ weeks)</option>
-          <option>Return to Training</option>
-          <option>Return to Full Duty</option>
+          <option value="acute">Acute (0–2 weeks)</option>
+          <option value="subacute" selected>Sub-Acute (2–6 weeks)</option>
+          <option value="recon">Reconditioning (6–12 weeks)</option>
+          <option value="rtd">Return to Duty (12+ weeks)</option>
         </select>
       </div>
       <div class="fg"><label>Pain Level (0–10)</label>
         <select id="pain">
-          <option>0 — No pain</option>
-          <option>1–2 — Minimal</option>
-          <option selected>3–4 — Mild</option>
-          <option>5–6 — Moderate</option>
-          <option>7–8 — Significant (limit activity)</option>
-          <option>9–10 — Severe (seek MO immediately)</option>
+          <option value="0">0 — No pain</option>
+          <option value="2">1–2 — Minimal</option>
+          <option value="4" selected>3–4 — Mild</option>
+          <option value="6">5–6 — Moderate</option>
+          <option value="8">7–8 — Severe</option>
         </select>
       </div>
     </div>
-    <div class="fgrid2">
-      <div class="fg"><label>Current Duty Status</label>
-        <select id="duty">
-          <option>Full duty — injury managed</option>
-          <option selected>Restricted duties — light PT only</option>
-          <option>Non-effective — no PT</option>
-          <option>Post-surgical — MO clearance required</option>
-        </select>
-      </div>
-      <div class="fg"><label>Equipment Access</label>
-        <select id="equip">
-          <option>Home — no equipment</option>
-          <option>Resistance bands + bodyweight</option>
-          <option selected>Full gym access</option>
-          <option>Physio / rehab centre</option>
-        </select>
-      </div>
-    </div>
-
     <div class="slabel">Program Setup</div>
-    <div class="fgrid3">
-      <div class="fg"><label>Duration (wks)</label>
-        <select id="weeks"><option>4</option><option selected>6</option><option>8</option><option>12</option></select>
+    <div class="fgrid2">
+      <div class="fg"><label>Duration (weeks)</label>
+        <select id="weeks"><option value="4">4 weeks</option><option value="6" selected>6 weeks</option><option value="8">8 weeks</option><option value="12">12 weeks</option></select>
       </div>
-      <div class="fg"><label>Sessions/Wk</label>
-        <select id="sessions"><option>2</option><option selected>3</option><option>4</option><option>Daily</option></select>
-      </div>
-      <div class="fg"><label>RTD Goal</label>
-        <select id="goal"><option>Pass next PFA</option><option selected>Full unrestricted duties</option><option>Selection prep post-injury</option><option>Long-term injury management</option></select>
+      <div class="fg"><label>Sessions/Week</label>
+        <select id="sessions"><option value="3">3/week</option><option value="4">4/week</option><option value="5" selected>5/week</option></select>
       </div>
     </div>
-    <div class="fg"><label>Medical Notes / Physio Findings / Specific Restrictions</label>
-      <textarea id="notes" placeholder="e.g. Cleared for pool but no running. Physio says closed chain only for now. MO review in 3 weeks. No jumping or impact."></textarea>
+    <div class="fg"><label>Available Equipment</label>
+      <select id="equip"><option value="none">None / Bodyweight</option><option value="basic" selected>Basic (bands, light weights)</option><option value="gym">Full Gym</option></select>
     </div>
-    <button class="btn-gen" id="genBtn" onclick="generate()">Generate Rehab Program</button>
+    <div class="fg"><label>Goal</label>
+      <select id="goal"><option value="rtd" selected>Return to Full Duty</option><option value="pfa">Return to PFA Standard</option><option value="maintain">Maintain Fitness During Injury</option></select>
+    </div>
+    <div class="fg"><label>Medical Notes / Restrictions</label>
+      <textarea id="notes" placeholder="e.g. Cleared by MO for non-weight-bearing upper body work only"></textarea>
+    </div>
+    <button class="btn-gen" onclick="generate()">Generate Rehab Program</button>
   </div>
-
   <div class="output">
     <div class="empty" id="emptyState">
       <div class="empty-icon">🩺</div>
       <h2>No Program Generated</h2>
-      <p>Select the injury, current status<br>and press Generate Rehab Program.</p>
+      <p>Enter injury details and press<br>Generate Rehab Program.</p>
     </div>
     <div id="reportArea" style="display:none;"></div>
   </div>
 </div>
-
 <script>
-function v(id){return document.getElementById(id).value;}
-async function generate(){
-  const btn=document.getElementById('genBtn');
-  btn.disabled=true;btn.textContent='Generating...';
+const REHAB={
+  lower_back:{phases:{acute:[{name:'Diaphragmatic Breathing',sets:'3×10 breaths',load:'Supine',note:'Full exhale, belly rise on inhale'},{name:'Knee to Chest Stretch',sets:'3×30s each',load:'Gentle',note:'No pain — stop if increases symptoms'},{name:'Pelvic Tilts',sets:'3×15',load:'Supine',note:'Flatten lumbar spine to floor, hold 3s'},{name:'Dead Bug (arms only)',sets:'3×8',load:'Slow',note:'Lower back stays pressed to floor'}],subacute:[{name:'Bird Dog',sets:'3×10/side',load:'Slow',note:'Neutral spine throughout'},{name:'Glute Bridge',sets:'3×15',load:'Bodyweight',note:'Squeeze glutes at top, hold 2s'},{name:'Side Plank (knees)',sets:'3×20s',load:'Bodyweight',note:'Progress to feet when pain free'},{name:'Dead Bug (full)',sets:'3×8/side',load:'Controlled',note:'Lower back must stay flat'},{name:'Hip Hinge (bodyweight)',sets:'3×12',load:'Bodyweight',note:'Push hips back, soft knees — feel hamstrings'}],recon:[{name:'Romanian Deadlift',sets:'3×10',load:'Light–moderate',note:'Hinge at hips, brace core'},{name:'Goblet Squat',sets:'3×12',load:'Light–moderate',note:'Upright torso, full depth if pain free'},{name:'Plank',sets:'3×30s',load:'Bodyweight',note:'Progress duration weekly'},{name:'Single-Leg Deadlift',sets:'3×8/side',load:'Light',note:'Balance challenge + posterior chain'},{name:'Farmer\'s Carry',sets:'3×20m',load:'Moderate (even loading)',note:'Neutral spine, walk tall'}],rtd:[{name:'Back Squat / Deadlift',sets:'4×8',load:'Progressive',note:'Monitor pain — stop at >3/10'},{name:'Loaded Carry (bilateral)',sets:'3×30m',load:'Moderate–heavy',note:'Simulate pack march load'},{name:'Plank Variations',sets:'3×45s',load:'Bodyweight',note:'Stir the pot, body saw'},{name:'Hip Hinge + Row',sets:'3×10',load:'Moderate',note:'Combined posterior chain + pull'}]}},
+  knee:{phases:{acute:[{name:'Quad Sets',sets:'3×15',load:'Isometric',note:'Tighten quad, hold 5s, heel on mat'},{name:'Heel Slides',sets:'3×15',load:'Gravity only',note:'Slide heel toward glute, controlled return'},{name:'Straight Leg Raise',sets:'3×15',load:'Bodyweight',note:'Lock knee, raise 45°, hold 2s'},{name:'Ice + Elevation',sets:'3–4×day',load:'PRICE protocol',note:'15–20 min at a time'}],subacute:[{name:'Mini Squat (0–45°)',sets:'3×15',load:'Bodyweight',note:'Pain-free range only'},{name:'Step-Up (low box)',sets:'3×12/leg',load:'Bodyweight',note:'Lead with injured leg going up'},{name:'Terminal Knee Extension (band)',sets:'3×15',load:'Light band',note:'Full extension against resistance'},{name:'Calf Raise',sets:'3×20',load:'Bodyweight',note:'Both legs, then progress to single'}],recon:[{name:'Bulgarian Split Squat',sets:'3×10/leg',load:'Light–moderate',note:'Front knee tracks over toes'},{name:'Leg Press',sets:'3×15',load:'Moderate',note:'Full ROM within pain limits'},{name:'Nordic Hamstring Curl',sets:'3×6',load:'Bodyweight',note:'Eccentric focus — control the descent'},{name:'Step-Down (eccentric)',sets:'3×10/leg',load:'Bodyweight',note:'Slow 4-second descent, single leg'}],rtd:[{name:'Back Squat',sets:'4×8',load:'Progressive',note:'Assess pain response after session'},{name:'Running Progression',sets:'Walk-run intervals',load:'Gradual',note:'Start 1:1 walk:run → progress weekly'},{name:'Plyometric Progression',sets:'3×10',load:'Low–moderate',note:'Box jump → land quietly, absorb with knees'}]}},
+  shoulder:{phases:{acute:[{name:'Pendulum Swings',sets:'3×30s',load:'Gravity/arm weight',note:'Small circles — gravity traction'},{name:'Active ROM (pain free)',sets:'3×10 each direction',load:'Bodyweight',note:'Forward flex, abduction to pain limit'},{name:'Posture Correction',sets:'Every hour',load:'Awareness',note:'Scapular retraction, chin tuck'}],subacute:[{name:'Scapular Push-Up',sets:'3×15',load:'Bodyweight',note:'Protract and retract — no arm bend'},{name:'Band External Rotation',sets:'3×15',load:'Light band',note:'Elbow at 90°, rotate slowly out'},{name:'Band Face Pull',sets:'3×15',load:'Light band',note:'Elbows high, pull to forehead level'},{name:'Prone Y-T-W',sets:'3×10 each',load:'No weight',note:'Shoulder blade moves, not just arm'}],recon:[{name:'DB Shoulder Press (limited ROM)',sets:'3×12',load:'Light',note:'Pain-free arc only — may be 90° max'},{name:'Lat Pulldown',sets:'3×12',load:'Moderate',note:'Slight lean back, pull to upper chest'},{name:'Cable Row',sets:'3×15',load:'Moderate',note:'Retract scapula at end of pull'},{name:'Push-Up Progression',sets:'3×max',load:'Bodyweight',note:'Wall → incline → floor progression'}],rtd:[{name:'Overhead Press',sets:'4×8',load:'Progressive',note:'Full ROM if pain free'},{name:'Pull-Ups / Chin-Ups',sets:'3×max',load:'Bodyweight',note:'Dead hang start, full extension'},{name:'Bench Press',sets:'4×8',load:'Progressive',note:'Monitor AC joint / rotator cuff response'}]}}
+};
+
+function generate(){
+  const name=document.getElementById('name').value.trim()||'Member';
+  const age=document.getElementById('age').value||'25';
+  const unit=document.getElementById('unit').value.trim()||'N/A';
+  const duty=document.getElementById('duty').value;
+  const injury=document.getElementById('injury').value;
+  const phase=document.getElementById('phase').value;
+  const pain=parseInt(document.getElementById('pain').value)||4;
+  const weeks=parseInt(document.getElementById('weeks').value)||6;
+  const sessions=parseInt(document.getElementById('sessions').value)||5;
+  const equip=document.getElementById('equip').value;
+  const goal=document.getElementById('goal').value;
+  const notes=document.getElementById('notes').value.trim();
+
+  const injuryLabels={lower_back:'Lower Back Pain',knee:'Knee',ankle:'Ankle Sprain',shoulder:'Shoulder',hamstring:'Hamstring Strain',calf:'Calf/Achilles',hip:'Hip Flexor/Groin',shin:'Shin Splints (MTSS)',stress_fx:'Stress Fracture',rotator_cuff:'Rotator Cuff',plantar:'Plantar Fasciitis',patellar:'Patellar Tendinopathy'};
+  const phaseLabels={acute:'Acute',subacute:'Sub-Acute',recon:'Reconditioning',rtd:'Return to Duty'};
+  const goalLabels={rtd:'Return to Full Duty',pfa:'Return to PFA Standard',maintain:'Maintain Fitness'};
+  const dutyLabels={light:'Light Duties',modified:'Modified Duties',full:'Full Duties'};
+
+  // Get exercises for this injury and phase (fall back to lower_back if not found)
+  const injData=REHAB[injury]||REHAB.lower_back;
+  const phaseOrder=['acute','subacute','recon','rtd'];
+  const phaseIdx=phaseOrder.indexOf(phase);
+
+  // Build 4 phases across the weeks
+  const weeksPerPhase=Math.max(1,Math.floor(weeks/Math.max(1,4-phaseIdx)));
+  const phasePlan=[];
+  let wStart=1;
+  for(let pi=phaseIdx;pi<phaseOrder.length&&wStart<=weeks;pi++){
+    const ph=phaseOrder[pi];
+    const wEnd=pi===phaseOrder.length-1?weeks:Math.min(weeks,wStart+weeksPerPhase-1);
+    const exs=injData.phases[ph]||injData.phases.subacute||[];
+    phasePlan.push({phase:ph,label:phaseLabels[ph],weeks:[wStart,wEnd],exercises:exs});
+    wStart=wEnd+1;
+  }
+
   const now=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const html=`
+    <div class="rpt-header">
+      <div>
+        <div class="rpt-title">Rehab <span>Program</span></div>
+        <div class="rpt-meta">Generated ${now} — ${name} — ${injuryLabels[injury]} — ${weeks} weeks</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';">Reset</button>
+      </div>
+    </div>
+
+    <div class="warning-box">⚠️ <strong>Medical Clearance Required:</strong> This program must be reviewed and approved by a Medical Officer or Physiotherapist before implementation. Stop any exercise that increases pain above 3/10. Seek immediate attention for severe pain, swelling, or loss of function.</div>
+
+    <div class="stats-bar">
+      <div><div class="stat-label">Member</div><div class="stat-val" style="font-size:13px;">${name}</div></div>
+      <div><div class="stat-label">Injury</div><div class="stat-val" style="font-size:12px;">${injuryLabels[injury]}</div></div>
+      <div><div class="stat-label">Duty Status</div><div class="stat-val" style="font-size:12px;">${dutyLabels[duty]}</div></div>
+      <div><div class="stat-label">Duration</div><div class="stat-val">${weeks} wks</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Rehabilitation Phases</div>
+      ${phasePlan.map(p=>`
+        <div class="phase-block">
+          <div class="phase-title">${p.label} Phase <span class="phase-weeks">Weeks ${p.weeks[0]}–${p.weeks[1]}</span></div>
+          <div style="display:grid;grid-template-columns:1fr 80px 100px;gap:10px;padding:5px 10px;background:var(--sand);border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">
+            <div>Exercise</div><div style="text-align:center;">Sets × Reps</div><div style="text-align:right;">Load</div>
+          </div>
+          ${p.exercises.map(ex=>`<div class="ex-row">
+            <div><div class="ex-name">${ex.name}</div><div class="ex-note">${ex.note}</div></div>
+            <div class="ex-sets">${ex.sets}</div>
+            <div class="ex-load">${ex.load}</div>
+          </div>`).join('')}
+        </div>`).join('')}
+    </div>
+
+    <div class="section">
+      <div class="section-title">Progression Criteria</div>
+      ${['Move to the next phase only when pain is ≤2/10 during and after exercise.','Complete all sets/reps with correct technique before adding load.','No swelling or significant pain within 24 hours of the previous session.','Progress one variable at a time: reps, then sets, then load.','If pain increases above 3/10, reduce load by 50% and reassess.','Return to duty criteria must be confirmed by Medical Officer.'].map(r=>`<div style="padding:7px 0 7px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);position:relative;"><span style="position:absolute;left:0;color:var(--red);">▸</span>${r}</div>`).join('')}
+    </div>
+
+    ${notes?`<div class="section"><div class="section-title">Medical Notes / Restrictions</div><p style="font-size:13px;color:var(--text2);">${notes}</p></div>`:''}
+
+    <div class="disclaimer"><strong>§ Medical Disclaimer:</strong> This program is general guidance only and must be reviewed by a Medical Officer or Physiotherapist before implementation. Stop any exercise that increases pain above 4/10. Seek immediate medical attention for severe pain, swelling, numbness or loss of function. All duty status changes must be authorised by a Medical Officer.</div>`;
+
   document.getElementById('emptyState').style.display='none';
   const ra=document.getElementById('reportArea');
   ra.style.display='block';
-  ra.innerHTML=`
-    <div class="rpt-header">
-      <div><div class="rpt-title">Rehab <span>Program</span></div><div class="rpt-meta">Generated ${now} — ${v('name')||'Member'} — ${v('injury')} — ${v('weeks')} weeks</div></div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-sec" onclick="window.print()">Print / Save PDF</button>
-        <button class="btn-sec" onclick="document.getElementById('reportArea').style.display='none';document.getElementById('emptyState').style.display='flex';document.getElementById('genBtn').disabled=false;document.getElementById('genBtn').textContent='Generate Rehab Program';">Reset</button>
-      </div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-item"><label>Injury</label><div class="stat-val" style="font-size:12px;">${v('injury').split('(')[0].trim()}</div></div>
-      <div class="stat-item"><label>Phase</label><div class="stat-val" style="font-size:12px;">${v('phase').split(' ')[0]}</div></div>
-      <div class="stat-item"><label>Pain Level</label><div class="stat-val">${v('pain').split(' ')[0]}/10</div></div>
-      <div class="stat-item"><label>Duration</label><div class="stat-val">${v('weeks')} wks</div></div>
-    </div>
-    <div class="ai-section">
-      <div class="ai-section-title">AI-Generated Rehabilitation Program</div>
-      <span class="ai-badge">AI Generated — Evidence-Based Rehab</span>
-      <div class="loading-strip" id="loadStrip"><div class="loading-fill"></div></div>
-      <div class="ai-output streaming" id="aiOut"></div>
-    </div>
-    <div class="disclaimer"><strong>⚕ Medical Disclaimer:</strong> This program is general guidance only and must be reviewed by a Medical Officer or Physiotherapist before implementation. Stop any exercise that increases pain above 4/10. Seek immediate medical attention for severe pain, swelling, numbness or loss of function. All duty status changes must be authorised by a Medical Officer.</div>`;
-
-  const prompt=`You are an expert ADF Physical Training Instructor with advanced rehabilitation knowledge, working alongside ADF medical officers and physiotherapists.
-
-Member: ${v('name')||'Member'} | Age: ${v('age')||'N/A'} | Unit: ${v('unit')||'N/A'}
-Injury/Condition: ${v('injury')}
-Phase: ${v('phase')} | Pain level: ${v('pain')}
-Duty status: ${v('duty')} | Equipment: ${v('equip')}
-Program duration: ${v('weeks')} weeks | Sessions/week: ${v('sessions')}
-Return-to-duty goal: ${v('goal')}
-Medical notes: ${v('notes')||'None'}
-
-Format with:
-1. INJURY OVERVIEW — brief explanation of the condition, common causes in military context, typical recovery timeline
-2. PHASE-BY-PHASE REHABILITATION — break weeks into phases (Acute management / Strength restoration / Functional training / Return to duty)
-3. WEEKLY PROGRAM — every session for every week: specific exercises, sets, reps, tempo, rest, pain monitoring cues (0-10 scale)
-4. RED FLAGS — specific symptoms that mean member must stop and see MO/physio immediately
-5. LOAD MANAGEMENT RULES — how to progress and when to reduce load using 0-10 pain scale
-6. COMPENSATORY FITNESS — what the member CAN do to maintain fitness while injured
-7. RETURN-TO-DUTY PROTOCOL — graduated return criteria, timeline, functional benchmarks
-8. PTI / SUPERVISOR NOTES — how to monitor, document, duty status considerations, escalation triggers
-
-Emphasise safety throughout. Use evidence-based principles appropriate for military members. Be specific with exercises, sets, reps and progressions.`;
-
-  await callAI(prompt,'aiOut','loadStrip','genBtn','Generate Rehab Program');
+  ra.innerHTML=html;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
 }
-async function callAI(prompt,outputId,loadStripId,btnId,btnLabel){
-  const aiOut=document.getElementById(outputId);
-  const loadStrip=document.getElementById(loadStripId);
-  const btn=document.getElementById(btnId);
-  loadStrip.style.display='block';
-  let fullText='';
-  aiOut.innerHTML='<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
-  try{
-    const response=await fetch('https://pti-ai-proxy.brendon-meredith3.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,stream:true,messages:[{role:'user',content:prompt}]})});
-    if(!response.ok){const errText=await response.text();aiOut.innerHTML='<p style="color:var(--red)"><strong>API Error '+response.status+':</strong> '+errText.slice(0,200)+'</p>';loadStrip.style.display='none';btn.disabled=false;btn.textContent=btnLabel;return;}
-    const reader=response.body.getReader();const decoder=new TextDecoder();let buffer='';
-    while(true){
-      const{done,value}=await reader.read();if(done)break;
-      buffer+=decoder.decode(value,{stream:true});
-      const lines=buffer.split('\n');buffer=lines.pop();
-      for(const line of lines){
-        if(line.startsWith('data: ')){const data=line.slice(6);if(data==='[DONE]')continue;
-          try{const p=JSON.parse(data);if(p.type==='content_block_delta'&&p.delta?.text){
-            fullText+=p.delta.text;
-            aiOut.innerHTML=renderMD(fullText)+'<span style="color:var(--red);animation:blink .7s infinite">▋</span>';
-            aiOut.scrollIntoView({behavior:'smooth',block:'end'});
-          }}catch(e){}
-        }
-      }
-    }
-  }catch(err){aiOut.innerHTML='<p style="color:var(--red)"><strong>Error:</strong> '+err.message+'<br><small>Open browser DevTools (F12) → Console for details.</small></p>';}
-  aiOut.innerHTML=renderMD(fullText);
-  aiOut.classList.remove('streaming');
-  loadStrip.style.display='none';
-  btn.disabled=false;btn.textContent=btnLabel;
-}
-function renderMD(t){
-  const lines=t.split('\n');
-  let html='';let inList=false;
-  for(let i=0;i<lines.length;i++){
-    let l=lines[i];
-    if(l.match(/^###\s/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/^###\s/,''))+'</h3>';continue;}
-    if(l.match(/^##\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^##\s/,''))+'</h2>';continue;}
-    if(l.match(/^#\s/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^#\s/,''))+'</h2>';continue;}
-    if(l.match(/^\d+\.\s+[A-Z][A-Z\s\/&():-]{3,}/)){if(inList){html+='</ul>';inList=false;}html+='<h2>'+esc(l.replace(/^\d+\.\s+/,''))+'</h2>';continue;}
-    if(l.match(/^[-*]\s/)){if(!inList){html+='<ul>';inList=true;}html+='<li>'+inlineMD(l.replace(/^[-*]\s/,''))+'</li>';continue;}
-    if(l.trim()===''){if(inList){html+='</ul>';inList=false;}continue;}
-    if(l.match(/^\*\*[^*]+\*\*:?\s*$/)){if(inList){html+='</ul>';inList=false;}html+='<h3>'+esc(l.replace(/\*\*/g,'').replace(/:$/,''))+'</h3>';continue;}
-    if(inList){html+='</ul>';inList=false;}
-    html+='<p>'+inlineMD(l)+'</p>';
-  }
-  if(inList)html+='</ul>';
-  return html;
-}
-function inlineMD(t){
-  return esc(t).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>');
-}
-function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 </script>
 </body>
 </html>
