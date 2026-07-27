@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#182634">
+<title>Conditioning Program — OCDT Francis</title>
+<style>
+  :root{
+    --ink:#182634; --ink-soft:#42525f; --muted:#6d7b87;
+    --bg:#eef1f4; --card:#ffffff;
+    --steel:#2f6f8f; --steel-dk:#245a75; --steel-bg:#e7f0f4;
+    --caution:#b26a12; --caution-bg:#fbf2e2; --caution-bd:#ecd9b4;
+    --go:#3f7d54; --amber:#c08a1e; --stop:#a8412f;
+    --line:#dbe1e7; --line-soft:#eaeef1;
+    --mono: ui-monospace,"SFMono-Regular","SF Mono",Menlo,Consolas,monospace;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;
+    padding-bottom:env(safe-area-inset-bottom)}
+  .wrap{max-width:680px;margin:0 auto;padding:0 14px}
+
+  header{background:var(--ink);color:#eef2f5;padding:calc(18px + env(safe-area-inset-top)) 0 16px;border-bottom:3px solid var(--steel)}
+  .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb4c7;margin:0 0 6px}
+  header h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.01em}
+  header .who{margin:5px 0 0;color:#b9c6d0;font-size:13.5px}
+  .hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .hchip{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:4px;font-weight:700}
+  .hchip.status{background:var(--caution);color:#241505}
+  .hchip.plan{background:var(--steel);color:#fff}
+
+  .cautionstrip{width:100%;background:var(--caution-bg);border:0;border-bottom:1px solid var(--caution-bd);color:#5a3c0e;
+    font-size:13px;padding:9px 14px;text-align:center;cursor:pointer;font-family:var(--sans)}
+  .cautionstrip b{color:var(--caution)}
+  .cautionstrip:focus-visible{outline:2px solid var(--steel);outline-offset:-2px}
+
+  .ready{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin:14px 0}
+  .ready h2{margin:0 0 3px;font-size:13px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--steel-dk)}
+  .ready .q{font-size:13px;color:var(--muted);margin:0 0 10px}
+  .pills{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .pill{border:1.5px solid var(--line);background:#fafbfc;border-radius:10px;padding:9px 6px;text-align:center;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink-soft);transition:transform .08s,border-color .12s,background .12s}
+  .pill .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}
+  .pill.g .dot{background:var(--go)} .pill.a .dot{background:var(--amber)} .pill.r .dot{background:var(--stop)}
+  .pill[aria-pressed="true"]{color:#fff;transform:translateY(-1px)}
+  .pill.g[aria-pressed="true"]{background:var(--go);border-color:var(--go)}
+  .pill.a[aria-pressed="true"]{background:var(--amber);border-color:var(--amber)}
+  .pill.r[aria-pressed="true"]{background:var(--stop);border-color:var(--stop)}
+  .pill.g[aria-pressed="true"] .dot,.pill.a[aria-pressed="true"] .dot,.pill.r[aria-pressed="true"] .dot{background:#fff}
+  .pill:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .readymsg{margin:10px 0 0;font-size:13.5px;color:var(--ink-soft);min-height:1px}
+  .readymsg.show{padding:9px 11px;background:var(--steel-bg);border-radius:8px;border-left:3px solid var(--steel)}
+
+  .tabs{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0 8px;display:flex;gap:6px}
+  .tab{flex:1;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 4px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .tab:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .panel{display:none;animation:fade .18s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  /* week selector */
+  .weekbar{display:flex;gap:7px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .wk{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 12px 7px;cursor:pointer;text-align:center;line-height:1.2;min-width:64px}
+  .wk .wnum{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--ink);display:block}
+  .wk .wph{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-top:2px}
+  .wk .bar{height:3px;border-radius:2px;margin-top:6px}
+  .wk[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+  .wk[aria-pressed="true"] .wnum{color:#fff} .wk[aria-pressed="true"] .wph{color:#c3ccd3}
+  .wk:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .wk .now{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--caution);display:block;margin-top:3px;font-weight:700}
+  .wk[aria-pressed="true"] .now{color:#e9b672}
+
+  .weekhead{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:2px 0 10px}
+  .weekhead .wt{font-size:16px;font-weight:750}
+  .weekhead .wt .pdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .weekhead .wd{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:2px}
+  .weekhead .wf{font-size:14px;color:var(--ink-soft);margin-top:8px}
+  .prognote{background:var(--steel-bg);border-left:3px solid var(--steel);border-radius:8px;padding:10px 13px;margin:0 0 10px;font-size:13.5px;color:var(--ink-soft)}
+  .prognote b{color:var(--steel-dk)}
+  .provisional{background:var(--caution-bg);border:1px solid var(--caution-bd);border-left:4px solid var(--caution);border-radius:8px;padding:10px 13px;margin:0 0 10px;font-size:13px;color:#5a3c0e}
+  .provisional b{color:var(--caution)}
+
+  .day{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden}
+  .day.rest{opacity:.92}
+  .dayhead{width:100%;text-align:left;background:none;border:0;font-family:var(--sans);cursor:pointer;padding:13px 14px;display:flex;align-items:center;gap:12px}
+  .dayhead:focus-visible{outline:2px solid var(--steel);outline-offset:-2px}
+  .dcol{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:42px}
+  .dcol .dn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .dcol .code{font-family:var(--mono);font-size:9.5px;margin-top:3px;color:#fff;background:var(--steel);padding:2px 5px;border-radius:3px}
+  .dcol .code.run{background:var(--caution)} .dcol .code.swim{background:var(--steel-dk)} .dcol .code.rest{background:#9aa6b0} .dcol .code.lower{background:var(--go)}
+  .dmid{flex:1;min-width:0}
+  .dmid .t{font-weight:650;font-size:15px;display:block;line-height:1.3}
+  .dmid .s{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .dright{display:flex;align-items:center;gap:9px}
+  .prog{font-family:var(--mono);font-size:11px;color:var(--steel-dk);background:var(--steel-bg);padding:3px 7px;border-radius:20px;white-space:nowrap}
+  .prog.done{background:var(--go);color:#fff}
+  .chev{color:var(--muted);transition:transform .18s;font-size:13px}
+  .day.open .chev{transform:rotate(90deg)}
+  .daybody{display:none;border-top:1px solid var(--line-soft)}
+  .day.open .daybody{display:block}
+
+  .runbanner{margin:10px 14px 2px;background:var(--caution-bg);border:1px solid var(--caution-bd);border-left:4px solid var(--caution);border-radius:8px;padding:11px 13px;font-size:13px;color:#5a3c0e}
+  .runbanner b{color:var(--caution)}
+
+  ul.ex{list-style:none;margin:6px 0 2px;padding:0}
+  ul.ex li{display:flex;gap:11px;align-items:flex-start;padding:11px 14px;border-top:1px solid var(--line-soft)}
+  ul.ex li:first-child{border-top:0}
+  .cbx{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:22px;height:22px;border:2px solid var(--line);border-radius:6px;margin-top:1px;cursor:pointer;position:relative;background:#fff;transition:background .12s,border-color .12s}
+  .cbx:checked{background:var(--go);border-color:var(--go)}
+  .cbx:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+  .cbx:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .exn{flex:1;min-width:0;font-size:14.5px}
+  .exn.checked{color:var(--muted);text-decoration:line-through;text-decoration-color:#c3ccd3}
+  .exn .note{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;text-decoration:none}
+  .chip{font-family:var(--mono);font-size:11.5px;white-space:nowrap;background:var(--steel-bg);color:var(--steel-dk);border:1px solid #d3e2ea;padding:2px 7px;border-radius:5px;align-self:center}
+  .wu{background:#f6f8f9}
+  .sub{background:#fbf4ea}
+
+  .daytools{display:flex;align-items:center;gap:14px;padding:10px 14px;border-top:1px solid var(--line-soft)}
+  .linkbtn{background:none;border:0;color:var(--steel-dk);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;padding:2px 0}
+  .linkbtn:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .log{padding:0 14px 14px}
+  .log .lrow{display:flex;gap:10px;margin-top:4px}
+  .log label{flex:1;font-size:12px;font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .log select,.log textarea{width:100%;margin-top:4px;border:1px solid var(--line);border-radius:8px;padding:8px;font-family:var(--sans);font-size:14px;background:#fff;color:var(--ink)}
+  .log textarea{resize:vertical;min-height:44px}
+  .saved{font-size:11px;color:var(--go);font-family:var(--mono);opacity:0;transition:opacity .2s}
+  .saved.show{opacity:1}
+  .restnote{padding:12px 14px 14px;font-size:14px;color:var(--muted)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px;margin:12px 0}
+  .card h3{margin:0 0 8px;font-size:16px}
+  .kick{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel-dk);margin:22px 4px 2px;display:block}
+  .card p{margin:0 0 10px} .card p:last-child{margin-bottom:0}
+  .card ul{margin:0 0 6px;padding-left:19px} .card li{margin:5px 0}
+  .small{font-size:13px;color:var(--muted)}
+  .phaserow{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line-soft)}
+  .phaserow:first-of-type{border-top:0}
+  .pcode{font-family:var(--mono);font-size:11px;color:#fff;padding:3px 7px;border-radius:4px;white-space:nowrap;margin-top:2px}
+  .pcode.reset{background:var(--steel)} .pcode.rebuild{background:var(--amber)} .pcode.develop{background:var(--go)}
+  ol.proto{counter-reset:s;list-style:none;padding:0;margin:6px 0}
+  ol.proto li{position:relative;padding:9px 12px 9px 42px;border:1px solid var(--line);border-radius:8px;margin:7px 0}
+  ol.proto li::before{counter-increment:s;content:"W" counter(s);position:absolute;left:8px;top:8px;font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;background:var(--steel);width:25px;height:25px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+  .flag{border-radius:10px;padding:13px 15px;margin:11px 0;border:1px solid var(--caution-bd);border-left:5px solid var(--caution);background:var(--caution-bg)}
+  .flag.stopf{border-color:#ecccc4;border-left-color:var(--stop);background:#fbeeeb}
+  .flag .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--caution);display:block;margin-bottom:5px}
+  .flag.stopf .tag{color:var(--stop)}
+  .flag p{margin:0}
+  .legend{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px}
+  .lg{border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+  .lg .h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+  .lg.g{border-top:3px solid var(--go)} .lg.a{border-top:3px solid var(--amber)} .lg.r{border-top:3px solid var(--stop)}
+  .lg p{margin:5px 0 0;font-size:13.5px;color:var(--ink-soft)}
+  footer{color:var(--muted);font-size:12px;padding:20px 4px 40px;text-align:center}
+  .resetall{display:block;margin:6px auto 0;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;cursor:pointer}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Alpha Squadron PTI Cell</p>
+    <h1>Graded Return-to-Training</h1>
+    <p class="who">OCDT E. Francis (RAAF) · CPL Brendon, PTI</p>
+    <div class="hchips">
+      <span class="hchip plan">6-week block</span>
+      <span class="hchip status">Non-contact until cleared</span>
+    </div>
+  </div>
+</header>
+
+<button class="cautionstrip" id="cautionStrip"><b>Read first ▸</b> spleen, hip &amp; fatigue rules — tap for the safety brief</button>
+
+<div class="wrap">
+
+  <section class="ready" aria-label="Daily readiness">
+    <h2>Today's readiness</h2>
+    <p class="q">10-second gut check — sleep, energy, soreness, hip. How are you?</p>
+    <div class="pills" role="group" aria-label="Readiness">
+      <button class="pill g" data-r="g" aria-pressed="false"><span class="dot"></span>Green</button>
+      <button class="pill a" data-r="a" aria-pressed="false"><span class="dot"></span>Amber</button>
+      <button class="pill r" data-r="r" aria-pressed="false"><span class="dot"></span>Red</button>
+    </div>
+    <p class="readymsg" id="readymsg"></p>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="week">Plan</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="guide">Guide</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="safety">Safety</button>
+  </div>
+
+  <div class="panel active" id="week" role="tabpanel">
+    <div class="weekbar" id="weekbar" role="tablist" aria-label="Weeks"></div>
+    <div id="weekhead"></div>
+    <div id="days"></div>
+    <button class="resetall" id="resetWeek">Reset this week's ticks</button>
+  </div>
+
+  <div class="panel" id="guide" role="tabpanel">
+    <span class="kick">The block at a glance</span>
+    <div class="card">
+      <div class="phaserow"><span class="pcode reset">PH-0</span><div><b>Reset — Weeks 1–2.</b> Settle the hip, rebuild the aerobic base with no pounding, hold upper-body strength, switch on hip stabilisers &amp; core. One easy run a week. No contact.</div></div>
+      <div class="phaserow"><span class="pcode rebuild">PH-1</span><div><b>Rebuild — Weeks 3–4.</b> Add the second run, gently reintroduce lower body in a pain-free range, keep building upper + aerobic. Kicks in after the 11 Aug review, assuming clearance.</div></div>
+      <div class="phaserow"><span class="pcode develop">PH-2</span><div><b>Develop — Weeks 5–6+.</b> Build toward the RAAF PFT &amp; LC2 — running volume then intensity, push-up endurance, full-body strength, and change-of-direction once cleared for contact.</div></div>
+    </div>
+
+    <span class="kick">The easy run — keeping it light</span>
+    <div class="card">
+      <p>One easy run a week through the finals lead-up. Keeping it genuinely light is what keeps it safe:</p>
+      <ul>
+        <li>Easy, conversational pace — you should be able to talk the whole way. It's not a fitness run, it's keeping the pattern.</li>
+        <li>Flat, soft ground (grass/oval or treadmill). Every rule from Safety applies: hip stays ≤3/10 during and next morning.</li>
+        <li>If the hip niggles, switch to the walk–run version or bin it that week — no drama.</li>
+        <li>Keep it short — better to finish wanting more than sore.</li>
+      </ul>
+      <p class="small">After the 11 Aug review, this folds into the return-to-run below and a second run comes in.</p>
+    </div>
+
+    <span class="kick">Return-to-run reference (if we ever reset)</span>
+    <div class="card">
+      <p>You're already tolerating easy continuous running, so we build from there rather than starting at the bottom. But if a flare forces a reset, this is the ladder — every other day, flat/soft ground, pain ≤2/10, repeat each step 2–3× before moving up.</p>
+      <ol class="proto">
+        <li>5 min brisk walk, then 4 × (1 min jog / 2 min walk), 5 min walk down.</li>
+        <li>5 × (2 min jog / 1 min walk).</li>
+        <li>4 × (4 min jog / 1 min walk).</li>
+        <li>3 × (8–10 min jog / 1 min walk) → continuous 25–30 min easy.</li>
+      </ol>
+    </div>
+
+    <span class="kick">Cardio menu (low-impact)</span>
+    <div class="card">
+      <p>Add Zone 2 (conversational) on green days if you want more:</p>
+      <ul>
+        <li><b>Stationary bike</b> — 25–40 min, the safe default.</li>
+        <li><b>Stairmaster</b> — 15–25 min if the hip stays ≤3/10 on the step.</li>
+        <li><b>Incline treadmill walk</b> — 20–30 min, tests impact without running.</li>
+        <li><b>Row erg</b> — only if the hip's comfy in the catch.</li>
+      </ul>
+    </div>
+
+    <span class="kick">Mobility &amp; recovery</span>
+    <div class="card">
+      <p>10 min most days, gentle, never into pain — this is where the hip settles.</p>
+      <ul>
+        <li>90/90 hip rotations · half-kneeling hip-flexor stretch · adductor rock-backs</li>
+        <li>Glute / piriformis stretch · thoracic openers for pressing</li>
+        <li>Slow breathing before bed to help sleep</li>
+      </ul>
+      <p><b>Sleep is the real training right now</b> — aim 8–9 h. A pillow between the knees can make side-sleeping more comfortable.</p>
+    </div>
+
+    <span class="kick">Getting to the second-years' level</span>
+    <div class="card">
+      <p>Honest version: it's a <b>consistency-and-base game, not a hero-session game</b> — especially off glandular fever. Steady Zone 2 volume + consistent strength + gradual intensity beats one weekly smash-fest.</p>
+      <ul>
+        <li>We bias some upper work toward push-up endurance for the RAAF test from Week 5.</li>
+        <li>The 2.4 km / beep test comes back on its own as the running base rebuilds.</li>
+        <li>AFL-specific agility &amp; power is Phase 2, built up well before any return to play.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" id="safety" role="tabpanel">
+    <span class="kick" id="safetyTop">Non-negotiables</span>
+    <div class="flag"><span class="tag">⚑ Glandular fever + contact sport</span>
+      <p>Glandular fever can leave the spleen enlarged for weeks and you can't feel it. A knock to the stomach in contact sport can rupture it — a real emergency. So this program is <b>non-contact until a doctor clears you for contact.</b> The grand final is a medical decision, not a fitness one. Ask ACTHC on the 11th.</p></div>
+    <div class="flag"><span class="tag">⚑ The hip — train around it</span>
+      <p>Until the appointment, we don't push into it. <b>Pain rule: nothing above 3/10, and it must settle within 24 h.</b> If a movement spikes it, bin that movement and note it for the physio. Nothing single-leg, jumping or deep-squatting until Phase 1.</p></div>
+    <div class="flag"><span class="tag">⚑ Fatigue is data, not weakness</span>
+      <p>Training hard through glandular fever prolongs it. Wiped = back off. Use the readiness check up top every day.</p></div>
+    <div class="flag stopf"><span class="tag">■ Stop &amp; seek help immediately if</span>
+      <p>Sharp pain at the top of the left shoulder or upper-left abdomen · sudden dizziness/fainting · fever returning · chest pain/breathlessness · calf swelling. The first two can signal a spleen problem — treat as an emergency.</p></div>
+
+    <span class="kick">Readiness — what each light means</span>
+    <div class="legend">
+      <div class="lg g"><span class="h" style="color:var(--go)">Green</span><p>Slept well, feel decent, hip quiet. Run the full session.</p></div>
+      <div class="lg a"><span class="h" style="color:var(--amber)">Amber</span><p>Flat, sore, or hip niggling. Halve the volume, or easy cardio + mobility only.</p></div>
+      <div class="lg r"><span class="h" style="color:var(--stop)">Red</span><p>Wiped, feverish, or hip flared. Rest or gentle mobility. No guilt — this <em>is</em> the program.</p></div>
+    </div>
+
+    <span class="kick">Take to your ACTHC appointment (11 Aug)</span>
+    <div class="card"><ul>
+      <li>Is my spleen clear — ok for contact sport and heavier lifting yet?</li>
+      <li>What's the working diagnosis for the hip/groin, and what should I avoid?</li>
+      <li>Am I cleared to start graded running? Any imaging needed first?</li>
+      <li>Anything to check that I'm not coming back too early?</li>
+    </ul><p class="small">Bring this program — it shows them your intended load.</p></div>
+  </div>
+
+  <footer>Provisional — subject to ACTHC / physio review 11 Aug 26. Non-contact until cleared. A conditioning plan, not medical advice or diagnosis.<br>Ticks &amp; logs save on this device only.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var store=(function(){var mem={},ok=false;try{var k="__t";localStorage.setItem(k,"1");localStorage.removeItem(k);ok=true;}catch(e){ok=false;}
+    return{get:function(k){try{return ok?localStorage.getItem(k):(k in mem?mem[k]:null);}catch(e){return k in mem?mem[k]:null;}},
+           set:function(k,v){try{if(ok)localStorage.setItem(k,v);else mem[k]=v;}catch(e){mem[k]=v;}}};})();
+  var NS="ef.v2.";
+  function today(){return new Date().toISOString().slice(0,10);}
+
+  // ---------- reusable blocks ----------
+  var warmBike={n:"Warm-up",note:"5 min easy bike + band shoulder prep",chip:"5 min",wu:true};
+  var warmCardio={n:"Warm-up",note:"5 min easy cardio + band prep",chip:"5 min",wu:true};
+  var STR_A=[warmBike,
+    {n:"DB bench press",note:"or push-up progression — controlled tempo",chip:"3 × 8–10 · RPE 7"},
+    {n:"Chest-supported DB row",note:"bench takes load off the hip & lower back",chip:"3 × 10–12"},
+    {n:"Half-kneeling DB shoulder press",note:"seated if kneeling bugs the hip",chip:"3 × 8–10"},
+    {n:"Lat pulldown",note:"or assisted pull-up",chip:"3 × 8–10"},
+    {n:"Face pulls / band pull-aparts",note:"",chip:"2 × 15"},
+    {n:"Dead bug",note:"core, no hip load",chip:"3 × 8 / side"},
+    {n:"Side plank",note:"bent-knee if the full one pulls",chip:"3 × 20–30 s"},
+    {n:"Pallof press",note:"anti-rotation",chip:"3 × 10 / side"},
+    {n:"Adductor squeeze",note:"ball between knees, lying — gentle groin iso",chip:"5 × 20–30 s"},
+    {n:"Glute bridge hold",note:"double-leg, pain-free",chip:"4 × 20–30 s"}];
+  var STR_B=[warmCardio,
+    {n:"Seated cable row",note:"or chest-supported DB row",chip:"3 × 10"},
+    {n:"DB floor / incline press",note:"",chip:"3 × 8–10"},
+    {n:"Chin-up",note:"assisted or slow negatives",chip:"3 × 5–8"},
+    {n:"DB Romanian deadlift — LIGHT",note:"pain-free range only; swap for the hip thrust if the hinge bugs the hip",chip:"3 × 8–10 · RPE 6"},
+    {n:"Double-leg hip thrust / glute bridge",note:"pain-free, controlled",chip:"3 × 12"},
+    {n:"Copenhagen adductor — SHORT lever",note:"knee on bench; only if pain-free",chip:"2 × 5–8 / side"},
+    {n:"Bird dog",note:"",chip:"3 × 8 / side"},
+    {n:"Suitcase carry",note:"light, tall posture",chip:"3 × 20 m"}];
+  var SWIM=[{n:"Warm-up",note:"easy mixed stroke",chip:"200 m",wu:true},
+    {n:"Technique / easy intervals",note:"8–10 × 50 m easy, 15–20 s rest",chip:"400–500 m"},
+    {n:"Steady swim",note:"continuous, relaxed",chip:"300–400 m"},
+    {n:"Cool-down",note:"",chip:"100–200 m"}];
+  var LOWER=[
+    {n:"Box / goblet squat",note:"to a comfortable depth only — no pain",chip:"3 × 8 · RPE 6",sub:true},
+    {n:"Split squat",note:"bodyweight & short range first; DBs only if pain-free",chip:"3 × 8 / side",sub:true},
+    {n:"Step-up (low box)",note:"controlled, low height",chip:"3 × 8 / side",sub:true},
+    {n:"Calf raise",note:"",chip:"3 × 12",sub:true}];
+  var PUSHUP={n:"Push-up ladder",note:"RAAF prep — 5/10/15… to a strong-form stop",chip:"ladder",sub:true};
+
+  function runLight(desc,chip){return[
+    {n:"Walk warm-up",note:"brisk, loosen up",chip:"5 min",wu:true},
+    {n:"Easy jog",note:desc,chip:chip},
+    {n:"Walk–run option",note:"if continuous is too much: 4 × (3 min jog / 1 min walk)",chip:"alt"},
+    {n:"Walk cool-down",note:"",chip:"5 min"},
+    {n:"Mobility",note:"hips, glutes, hip flexors — gentle",chip:"5–10 min"}];}
+  function runCont(desc,chip){return[
+    {n:"Walk warm-up",note:"brisk",chip:"5 min",wu:true},
+    {n:"Easy continuous run",note:desc,chip:chip},
+    {n:"Walk cool-down",note:"",chip:"5 min"},
+    {n:"Mobility",note:"hips, glutes — gentle",chip:"5–10 min"}];}
+  function runShort(desc,chip){return[
+    {n:"Walk warm-up",note:"",chip:"3–5 min",wu:true},
+    {n:"Easy run",note:desc,chip:chip},
+    {n:"Walk cool-down",note:"",chip:"3–5 min"}];}
+  var runTempo=[
+    {n:"Walk/jog warm-up",note:"",chip:"8 min",wu:true},
+    {n:"Tempo blocks",note:"2 × 5 min comfortably-hard, 3 min easy between — GREEN days only",chip:"tempo"},
+    {n:"Easy running around them",note:"",chip:"~18 min"},
+    {n:"Cool-down",note:"",chip:"5 min"}];
+
+  function rest(dn,txt){return{dn:dn,code:"REST",kind:"rest",t:"Rest / recovery",s:"",note:txt};}
+  var restMon=rest("Mon","Easy day. 10 min mobility if you feel like it, otherwise rest — it counts.");
+  var restFri=rest("Fri","Recovery day. Sleep is the priority — this is where the fitness sticks.");
+  function restSat(t){return rest("Sat",t||"Full rest. If AFL is on and you're not cleared for contact, this stays non-contact — see Safety.");}
+
+  function strADay(extra){return{dn:"Tue",code:"STR-A",kind:"strength",t:"Upper (push) + core"+(extra&&extra.length?" + lower":"")+" + hip stability",s:"Daytime · 45–60 min",ex:STR_A.concat(extra||[])};}
+  function strBDay(extra){return{dn:"Sun",code:"STR-B",kind:"strength",t:"Upper (pull) + posterior chain + core",s:"45–60 min",ex:STR_B.concat(extra||[])};}
+  function swimDay(){return{dn:"Thu",code:"SWIM",kind:"swim",t:"Structured swim (after PT)",s:"After PT · ~1–1.2 km",note:"Full aerobic benefit, zero hip impact. Easy on low-energy days. Green day and want more? Add an easy 20–30 min bike tonight.",ex:SWIM};}
+
+  var LIGHTBANNER="<b>Keep it easy &amp; short</b> — talk-the-whole-way pace, flat/soft ground. Hip ≤3/10 during and next morning, or switch to the walk–run and shorten it.";
+  var CONTBANNER="<b>Easy pace, hip-led.</b> Flat/soft ground, ≤3/10 during and next morning. If it flares, back off to the walk–run in the Guide.";
+
+  // ---------- the 6-week plan ----------
+  var PLAN=[
+    {id:"w1",num:"Week 1",phase:"Reset",pcls:"reset",start:"2026-07-27",end:"2026-08-02",dates:"27 Jul – 2 Aug",
+     focus:"Settle the hip, rebuild the aerobic base with no pounding, hold upper-body strength. One easy run.",
+     days:[restMon,
+       strADay(),
+       {dn:"Wed",code:"RUN",kind:"run",t:"Easy run + mobility",s:"Afternoon · ~30 min",banner:LIGHTBANNER,ex:runLight("conversational pace — NOT a hard run","15–20 min")},
+       swimDay(),restFri,restSat(),strBDay()]},
+
+    {id:"w2",num:"Week 2",phase:"Reset",pcls:"reset",start:"2026-08-03",end:"2026-08-09",dates:"3 – 9 Aug",
+     focus:"Same shape, small step up. Consolidate before the review.",
+     prognote:"<b>Progress from W1:</b> where a lift felt easy, add ~2.5–5 kg (still ≤RPE 7). Stretch the run a touch. Everything else holds — consistency is the win this week.",
+     days:[restMon,
+       strADay(),
+       {dn:"Wed",code:"RUN",kind:"run",t:"Easy run + mobility",s:"Afternoon · ~30 min",banner:LIGHTBANNER,ex:runLight("easy, relaxed — same effort, slightly longer","20–22 min")},
+       swimDay(),restFri,restSat(),strBDay()]},
+
+    {id:"w3",num:"Week 3",phase:"Rebuild",pcls:"rebuild",start:"2026-08-10",end:"2026-08-16",dates:"10 – 16 Aug",
+     focus:"Add the second run and gently reintroduce lower body — all pain-capped.",
+     provisional:"<b>Assumes clearance at the 11 Aug review.</b> Not cleared to run or load yet? Stay on the Week 2 layout and we adjust — no rush.",
+     prognote:"<b>New this week:</b> a 2nd easy run (Thu night) and light lower-body work added to Tuesday. Start conservative on the squats/split squats — comfortable range only.",
+     days:[restMon,
+       strADay(LOWER),
+       {dn:"Wed",code:"RUN",kind:"run",t:"Easy run 1 + mobility",s:"Afternoon",banner:CONTBANNER,ex:runCont("easy continuous","22–25 min")},
+       swimDay(),restFri,restSat(),
+       strBDay()],
+     extraThu:{dn:"Thu",code:"RUN",kind:"run",t:"Easy run 2 (after swim day)",s:"Thu evening",ex:runShort("short & easy — pattern, not performance","15–18 min")}},
+
+    {id:"w4",num:"Week 4",phase:"Rebuild",pcls:"rebuild",start:"2026-08-17",end:"2026-08-23",dates:"17 – 23 Aug",
+     focus:"Progress running and lower-body load. Grand-final week.",
+     provisional:"<b>Grand final 22 Aug.</b> Whether you play contact is the doctor's call — the training here keeps you sharp either way. Assumes you're cleared to run/load.",
+     prognote:"<b>Progress:</b> runs get a little longer; add load to the lower-body work only where it's been pain-free. If finals weekend is on, treat Sat/Sun as lighter and prioritise recovery.",
+     days:[restMon,
+       strADay(LOWER),
+       {dn:"Wed",code:"RUN",kind:"run",t:"Easy run 1 + mobility",s:"Afternoon",banner:CONTBANNER,ex:runCont("easy continuous","25–30 min")},
+       swimDay(),restFri,restSat("Grand-final adjacent — keep it non-contact unless a doctor has cleared you. Recovery first."),
+       strBDay()],
+     extraThu:{dn:"Thu",code:"RUN",kind:"run",t:"Easy run 2 (after swim day)",s:"Thu evening",ex:runShort("easy; add 4–6 relaxed strides at the end only if the hip's fine","18–20 min")}},
+
+    {id:"w5",num:"Week 5",phase:"Develop",pcls:"develop",start:"2026-08-24",end:"2026-08-30",dates:"24 – 30 Aug",
+     focus:"Build the base up — a touch of run intensity, push-up endurance for the PFT.",
+     prognote:"<b>Develop phase:</b> finish the long run slightly quicker, add the push-up ladder to Tuesday, and you can slot a stairmaster interval on a green day. Strength keeps progressing.",
+     days:[restMon,
+       strADay(LOWER.concat([PUSHUP])),
+       {dn:"Wed",code:"RUN",kind:"run",t:"Aerobic run 1 + mobility",s:"Afternoon",banner:CONTBANNER,ex:runCont("30 min, last 5 min a little quicker (still controlled)","~30 min")},
+       swimDay(),restFri,restSat(),
+       strBDay()],
+     extraThu:{dn:"Thu",code:"RUN",kind:"run",t:"Easy run 2 (after swim day)",s:"Thu evening",ex:runShort("easy — or swap for 15–20 min stairmaster intervals if the hip's happy","25 min")}},
+
+    {id:"w6",num:"Week 6",phase:"Develop",pcls:"develop",start:"2026-08-31",end:"2026-09-06",dates:"31 Aug – 6 Sep",
+     focus:"Introduce a proper tempo, keep building toward the 2.4 km & LC2.",
+     prognote:"<b>Progress:</b> first real tempo run (green days only) plus your easy run. Push-up ladder continues. Once this feels comfortable we'll bolt on a 2.4 km time-trial to benchmark against the second-years.",
+     days:[restMon,
+       strADay(LOWER.concat([PUSHUP])),
+       {dn:"Wed",code:"RUN",kind:"run",t:"Tempo run + mobility",s:"Afternoon",banner:CONTBANNER,ex:runTempo},
+       swimDay(),restFri,restSat(),
+       strBDay()],
+     extraThu:{dn:"Thu",code:"RUN",kind:"run",t:"Easy run 2 (after swim day)",s:"Thu evening",ex:runShort("easy, flush the legs","20–25 min")}}
+  ];
+
+  // insert the Thursday 2nd run right after the Thu swim, when present
+  PLAN.forEach(function(w){
+    if(w.extraThu){
+      var out=[],inserted=false;
+      w.days.forEach(function(d){ out.push(d); if(d.dn==="Thu"&&d.kind==="swim"&&!inserted){out.push(w.extraThu);inserted=true;} });
+      w.days=out;
+    }
+  });
+
+  var PHCOL={reset:"var(--steel)",rebuild:"var(--amber)",develop:"var(--go)"};
+
+  // ---------- render ----------
+  var daysEl=document.getElementById("days");
+  var headEl=document.getElementById("weekhead");
+  var barEl=document.getElementById("weekbar");
+  var curWeek=null;
+
+  function ckKey(wid,idx,i){return NS+"ck."+wid+"."+idx+"."+i;}
+  function logKey(wid,idx){return NS+"log."+wid+"."+idx;}
+
+  function updateProg(wid,idx,d){
+    if(!d.ex)return;
+    var done=0;d.ex.forEach(function(e,i){if(store.get(ckKey(wid,idx,i))==="1")done++;});
+    var pill=document.querySelector('[data-prog="'+idx+'"]');
+    if(!pill)return;pill.textContent=done+"/"+d.ex.length;pill.classList.toggle("done",done===d.ex.length&&d.ex.length>0);
+  }
+
+  function buildWeekbar(){
+    barEl.innerHTML="";
+    PLAN.forEach(function(w){
+      var b=document.createElement("button");b.className="wk";b.setAttribute("data-wk",w.id);
+      var isNow=today()>=w.start&&today()<=w.end;
+      b.innerHTML='<span class="wnum">W'+w.num.split(" ")[1]+'</span><span class="wph">'+w.phase+'</span>'+
+        (isNow?'<span class="now">● now</span>':'')+'<span class="bar" style="background:'+PHCOL[w.pcls]+'"></span>';
+      b.addEventListener("click",function(){selectWeek(w.id);store.set(NS+"wk",w.id);});
+      barEl.appendChild(b);
+    });
+  }
+
+  function selectWeek(wid){
+    var w=PLAN.filter(function(x){return x.id===wid;})[0]||PLAN[0];
+    curWeek=w;
+    document.querySelectorAll(".wk").forEach(function(el){el.setAttribute("aria-pressed",el.getAttribute("data-wk")===w.id?"true":"false");});
+    // header
+    headEl.innerHTML=
+      '<div class="weekhead"><div class="wt"><span class="pdot" style="background:'+PHCOL[w.pcls]+'"></span>'+w.num+' · '+w.phase+'</div>'+
+      '<div class="wd">'+w.dates+'</div><div class="wf">'+w.focus+'</div></div>'+
+      (w.provisional?'<div class="provisional">'+w.provisional+'</div>':'')+
+      (w.prognote?'<div class="prognote">'+w.prognote+'</div>':'');
+    renderDays(w);
+  }
+
+  function renderDays(w){
+    daysEl.innerHTML="";
+    w.days.forEach(function(d,idx){
+      var card=document.createElement("section");
+      card.className="day "+(d.kind==="rest"?"rest":"");
+      var codeCls=d.kind==="run"?"run":d.kind==="swim"?"swim":d.kind==="rest"?"rest":"";
+      var progHTML=d.ex?'<span class="prog" data-prog="'+idx+'">0/'+d.ex.length+'</span>':'';
+      card.innerHTML='<button class="dayhead" aria-expanded="false">'+
+        '<span class="dcol"><span class="dn">'+d.dn+'</span><span class="code '+codeCls+'">'+d.code+'</span></span>'+
+        '<span class="dmid"><span class="t">'+d.t+'</span>'+(d.s?'<span class="s">'+d.s+'</span>':'')+'</span>'+
+        '<span class="dright">'+progHTML+'<span class="chev">▶</span></span></button><div class="daybody"></div>';
+      var body=card.querySelector(".daybody");
+
+      if(d.banner){var rb=document.createElement("div");rb.className="runbanner";rb.innerHTML=d.banner;body.appendChild(rb);}
+
+      if(d.ex){
+        var ul=document.createElement("ul");ul.className="ex";
+        d.ex.forEach(function(e,i){
+          var li=document.createElement("li");if(e.wu)li.className="wu";else if(e.sub)li.className="sub";
+          var checked=store.get(ckKey(w.id,idx,i))==="1";
+          li.innerHTML='<input type="checkbox" class="cbx" '+(checked?"checked":"")+' aria-label="'+e.n+'">'+
+            '<span class="exn '+(checked?"checked":"")+'"><b>'+e.n+'</b>'+(e.note?'<span class="note">'+e.note+'</span>':'')+'</span>'+
+            '<span class="chip">'+e.chip+'</span>';
+          var cb=li.querySelector(".cbx");
+          cb.addEventListener("change",function(){store.set(ckKey(w.id,idx,i),cb.checked?"1":"0");li.querySelector(".exn").classList.toggle("checked",cb.checked);updateProg(w.id,idx,d);});
+          ul.appendChild(li);
+        });
+        body.appendChild(ul);
+
+        var tools=document.createElement("div");tools.className="daytools";
+        var rb2=document.createElement("button");rb2.className="linkbtn";rb2.textContent="Reset day";
+        rb2.addEventListener("click",function(){d.ex.forEach(function(e,i){store.set(ckKey(w.id,idx,i),"0");});ul.querySelectorAll(".cbx").forEach(function(c){c.checked=false;});ul.querySelectorAll(".exn").forEach(function(x){x.classList.remove("checked");});updateProg(w.id,idx,d);});
+        tools.appendChild(rb2);body.appendChild(tools);
+
+        var log=document.createElement("div");log.className="log";
+        var lk=logKey(w.id,idx);var saved=JSON.parse(store.get(lk)||"{}");
+        function opts(sel){var o='<option value="">–</option>';for(var v=0;v<=10;v++){o+='<option '+(String(sel)===String(v)?"selected":"")+'>'+v+'</option>';}return o;}
+        log.innerHTML='<div class="lrow"><label>Hip 0–10<select data-f="hip">'+opts(saved.hip)+'</select></label>'+
+          '<label>Energy 0–10<select data-f="energy">'+opts(saved.energy)+'</select></label></div>'+
+          '<label style="display:block;margin-top:8px">Notes<textarea data-f="note" placeholder="How did it feel? Anything that flared?">'+(saved.note||"")+'</textarea></label><span class="saved">saved ✓</span>';
+        function persist(){var obj={};log.querySelectorAll("[data-f]").forEach(function(el){obj[el.getAttribute("data-f")]=el.value;});store.set(lk,JSON.stringify(obj));var s=log.querySelector(".saved");s.classList.add("show");setTimeout(function(){s.classList.remove("show");},900);}
+        log.querySelectorAll("[data-f]").forEach(function(el){el.addEventListener("change",persist);});
+        log.querySelector('[data-f="note"]').addEventListener("blur",persist);
+        body.appendChild(log);
+      }else{
+        var rn=document.createElement("div");rn.className="restnote";rn.textContent=d.note||"";body.appendChild(rn);
+      }
+
+      var head=card.querySelector(".dayhead");
+      head.addEventListener("click",function(){var open=card.classList.toggle("open");head.setAttribute("aria-expanded",open?"true":"false");});
+      daysEl.appendChild(card);
+      if(d.ex)updateProg(w.id,idx,d);
+    });
+  }
+
+  document.getElementById("resetWeek").addEventListener("click",function(){
+    if(!curWeek)return;
+    curWeek.days.forEach(function(d,idx){if(d.ex)d.ex.forEach(function(e,i){store.set(ckKey(curWeek.id,idx,i),"0");});});
+    renderDays(curWeek);
+  });
+
+  // readiness
+  var msgs={g:"Green — good to go. Run the session as written.",a:"Amber — dial it back: halve the volume, or just easy cardio + mobility today.",r:"Red — rest or gentle mobility only. Backing off today is the smart call, not the soft one."};
+  var rmsg=document.getElementById("readymsg");var rkey=NS+"ready."+today();
+  function setReady(r){document.querySelectorAll(".pill").forEach(function(p){p.setAttribute("aria-pressed",p.getAttribute("data-r")===r?"true":"false");});rmsg.textContent=msgs[r]||"";rmsg.classList.toggle("show",!!r);store.set(rkey,r||"");}
+  document.querySelectorAll(".pill").forEach(function(p){p.addEventListener("click",function(){setReady(p.getAttribute("data-r"));});});
+  var savedR=store.get(rkey);if(savedR)setReady(savedR);
+
+  // tabs
+  var tabs=document.querySelectorAll(".tab"),panels=document.querySelectorAll(".panel");
+  function showTab(name){tabs.forEach(function(t){t.setAttribute("aria-selected",t.getAttribute("data-tab")===name?"true":"false");});panels.forEach(function(pl){pl.classList.toggle("active",pl.id===name);});window.scrollTo({top:0});}
+  tabs.forEach(function(t){t.addEventListener("click",function(){showTab(t.getAttribute("data-tab"));});});
+  document.getElementById("cautionStrip").addEventListener("click",function(){showTab("safety");var el=document.getElementById("safetyTop");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});});
+
+  // init — default to the week containing today, else last-selected, else W1
+  buildWeekbar();
+  var byDate=PLAN.filter(function(w){return today()>=w.start&&today()<=w.end;})[0];
+  var stored=store.get(NS+"wk");
+  var startId=(byDate&&byDate.id)||stored||PLAN[0].id;
+  selectWeek(startId);
+})();
+</script>
+</body>
+</html>
