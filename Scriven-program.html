@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#182634">
+<title>Beep Test &amp; Strength Build — OCDT Scriven</title>
+<style>
+  :root{
+    --ink:#182634; --ink-soft:#42525f; --muted:#6d7b87;
+    --bg:#eef1f4; --card:#ffffff;
+    --steel:#2f6f8f; --steel-dk:#245a75; --steel-bg:#e7f0f4;
+    --caution:#b26a12; --caution-bg:#fbf2e2; --caution-bd:#ecd9b4;
+    --go:#3f7d54; --amber:#c08a1e; --stop:#a8412f;
+    --line:#dbe1e7; --line-soft:#eaeef1;
+    --mono: ui-monospace,"SFMono-Regular","SF Mono",Menlo,Consolas,monospace;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;padding-bottom:env(safe-area-inset-bottom)}
+  .wrap{max-width:680px;margin:0 auto;padding:0 14px}
+  header{background:var(--ink);color:#eef2f5;padding:calc(18px + env(safe-area-inset-top)) 0 16px;border-bottom:3px solid var(--steel)}
+  .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb4c7;margin:0 0 6px}
+  header h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.01em}
+  header .who{margin:5px 0 0;color:#b9c6d0;font-size:13.5px}
+  .hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .hchip{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:4px;font-weight:700}
+  .hchip.plan{background:var(--steel);color:#fff} .hchip.goal{background:var(--go);color:#fff}
+
+  .cautionstrip{width:100%;background:var(--steel-bg);border:0;border-bottom:1px solid #d3e2ea;color:#204a5e;font-size:13px;padding:9px 14px;text-align:center;cursor:pointer;font-family:var(--sans)}
+  .cautionstrip b{color:var(--steel-dk)}
+  .cautionstrip:focus-visible{outline:2px solid var(--steel);outline-offset:-2px}
+
+  .ready{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin:14px 0}
+  .ready h2{margin:0 0 3px;font-size:13px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--steel-dk)}
+  .ready .q{font-size:13px;color:var(--muted);margin:0 0 10px}
+  .pills{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .pill{border:1.5px solid var(--line);background:#fafbfc;border-radius:10px;padding:9px 6px;text-align:center;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink-soft);transition:transform .08s,border-color .12s,background .12s}
+  .pill .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}
+  .pill.g .dot{background:var(--go)} .pill.a .dot{background:var(--amber)} .pill.r .dot{background:var(--stop)}
+  .pill[aria-pressed="true"]{color:#fff;transform:translateY(-1px)}
+  .pill.g[aria-pressed="true"]{background:var(--go);border-color:var(--go)}
+  .pill.a[aria-pressed="true"]{background:var(--amber);border-color:var(--amber)}
+  .pill.r[aria-pressed="true"]{background:var(--stop);border-color:var(--stop)}
+  .pill.g[aria-pressed="true"] .dot,.pill.a[aria-pressed="true"] .dot,.pill.r[aria-pressed="true"] .dot{background:#fff}
+  .pill:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .readymsg{margin:10px 0 0;font-size:13.5px;color:var(--ink-soft);min-height:1px}
+  .readymsg.show{padding:9px 11px;background:var(--steel-bg);border-radius:8px;border-left:3px solid var(--steel)}
+
+  .tabs{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0 8px;display:flex;gap:6px}
+  .tab{flex:1;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 4px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .tab:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .panel{display:none;animation:fade .18s ease}.panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .weekbar{display:flex;gap:7px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .wk{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 12px 7px;cursor:pointer;text-align:center;line-height:1.2;min-width:62px}
+  .wk .wnum{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--ink);display:block}
+  .wk .wph{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-top:2px}
+  .wk .bar{height:3px;border-radius:2px;margin-top:6px}
+  .wk[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+  .wk[aria-pressed="true"] .wnum{color:#fff} .wk[aria-pressed="true"] .wph{color:#c3ccd3}
+  .wk:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+
+  .weekhead{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:2px 0 10px}
+  .weekhead .wt{font-size:16px;font-weight:750}
+  .weekhead .wt .pdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .weekhead .wf{font-size:14px;color:var(--ink-soft);margin-top:8px}
+  .prognote{background:var(--steel-bg);border-left:3px solid var(--steel);border-radius:8px;padding:10px 13px;margin:0 0 10px;font-size:13.5px;color:var(--ink-soft)}
+  .prognote b{color:var(--steel-dk)}
+
+  .day{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden}
+  .day.rest{opacity:.92}
+  .dayhead{width:100%;text-align:left;background:none;border:0;font-family:var(--sans);cursor:pointer;padding:13px 14px;display:flex;align-items:center;gap:12px}
+  .dayhead:focus-visible{outline:2px solid var(--steel);outline-offset:-2px}
+  .dcol{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:46px}
+  .dcol .dn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .dcol .code{font-family:var(--mono);font-size:9px;margin-top:3px;color:#fff;padding:2px 5px;border-radius:3px}
+  .dmid{flex:1;min-width:0}
+  .dmid .t{font-weight:650;font-size:15px;display:block;line-height:1.3}
+  .dmid .s{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .dright{display:flex;align-items:center;gap:9px}
+  .prog{font-family:var(--mono);font-size:11px;color:var(--steel-dk);background:var(--steel-bg);padding:3px 7px;border-radius:20px;white-space:nowrap}
+  .prog.done{background:var(--go);color:#fff}
+  .chev{color:var(--muted);transition:transform .18s;font-size:13px}
+  .day.open .chev{transform:rotate(90deg)}
+  .daybody{display:none;border-top:1px solid var(--line-soft)}
+  .day.open .daybody{display:block}
+
+  .runbanner{margin:10px 14px 2px;border-radius:8px;padding:11px 13px;font-size:13px}
+  .runbanner.hard{background:var(--caution-bg);border:1px solid var(--caution-bd);border-left:4px solid var(--caution);color:#5a3c0e}
+  .runbanner.hard b{color:var(--caution)}
+  .runbanner.info{background:var(--steel-bg);border:1px solid #d3e2ea;border-left:4px solid var(--steel);color:#204a5e}
+  .runbanner.info b{color:var(--steel-dk)}
+  .runbanner.test{background:#fbeeeb;border:1px solid #ecccc4;border-left:4px solid var(--stop);color:#6e2c20}
+  .runbanner.test b{color:var(--stop)}
+
+  ul.ex{list-style:none;margin:6px 0 2px;padding:0}
+  ul.ex li{display:flex;gap:11px;align-items:flex-start;padding:11px 14px;border-top:1px solid var(--line-soft)}
+  ul.ex li:first-child{border-top:0}
+  .cbx{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:22px;height:22px;border:2px solid var(--line);border-radius:6px;margin-top:1px;cursor:pointer;position:relative;background:#fff}
+  .cbx:checked{background:var(--go);border-color:var(--go)}
+  .cbx:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+  .cbx:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .exn{flex:1;min-width:0;font-size:14.5px}
+  .exn.checked{color:var(--muted);text-decoration:line-through;text-decoration-color:#c3ccd3}
+  .exn .note{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;text-decoration:none}
+  .chip{font-family:var(--mono);font-size:11.5px;white-space:nowrap;background:var(--steel-bg);color:var(--steel-dk);border:1px solid #d3e2ea;padding:2px 7px;border-radius:5px;align-self:center}
+  .wu{background:#f6f8f9}
+
+  .daytools{display:flex;align-items:center;gap:14px;padding:10px 14px;border-top:1px solid var(--line-soft)}
+  .linkbtn{background:none;border:0;color:var(--steel-dk);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;padding:2px 0}
+  .linkbtn:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+  .log{padding:0 14px 14px}
+  .log .lrow{display:flex;gap:10px;margin-top:4px}
+  .log label{flex:1;font-size:12px;font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .log select,.log textarea{width:100%;margin-top:4px;border:1px solid var(--line);border-radius:8px;padding:8px;font-family:var(--sans);font-size:14px;background:#fff;color:var(--ink)}
+  .log textarea{resize:vertical;min-height:44px}
+  .saved{font-size:11px;color:var(--go);font-family:var(--mono);opacity:0;transition:opacity .2s}
+  .saved.show{opacity:1}
+  .restnote{padding:12px 14px 14px;font-size:14px;color:var(--muted)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px;margin:12px 0}
+  .kick{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel-dk);margin:22px 4px 2px;display:block}
+  .card p{margin:0 0 10px} .card p:last-child{margin-bottom:0}
+  .card ul{margin:0 0 6px;padding-left:19px} .card li{margin:5px 0}
+  .small{font-size:13px;color:var(--muted)}
+  .phaserow{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line-soft)}
+  .phaserow:first-of-type{border-top:0}
+  .pcode{font-family:var(--mono);font-size:11px;color:#fff;padding:3px 7px;border-radius:4px;white-space:nowrap;margin-top:2px}
+  .effort{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin:7px 0}
+  .effort .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+  .effort p{margin:4px 0 0;font-size:13.5px;color:var(--ink-soft)}
+  .flag{border-radius:10px;padding:13px 15px;margin:11px 0;border:1px solid var(--caution-bd);border-left:5px solid var(--caution);background:var(--caution-bg)}
+  .flag.stopf{border-color:#ecccc4;border-left-color:var(--stop);background:#fbeeeb}
+  .flag .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--caution);display:block;margin-bottom:5px}
+  .flag.stopf .tag{color:var(--stop)}
+  .flag p{margin:0}
+  .legend{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px}
+  .lg{border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+  .lg .h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+  .lg.g{border-top:3px solid var(--go)} .lg.a{border-top:3px solid var(--amber)} .lg.r{border-top:3px solid var(--stop)}
+  .lg p{margin:5px 0 0;font-size:13.5px;color:var(--ink-soft)}
+  footer{color:var(--muted);font-size:12px;padding:20px 4px 40px;text-align:center}
+  .resetall{display:block;margin:6px auto 0;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;cursor:pointer}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Alpha Squadron PTI Cell</p>
+    <h1>Beep Test &amp; Strength Build</h1>
+    <p class="who">OCDT M. Scriven · CPL Brendon, PTI</p>
+    <div class="hchips"><span class="hchip plan">8-week block</span><span class="hchip goal">Beep test 7.5 → 8.5</span></div>
+  </div>
+</header>
+
+<button class="cautionstrip" id="cautionStrip"><b>Start here ▸</b> how the sessions work &amp; hand care — tap for the notes</button>
+
+<div class="wrap">
+  <section class="ready" aria-label="Daily readiness">
+    <h2>Today's readiness</h2>
+    <p class="q">10-second gut check — sleep, energy, legs, hand. How are you?</p>
+    <div class="pills" role="group" aria-label="Readiness">
+      <button class="pill g" data-r="g" aria-pressed="false"><span class="dot"></span>Green</button>
+      <button class="pill a" data-r="a" aria-pressed="false"><span class="dot"></span>Amber</button>
+      <button class="pill r" data-r="r" aria-pressed="false"><span class="dot"></span>Red</button>
+    </div>
+    <p class="readymsg" id="readymsg"></p>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="week">Plan</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="guide">Guide</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="notes">Notes</button>
+  </div>
+
+  <div class="panel active" id="week" role="tabpanel">
+    <div class="weekbar" id="weekbar" aria-label="Weeks"></div>
+    <div id="weekhead"></div>
+    <div id="days"></div>
+    <button class="resetall" id="resetWeek">Reset this week's ticks</button>
+  </div>
+
+  <div class="panel" id="guide" role="tabpanel">
+    <span class="kick">Why solo running wasn't moving the needle</span>
+    <div class="card">
+      <p>The commonest reason a beep score stalls: running everything at one steady, medium pace. That pace is a bit too hard to build a big easy base, and a bit too easy to grow your VO2 max — so you plateau, and it feels like effort with no reward. You're not doing anything wrong; the <b>structure</b> just wasn't there.</p>
+      <p>This block fixes it with two levers: <b>easy running</b> to grow the aerobic engine, and <b>short, genuinely hard intervals</b> — which is the single most effective thing for lifting a beep test — plus <b>shuttle practice</b> so the turning and pacing become second nature. Do those consistently for eight weeks and the score moves.</p>
+    </div>
+
+    <span class="kick">The three effort levels</span>
+    <div class="effort"><span class="h" style="color:var(--go)">Easy (Zone 2)</span><p>Conversational — full sentences without gasping. Feels almost too slow. This builds the engine; don't rush it.</p></div>
+    <div class="effort"><span class="h" style="color:var(--amber)">Tempo (threshold)</span><p>"Comfortably hard" — controlled discomfort, only a few words at a time. Steady and even, never a sprint.</p></div>
+    <div class="effort"><span class="h" style="color:var(--caution)">Hard (VO2)</span><p>RPE 8–9 — strong and fast, breathing hard, but repeatable. The last rep should feel tough but completeable, not an all-out sprint on rep one.</p></div>
+
+    <span class="kick">Beep-test technique &amp; pacing</span>
+    <div class="card"><ul>
+      <li><b>Turn on the line, not past it.</b> Overrunning adds metres every shuttle and burns you out early — this is the biggest free win.</li>
+      <li><b>Don't lead the beep.</b> Reach the line just as it sounds; sprinting early then waiting wastes energy.</li>
+      <li>Run efficient straight lines, plant and pivot, use your arms on the turn.</li>
+      <li>Settle in early and relax — the first levels should feel easy. Breathe rhythmically.</li>
+      <li>Warm up properly (the session warm-ups here are the template) and be hydrated.</li>
+    </ul></div>
+
+    <span class="kick">Upper body — small gym is plenty</span>
+    <div class="card">
+      <p>Dumbbells, bands and bodyweight cover everything needed for "general upper-body strength." The plan alternates a push-focused and pull-focused session and progresses by adding a little load or a rep or two when the last one felt solid.</p>
+      <p class="small">Hand: keep grips relaxed and neutral early, and see the Notes tab for working around the brace.</p>
+    </div>
+
+    <span class="kick">Autoregulate</span>
+    <div class="card"><p>Green day and the session feels easy? Push the hard reps a touch. Flat or a poor sleep? Take the easy option or trim a set — a slightly easier session beats a skipped one. Consistency over eight weeks beats three heroic weeks and a flame-out.</p></div>
+  </div>
+
+  <div class="panel" id="notes" role="tabpanel">
+    <span class="kick" id="notesTop">Hand &amp; load notes</span>
+    <div class="flag"><span class="tag">Hand — working around the brace</span>
+      <p>Brace on for now, per your physio, and off when they clear it. Keep grips relaxed, favour neutral/hammer grips, and use fists or push-up handles if wrist/hand extension is sore. Progress upper-body load as the brace comes off — grip endurance returns quickly.</p></div>
+    <div class="flag"><span class="tag">The post-session ache</span>
+      <p>Your physio's said the mild-to-moderate ache after PT is return-to-use, not the injury — so it's expected and fine to train through at that level.</p></div>
+    <div class="flag stopf"><span class="tag">Stop &amp; check with physio if</span>
+      <p>Sharp (not dull) pain in the hand, swelling, or any loss of grip strength. That's different from the normal ache — back off and flag it.</p></div>
+    <div class="flag"><span class="tag">Load management around JMET PT</span>
+      <p>These three sessions sit around your work PT. If JMET has a hard run the day before an interval day, keep that run controlled — don't arrive at the hard session already cooked. Two hard days in a row is the thing to avoid.</p></div>
+
+    <span class="kick">Readiness — what each light means</span>
+    <div class="legend">
+      <div class="lg g"><span class="h" style="color:var(--go)">Green</span><p>Slept well, legs fresh, hand quiet. Full session — push the hard reps.</p></div>
+      <div class="lg a"><span class="h" style="color:var(--amber)">Amber</span><p>Flat or sore. Take the easy option, trim a set, or swap a hard day for an easy run.</p></div>
+      <div class="lg r"><span class="h" style="color:var(--stop)">Red</span><p>Wiped or hand flared. Easy movement or rest. Recovery is when the fitness actually lands.</p></div>
+    </div>
+  </div>
+
+  <footer>Built around your JMET PT · adjust to how the hand and legs feel · a conditioning plan, not medical advice.<br>Ticks &amp; logs save on this device only.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var store=(function(){var mem={},ok=false;try{var k="__t";localStorage.setItem(k,"1");localStorage.removeItem(k);ok=true;}catch(e){ok=false;}
+    return{get:function(k){try{return ok?localStorage.getItem(k):(k in mem?mem[k]:null);}catch(e){return k in mem?mem[k]:null;}},
+           set:function(k,v){try{if(ok)localStorage.setItem(k,v);else mem[k]=v;}catch(e){mem[k]=v;}}};})();
+  var NS="ms.v1.";
+  function today(){return new Date().toISOString().slice(0,10);}
+
+  // ---- blocks ----
+  var runWU={n:"Warm-up",note:"5–10 min easy jog + leg swings, then 3–4 build-up strides",chip:"~10 min",wu:true};
+  var runCD={n:"Cool-down",note:"5 min easy jog/walk + light stretch",chip:"5 min"};
+  var warmUpper={n:"Warm-up",note:"band pull-aparts, shoulder circles, a few light reps",chip:"5 min",wu:true};
+  var STR_UP_A=[warmUpper,
+    {n:"DB bench / floor press",note:"neutral grip if the hand prefers it",chip:"3 × 8–10"},
+    {n:"One-arm DB row",note:"knee/hand on bench; keep grip relaxed",chip:"3 × 10 / side"},
+    {n:"DB shoulder press",note:"seated, controlled",chip:"3 × 8–10"},
+    {n:"Push-ups",note:"fists or handles if wrist extension is sore; incline to scale",chip:"3 × leave 2 in reserve"},
+    {n:"Band lat pulldown / DB pullover",note:"",chip:"3 × 12"},
+    {n:"Lateral raises",note:"light",chip:"2 × 12–15"},
+    {n:"Plank",note:"",chip:"3 × 30–45 s"}];
+  var STR_UP_B=[warmUpper,
+    {n:"Incline DB press",note:"",chip:"3 × 8–10"},
+    {n:"Chest-supported / bent-over DB row",note:"both arms, relaxed grip",chip:"3 × 10–12"},
+    {n:"DB Arnold / shoulder press",note:"",chip:"3 × 8–10"},
+    {n:"Band face pulls",note:"rear delts & posture",chip:"3 × 15"},
+    {n:"DB curls",note:"hammer/neutral grip is kinder on the hand",chip:"2 × 10–12"},
+    {n:"Triceps extension (DB/band)",note:"",chip:"2 × 12"},
+    {n:"Dead bug",note:"core",chip:"3 × 8 / side"}];
+  function easy(desc,chip){return{n:"Easy run (Zone 2)",note:desc||"conversational the whole way — build the engine",chip:chip};}
+  function core(){return{n:"Core (optional)",note:"plank + dead bug, 5 min",chip:"5 min"};}
+
+  function intervals(setDesc,chip,extra){var a=[runWU,{n:"Main set",note:setDesc,chip:chip}];if(extra)a=a.concat(extra);a.push(runCD);return a;}
+  var HARD={cls:"hard",html:"<b>Hard = RPE 8–9.</b> Strong and controlled, breathing hard but repeatable — not an all-out sprint. Jog/walk the recoveries fully so each rep is quality."};
+  var TEMPO={cls:"info",html:"<b>Tempo = comfortably hard.</b> Controlled discomfort, only a few words at a time. Hold it even — resist going too hard early."};
+  var SHUTTLE={cls:"info",html:"<b>Shuttle work.</b> Mark 20 m out. Turn <b>on</b> the line (don't overrun), plant and pivot — this rehearses the exact skill the beep test scores."};
+  var TESTB={cls:"test",html:"<b>Benchmark — run it properly.</b> Full warm-up, then the beep test to genuine failure. Record the level in the log; this is how we prove the plan's working."};
+
+  function strDay(list){return{dn:"Wed",code:"STR",kind:"str",t:"Upper body + easy run",s:"After work · ~50 min",ex:list};}
+  function jmet(dn){return{dn:dn,code:"JMET",kind:"jmet",t:"JMET PT (work)",s:"",note:"Your work PT — the plan stays off these days so you're not doubling up. If it's a hard run, keep it controlled the day before an interval session."};}
+  function rest(dn){return{dn:dn,code:"REST",kind:"rest",t:"Rest",s:"",note:"Full rest. Sleep is where the beep-test gains actually consolidate — protect it."};}
+
+  // ---- 8-week plan ----
+  var PLAN=[
+   {id:"w1",num:"Week 1",phase:"Base",pcls:"steel",focus:"Set a baseline and learn the interval feel. Easy running builds the engine.",
+    prognote:"<b>Benchmark week.</b> Run a real beep test Monday and log the level — that's the number we beat. Keep easy runs genuinely easy.",
+    days:[{dn:"Mon",code:"TEST",kind:"test",t:"Beep-test benchmark",s:"After work · ~30 min",banner:TESTB,ex:[runWU,{n:"Beep test to failure",note:"record your level in the log below",chip:"benchmark"},runCD]},
+      jmet("Tue"),
+      strDay(STR_UP_A.concat([easy("20 min after the weights","20 min")])),
+      {dn:"Thu",code:"VO2",kind:"vo2",t:"Intervals — introduction",s:"After work · ~40 min",banner:HARD,ex:intervals("8 × (1 min hard / 90 s easy jog)","RPE 8",[core()])},
+      jmet("Fri"),rest("Sat"),rest("Sun")]},
+
+   {id:"w2",num:"Week 2",phase:"Base",pcls:"steel",focus:"More interval density, first proper tempo.",
+    prognote:"<b>Progress from W1:</b> one more rep on the intervals, and the recoveries shorten. Add a rep or a touch of load on any lift that felt easy.",
+    days:[{dn:"Mon",code:"VO2",kind:"vo2",t:"VO2 intervals",s:"After work · ~42 min",banner:HARD,ex:intervals("10 × (1 min hard / 75 s easy jog)","RPE 8",[core()])},
+      jmet("Tue"),
+      strDay(STR_UP_B.concat([easy("22 min after the weights","22 min")])),
+      {dn:"Thu",code:"TEMPO",kind:"tempo",t:"Tempo run",s:"After work · ~35 min",banner:TEMPO,ex:intervals("2 × 8 min tempo / 2 min easy between","comfortably hard")},
+      jmet("Fri"),rest("Sat"),rest("Sun")]},
+
+   {id:"w3",num:"Week 3",phase:"Base",pcls:"steel",focus:"First shuttle session — turning & pacing. Longer tempo.",
+    prognote:"<b>New:</b> Monday moves to 20 m shuttles to rehearse the test itself. Focus on turning on the line, not speed.",
+    days:[{dn:"Mon",code:"SHTL",kind:"vo2",t:"Shuttle intervals",s:"After work · ~40 min",banner:SHUTTLE,ex:intervals("8 × (45 s hard shuttle / 75 s walk) over 20 m","turns",[core()])},
+      jmet("Tue"),
+      strDay(STR_UP_A.concat([easy("25 min after the weights","25 min")])),
+      {dn:"Thu",code:"TEMPO",kind:"tempo",t:"Tempo run",s:"After work · ~38 min",banner:TEMPO,ex:intervals("3 × 7 min tempo / 90 s easy between","comfortably hard")},
+      jmet("Fri"),rest("Sat"),rest("Sun")]},
+
+   {id:"w4",num:"Week 4",phase:"Build",pcls:"amber",focus:"Longer VO2 intervals — the big engine builder.",
+    prognote:"<b>Build phase:</b> intervals get longer (3-minute reps). This is the classic beep-test driver — hold the effort steady across all five.",
+    days:[{dn:"Mon",code:"VO2",kind:"vo2",t:"VO2 intervals",s:"After work · ~45 min",banner:HARD,ex:intervals("5 × (3 min hard / 2 min jog)","RPE 8–9",[core()])},
+      jmet("Tue"),
+      strDay(STR_UP_B.concat([easy("25 min after the weights","25 min")])),
+      {dn:"Thu",code:"TEMPO",kind:"tempo",t:"Tempo run",s:"After work · ~40 min",banner:TEMPO,ex:intervals("3 × 8 min tempo / 2 min easy between","comfortably hard")},
+      jmet("Fri"),rest("Sat"),rest("Sun")]},
+
+   {id:"w5",num:"Week 5",phase:"Build",pcls:"amber",focus:"Peak VO2 session + mid-block re-test.",
+    prognote:"<b>Re-test Thursday.</b> Run the beep test again and compare to Week 1 — you should see it move. Practise the pacing cues from the Guide.",
+    days:[{dn:"Mon",code:"VO2",kind:"vo2",t:"VO2 intervals (4×4)",s:"After work · ~45 min",banner:HARD,ex:intervals("4 × (4 min hard / 3 min jog)","RPE 8–9")},
+      jmet("Tue"),
+      strDay(STR_UP_A.concat([easy("25 min after the weights","25 min")])),
+      {dn:"Thu",code:"TEST",kind:"test",t:"Beep-test re-test",s:"After work · ~30 min",banner:TESTB,ex:[runWU,{n:"Beep test to failure",note:"log the level — compare to Week 1",chip:"re-test"},runCD]},
+      jmet("Fri"),rest("Sat"),rest("Sun")]},
+
+   {id:"w6",num:"Week 6",phase:"Build",pcls:"amber",focus:"Beep-pace shuttles + sustained tempo.",
+    prognote:"<b>Get specific:</b> shuttles a touch faster than test pace, so 8.5 pace starts to feel normal. Long continuous tempo builds the staying power.",
+    days:[{dn:"Mon",code:"SHTL",kind:"vo2",t:"Beep-pace shuttles",s:"After work · ~42 min",banner:SHUTTLE,ex:intervals("10 × (1 min at just-faster-than-test pace / 1 min walk) over 20 m","test+",[core()])},
+      jmet("Tue"),
+      strDay(STR_UP_B.concat([easy("25 min after the weights","25 min")])),
+      {dn:"Thu",code:"TEMPO",kind:"tempo",t:"Continuous tempo",s:"After work · ~40 min",banner:TEMPO,ex:intervals("20 min continuous tempo","comfortably hard")},
+      jmet("Fri"),rest("Sat"),rest("Sun")]},
+
+   {id:"w7",num:"Week 7",phase:"Sharpen",pcls:"develop",focus:"Sharpen the top-end turnover; keep it snappy, not draining.",
+    prognote:"<b>Sharpen:</b> shorter, faster reps to bring your speed to the surface. Volume drops a little — you're getting sharp, not tired.",
+    days:[{dn:"Mon",code:"VO2",kind:"vo2",t:"30/30 sharpener",s:"After work · ~38 min",banner:HARD,ex:intervals("18 × (30 s fast / 30 s easy jog)","RPE 9",[core()])},
+      jmet("Tue"),
+      strDay(STR_UP_A.concat([easy("20 min easy","20 min")])),
+      {dn:"Thu",code:"VO2",kind:"vo2",t:"Short intervals + strides",s:"After work · ~35 min",banner:HARD,ex:intervals("6 × (90 s hard / 90 s easy)","RPE 8",[{n:"Strides",note:"4 × 20 s relaxed & fast",chip:"4 ×"}])},
+      jmet("Fri"),rest("Sat"),rest("Sun")]},
+
+   {id:"w8",num:"Week 8",phase:"Test",pcls:"develop",focus:"Freshen up and go for 8.5.",
+    prognote:"<b>Test week.</b> Legs stay fresh — light primer Monday, easy shakeout midweek, then attack the beep test Thursday. Trust the work; execute the pacing.",
+    days:[{dn:"Mon",code:"PRIME",kind:"tempo",t:"Primer (light)",s:"After work · ~25 min",banner:{cls:"info",html:"<b>Just a wake-up.</b> Stay well within yourself — the aim is fresh, sharp legs for Thursday."},ex:[runWU,{n:"Primer set",note:"4 × 1 min at test pace / 2 min easy",chip:"light"},{n:"Strides",note:"3 × 20 s",chip:"3 ×"},runCD]},
+      jmet("Tue"),
+      {dn:"Wed",code:"STR",kind:"str",t:"Light upper + shakeout",s:"After work · ~30 min",ex:[warmUpper,{n:"Upper body — light",note:"2 sets each of press, row, shoulder press — easy, no grinding",chip:"2 × easy"},easy("15 min easy shakeout","15 min")]},
+      {dn:"Thu",code:"TEST",kind:"test",t:"Beep test — go for 8.5",s:"After work",banner:{cls:"test",html:"<b>Test day.</b> Full warm-up + strides. Turn on the line, don't lead the beep, settle in early, relax the shoulders. You've done the work — execute."},ex:[runWU,{n:"Beep test",note:"leave it all out there — log the level",chip:"GO"},runCD]},
+      jmet("Fri"),rest("Sat"),rest("Sun")]}
+  ];
+
+  var PHCOL={steel:"#2f6f8f",amber:"#c08a1e",develop:"#3f7d54"};
+  var CODECOL={vo2:"#b26a12",tempo:"#c08a1e",str:"#2f6f8f",test:"#a8412f",jmet:"#6d7b87",rest:"#9aa6b0"};
+
+  var daysEl=document.getElementById("days"),headEl=document.getElementById("weekhead"),barEl=document.getElementById("weekbar"),curWeek=null;
+  function ckKey(w,i,j){return NS+"ck."+w+"."+i+"."+j;}
+  function logKey(w,i){return NS+"log."+w+"."+i;}
+  function updateProg(wid,idx,d){if(!d.ex)return;var done=0;d.ex.forEach(function(e,i){if(store.get(ckKey(wid,idx,i))==="1")done++;});var p=document.querySelector('[data-prog="'+idx+'"]');if(!p)return;p.textContent=done+"/"+d.ex.length;p.classList.toggle("done",done===d.ex.length&&d.ex.length>0);}
+
+  function buildBar(){barEl.innerHTML="";PLAN.forEach(function(w){var b=document.createElement("button");b.className="wk";b.setAttribute("data-wk",w.id);
+    b.innerHTML='<span class="wnum">W'+w.num.split(" ")[1]+'</span><span class="wph">'+w.phase+'</span><span class="bar" style="background:'+PHCOL[w.pcls]+'"></span>';
+    b.addEventListener("click",function(){selectWeek(w.id);store.set(NS+"wk",w.id);});barEl.appendChild(b);});}
+
+  function selectWeek(wid){var w=PLAN.filter(function(x){return x.id===wid;})[0]||PLAN[0];curWeek=w;
+    document.querySelectorAll(".wk").forEach(function(el){el.setAttribute("aria-pressed",el.getAttribute("data-wk")===w.id?"true":"false");});
+    headEl.innerHTML='<div class="weekhead"><div class="wt"><span class="pdot" style="background:'+PHCOL[w.pcls]+'"></span>'+w.num+' · '+w.phase+' phase</div><div class="wf">'+w.focus+'</div></div>'+
+      (w.prognote?'<div class="prognote">'+w.prognote+'</div>':'');
+    renderDays(w);}
+
+  function renderDays(w){daysEl.innerHTML="";
+    w.days.forEach(function(d,idx){
+      var card=document.createElement("section");card.className="day "+(d.kind==="rest"||d.kind==="jmet"?"rest":"");
+      var col=CODECOL[d.kind]||"#2f6f8f";
+      var progHTML=d.ex?'<span class="prog" data-prog="'+idx+'">0/'+d.ex.length+'</span>':'';
+      card.innerHTML='<button class="dayhead" aria-expanded="false"><span class="dcol"><span class="dn">'+d.dn+'</span><span class="code" style="background:'+col+'">'+d.code+'</span></span>'+
+        '<span class="dmid"><span class="t">'+d.t+'</span>'+(d.s?'<span class="s">'+d.s+'</span>':'')+'</span>'+
+        '<span class="dright">'+progHTML+'<span class="chev">▶</span></span></button><div class="daybody"></div>';
+      var body=card.querySelector(".daybody");
+      if(d.banner){var rb=document.createElement("div");rb.className="runbanner "+d.banner.cls;rb.innerHTML=d.banner.html;body.appendChild(rb);}
+      if(d.ex){
+        var ul=document.createElement("ul");ul.className="ex";
+        d.ex.forEach(function(e,i){var li=document.createElement("li");if(e.wu)li.className="wu";
+          var checked=store.get(ckKey(w.id,idx,i))==="1";
+          li.innerHTML='<input type="checkbox" class="cbx" '+(checked?"checked":"")+' aria-label="'+e.n+'"><span class="exn '+(checked?"checked":"")+'"><b>'+e.n+'</b>'+(e.note?'<span class="note">'+e.note+'</span>':'')+'</span><span class="chip">'+e.chip+'</span>';
+          var cb=li.querySelector(".cbx");cb.addEventListener("change",function(){store.set(ckKey(w.id,idx,i),cb.checked?"1":"0");li.querySelector(".exn").classList.toggle("checked",cb.checked);updateProg(w.id,idx,d);});
+          ul.appendChild(li);});
+        body.appendChild(ul);
+        var tools=document.createElement("div");tools.className="daytools";var rr=document.createElement("button");rr.className="linkbtn";rr.textContent="Reset day";
+        rr.addEventListener("click",function(){d.ex.forEach(function(e,i){store.set(ckKey(w.id,idx,i),"0");});ul.querySelectorAll(".cbx").forEach(function(c){c.checked=false;});ul.querySelectorAll(".exn").forEach(function(x){x.classList.remove("checked");});updateProg(w.id,idx,d);});
+        tools.appendChild(rr);body.appendChild(tools);
+        var log=document.createElement("div");log.className="log";var lk=logKey(w.id,idx);var saved=JSON.parse(store.get(lk)||"{}");
+        var isTest=d.kind==="test";
+        function opts(sel){var o='<option value="">–</option>';for(var v=0;v<=10;v++){o+='<option '+(String(sel)===String(v)?"selected":"")+'>'+v+'</option>';}return o;}
+        var beepField=isTest?'<label>Beep level<input data-f="beep" inputmode="decimal" placeholder="e.g. 7.8" value="'+(saved.beep||"")+'" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:8px;padding:8px;font-family:var(--sans);font-size:14px"></label>':'<label>Legs 0–10<select data-f="legs">'+opts(saved.legs)+'</select></label>';
+        log.innerHTML='<div class="lrow">'+beepField+'<label>Hand 0–10<select data-f="hand">'+opts(saved.hand)+'</select></label></div>'+
+          '<label style="display:block;margin-top:8px">Notes<textarea data-f="note" placeholder="How did it feel? Anything to flag?">'+(saved.note||"")+'</textarea></label><span class="saved">saved ✓</span>';
+        function persist(){var obj={};log.querySelectorAll("[data-f]").forEach(function(el){obj[el.getAttribute("data-f")]=el.value;});store.set(lk,JSON.stringify(obj));var s=log.querySelector(".saved");s.classList.add("show");setTimeout(function(){s.classList.remove("show");},900);}
+        log.querySelectorAll("[data-f]").forEach(function(el){el.addEventListener("change",persist);});
+        log.querySelector('[data-f="note"]').addEventListener("blur",persist);
+        var beepEl=log.querySelector('[data-f="beep"]');if(beepEl)beepEl.addEventListener("blur",persist);
+        body.appendChild(log);
+      }else{var rn=document.createElement("div");rn.className="restnote";rn.textContent=d.note||"";body.appendChild(rn);}
+      var head=card.querySelector(".dayhead");head.addEventListener("click",function(){var open=card.classList.toggle("open");head.setAttribute("aria-expanded",open?"true":"false");});
+      daysEl.appendChild(card);if(d.ex)updateProg(w.id,idx,d);
+    });}
+
+  document.getElementById("resetWeek").addEventListener("click",function(){if(!curWeek)return;curWeek.days.forEach(function(d,idx){if(d.ex)d.ex.forEach(function(e,i){store.set(ckKey(curWeek.id,idx,i),"0");});});renderDays(curWeek);});
+
+  var msgs={g:"Green — full session, push the hard reps.",a:"Amber — take the easy option or trim a set. A lighter session beats a skipped one.",r:"Red — easy movement or rest. Recovery is when the gains land."};
+  var rmsg=document.getElementById("readymsg"),rkey=NS+"ready."+today();
+  function setReady(r){document.querySelectorAll(".pill").forEach(function(p){p.setAttribute("aria-pressed",p.getAttribute("data-r")===r?"true":"false");});rmsg.textContent=msgs[r]||"";rmsg.classList.toggle("show",!!r);store.set(rkey,r||"");}
+  document.querySelectorAll(".pill").forEach(function(p){p.addEventListener("click",function(){setReady(p.getAttribute("data-r"));});});
+  var sr=store.get(rkey);if(sr)setReady(sr);
+
+  var tabs=document.querySelectorAll(".tab"),panels=document.querySelectorAll(".panel");
+  function showTab(n){tabs.forEach(function(t){t.setAttribute("aria-selected",t.getAttribute("data-tab")===n?"true":"false");});panels.forEach(function(pl){pl.classList.toggle("active",pl.id===n);});window.scrollTo({top:0});}
+  tabs.forEach(function(t){t.addEventListener("click",function(){showTab(t.getAttribute("data-tab"));});});
+  document.getElementById("cautionStrip").addEventListener("click",function(){showTab("notes");var el=document.getElementById("notesTop");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});});
+
+  buildBar();
+  selectWeek(store.get(NS+"wk")||PLAN[0].id);
+})();
+</script>
+</body>
+</html>
