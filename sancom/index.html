@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SANDHURST Strength Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f0f0f;--paper:#f5f0e8;--accent:#c8392b;--accent2:#e8a020;--muted:#888;--border:#d0c8b8;--card:#fffdf8;--green:#2a6b3a;--sand:#ede8dc;--radius:4px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:15px;min-height:100vh;}
+
+/* AUTH SCREEN */
+.auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;}
+.auth-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2.5rem;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.08);}
+.auth-logo{text-align:center;margin-bottom:2rem;}
+.auth-logo h1{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:2px;color:var(--ink);}
+.auth-logo h1 span{color:var(--accent);}
+.auth-logo p{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);margin-top:4px;}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.auth-tab{padding:9px;text-align:center;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;background:var(--sand);color:var(--muted);}
+.auth-tab.active{background:var(--ink);color:#fff;}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem;}
+.fg label{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+input,select,textarea{font-family:'DM Sans',sans-serif;font-size:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:9px 12px;color:var(--ink);width:100%;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
+.btn-primary{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-top:.5rem;}
+.btn-primary:hover{background:var(--accent);}
+.auth-error{background:#fdf0ee;border:1px solid var(--accent);border-radius:var(--radius);padding:8px 12px;font-size:13px;color:var(--accent);margin-top:.75rem;display:none;}
+
+/* MAIN APP */
+.app{display:none;}
+header{background:var(--ink);color:#fff;padding:0 2rem;display:flex;align-items:stretch;border-bottom:4px solid var(--accent);}
+.hflag{background:var(--accent);width:6px;margin-right:1.5rem;}
+.htext{padding:1.25rem 0;}
+.htag{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);margin-bottom:4px;}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;color:#fff;}
+header h1 span{color:var(--accent);}
+.hsub{font-size:12px;color:#aaa;margin-top:2px;}
+.hright{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.user-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius);padding:5px 12px;font-size:12px;font-weight:600;color:#ccc;}
+.btn-logout{background:transparent;border:1px solid rgba(255,255,255,.2);color:#aaa;border-radius:var(--radius);padding:5px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
+.btn-logout:hover{border-color:var(--accent);color:var(--accent);}
+
+/* NAV */
+nav{background:var(--sand);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;gap:0;}
+.nav-tab{padding:12px 18px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.nav-tab:hover{color:var(--ink);}
+
+/* PAGES */
+.page{display:none;padding:2rem;max-width:1100px;margin:0 auto;}
+.page.active{display:block;}
+
+/* DASHBOARD */
+.welcome-bar{background:var(--ink);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.welcome-bar h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:1px;color:#fff;}
+.welcome-bar h2 span{color:var(--accent2);}
+.welcome-bar p{font-size:13px;color:#aaa;margin-top:2px;}
+.week-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;}
+.week-title{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
+.day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.day-cell{border-radius:var(--radius);padding:8px 6px;text-align:center;border:1px solid var(--border);}
+.day-cell.rest{background:var(--sand);}
+.day-cell.run{background:#e8f4ec;border-color:#a8d4b4;}
+.day-cell.strength{background:#fdf0ee;border-color:#f0b8b0;}
+.day-cell.ruck{background:#fff8e8;border-color:#f0d890;}
+.day-cell.wod{background:#e8eef8;border-color:#b0c4e8;}
+.day-cell.battle{background:#f0e8f8;border-color:#c8b0e8;}
+.day-name{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.day-type{font-size:10px;font-weight:600;color:var(--ink);}
+.day-icon{font-size:16px;margin-bottom:3px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;}
+.stat-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--ink);}
+.stat-val.red{color:var(--accent);}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* BUILDER */
+.builder-grid{display:grid;grid-template-columns:380px 1fr;gap:1.5rem;align-items:start;}
+.sidebar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;}
+.slabel{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
+.fg-inline{margin-bottom:.75rem;}
+.chip-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:.75rem;}
+.chip{border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 10px;cursor:pointer;background:var(--card);}
+.chip.sel{border-color:var(--accent);background:#fdf0ee;}
+.chip-name{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--ink);}
+.chip.sel .chip-name{color:var(--accent);}
+.chip-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+.btn-gen{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:.75rem;}
+.btn-gen:hover{background:var(--accent);}
+.btn-sec{background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-sec:hover{background:var(--sand);}
+.output-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;}
+.empty-state{text-align:center;padding:4rem 2rem;opacity:.4;}
+.empty-state h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;margin-bottom:.5rem;}
+.empty-state p{font-size:13px;color:var(--muted);}
+
+/* PROGRAM OUTPUT */
+.prog-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:2px solid var(--ink);}
+.prog-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;line-height:1;}
+.prog-title span{color:var(--accent);}
+.prog-meta{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:2px;color:var(--muted);margin-top:4px;text-transform:uppercase;}
+.stats-bar{background:var(--ink);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;}
+.sb-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:3px;}
+.sb-val{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;font-weight:700;color:var(--accent2);}
+.sb-val.sm{font-size:1.1rem;}
+.section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;}
+.section-title{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-bottom:.75rem;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'';display:inline-block;width:4px;height:12px;background:var(--accent);border-radius:2px;}
+.week-block{margin-bottom:1.25rem;}
+.week-hdr{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;padding:6px 10px;background:var(--sand);border-radius:var(--radius);margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center;}
+.week-phase{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);}
+.sess-block{margin-bottom:.75rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.sess-hdr{background:var(--sand);padding:7px 12px;display:flex;align-items:center;justify-content:space-between;}
+.sess-day{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink);}
+.sess-type{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:2px;font-weight:600;}
+.sess-type.strength{background:#fdf0ee;color:var(--accent);}
+.sess-type.rest{background:var(--border);color:var(--muted);}
+.ex-row{display:grid;grid-template-columns:1fr 70px 100px 90px;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px;align-items:start;}
+.ex-row:last-child{border-bottom:none;}
+.ex-row-hdr{display:grid;grid-template-columns:1fr 70px 100px 90px;gap:8px;padding:5px 12px;background:#fafaf8;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+.ex-name{font-weight:600;}
+.ex-note{font-size:11px;color:var(--muted);margin-top:2px;}
+.ex-sets{text-align:center;}
+.ex-load{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--accent);text-align:center;}
+.ex-rpe{text-align:center;font-size:12px;color:var(--muted);}
+.principle-list .p-item{padding:7px 0 7px 16px;border-bottom:1px solid var(--border);font-size:13px;color:#444;position:relative;}
+.principle-list .p-item::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:10px;top:9px;}
+.save-bar{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;margin-top:1rem;display:flex;align-items:center;gap:10px;}
+.save-bar input{flex:1;}
+.disclaimer{background:var(--sand);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-top:1rem;font-size:12px;color:var(--muted);font-style:italic;}
+
+/* MY PROGRAMS */
+.prog-list{display:flex;flex-direction:column;gap:10px;}
+.prog-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:grid;grid-template-columns:1fr auto;align-items:center;gap:1rem;}
+.prog-card-title{font-weight:700;font-size:15px;margin-bottom:3px;}
+.prog-card-meta{font-size:12px;color:var(--muted);}
+.prog-card-actions{display:flex;gap:8px;}
+.btn-view{background:var(--ink);color:#fff;border:none;border-radius:var(--radius);padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-del{background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:var(--radius);padding:6px 12px;font-size:12px;cursor:pointer;}
+.no-programs{text-align:center;padding:3rem;opacity:.4;}
+.no-programs h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;}
+
+@media(max-width:900px){.builder-grid{grid-template-columns:1fr;}.day-grid{grid-template-columns:repeat(4,1fr);}.stats-row{grid-template-columns:1fr 1fr;}.stats-bar{grid-template-columns:repeat(3,1fr);}}
+@media print{nav,header .hright,.btn-gen,.btn-sec,.save-bar{display:none!important;}.page{padding:.5rem;}}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <h1>SAND<span>HURST</span></h1>
+      <p>Strength Platform — ADFA SANCOM</p>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign In</div>
+      <div class="auth-tab" id="tabRegister" onclick="switchTab('register')">Register</div>
+    </div>
+    <div id="loginForm">
+      <div class="fg"><label>Username</label><input type="text" id="loginUser" placeholder="your username" autocomplete="username"></div>
+      <div class="fg"><label>Password</label><input type="password" id="loginPass" placeholder="password" autocomplete="current-password"></div>
+      <button class="btn-primary" onclick="login()">Sign In</button>
+      <div class="auth-error" id="loginError"></div>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <div class="fg"><label>Full Name</label><input type="text" id="regName" placeholder="e.g. OCdt Smith, J."></div>
+      <div class="fg"><label>Username</label><input type="text" id="regUser" placeholder="choose a username" autocomplete="username"></div>
+      <div class="fg"><label>Password</label><input type="password" id="regPass" placeholder="choose a password" autocomplete="new-password"></div>
+      <div class="fg"><label>Team / Section</label><input type="text" id="regTeam" placeholder="e.g. ADFA Sandhurst Team 1"></div>
+      <button class="btn-primary" onclick="register()">Create Account</button>
+      <div class="auth-error" id="registerError"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="app">
+  <header>
+    <div class="hflag"></div>
+    <div class="htext">
+      <div class="htag">ADFA — Sandhurst Competition</div>
+      <h1>SAND<span>HURST</span> Strength</h1>
+      <div class="hsub">Complementary Strength Platform for ADFA Sandhurst Athletes</div>
+    </div>
+    <div class="hright">
+      <div class="user-chip" id="userChip">—</div>
+      <button class="btn-logout" onclick="logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nav-tab active" onclick="showPage('dashboard')">Dashboard</div>
+    <div class="nav-tab" onclick="showPage('builder')">Build Program</div>
+    <div class="nav-tab" onclick="showPage('programs')">My Programs</div>
+    <div class="nav-tab" onclick="showPage('standards')">Standards</div>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="welcome-bar">
+      <div>
+        <h2>Welcome back, <span id="dashName">—</span></h2>
+        <p id="dashTeam">—</p>
+      </div>
+      <button class="btn-sec" onclick="showPage('builder')">+ New Program</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Saved Programs</div>
+        <div class="stat-val red" id="statProgs">0</div>
+        <div class="stat-sub">in your library</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Weekly Run Volume</div>
+        <div class="stat-val">4</div>
+        <div class="stat-sub">sessions / week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Strength Sessions</div>
+        <div class="stat-val">2–3</div>
+        <div class="stat-sub">recommended / week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Competition</div>
+        <div class="stat-val red">ADFA</div>
+        <div class="stat-sub">Sandhurst</div>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="week-title">Recommended Weekly Structure</div>
+      <div class="day-grid">
+        <div class="day-cell run"><div class="day-name">Mon</div><div class="day-icon">🏃</div><div class="day-type">LSD Run</div></div>
+        <div class="day-cell strength"><div class="day-name">Tue</div><div class="day-icon">🏋️</div><div class="day-type">Strength A</div></div>
+        <div class="day-cell run"><div class="day-name">Wed</div><div class="day-icon">🏃</div><div class="day-type">VDOT / Intervals</div></div>
+        <div class="day-cell strength"><div class="day-name">Thu</div><div class="day-icon">🏋️</div><div class="day-type">Strength B</div></div>
+        <div class="day-cell ruck"><div class="day-name">Fri</div><div class="day-icon">🎒</div><div class="day-type">Pack March</div></div>
+        <div class="day-cell wod"><div class="day-name">Sat</div><div class="day-icon">⚡</div><div class="day-type">WOD / Battle</div></div>
+        <div class="day-cell rest"><div class="day-name">Sun</div><div class="day-icon">💤</div><div class="day-type">Rest</div></div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:.75rem;">Strength sessions placed Tuesday and Thursday — away from long runs and ruck. Adjust based on your PTI's schedule.</p>
+    </div>
+  </div>
+
+  <!-- BUILDER -->
+  <div class="page" id="page-builder">
+    <div class="builder-grid">
+      <div class="sidebar">
+        <div class="slabel">Athlete Details</div>
+        <div class="fg-inline"><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Name</label><input type="text" id="bName" placeholder="e.g. OCdt Smith, J."></div>
+        <div class="fgrid2">
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Age</label><input type="number" id="bAge" placeholder="e.g. 20" min="17" max="40"></div>
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Bodyweight (kg)</label><input type="number" id="bBW" placeholder="e.g. 78" min="50" max="140"></div>
+        </div>
+        <div class="fgrid2">
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Training Age</label>
+            <select id="bExp"><option value="beginner">0–1 yr</option><option value="intermediate" selected>1–3 yr</option><option value="advanced">3+ yr</option></select>
+          </div>
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Team / Section</label><input type="text" id="bTeam" placeholder="e.g. Team 2"></div>
+        </div>
+
+        <div class="slabel">Current Sandhurst Load</div>
+        <div class="fgrid2">
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">LSD Runs/Week</label>
+            <select id="bLSD"><option value="2">2</option><option value="3" selected>3</option></select>
+          </div>
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">LSD Distance (km)</label>
+            <select id="bLSDkm"><option value="8">8 km</option><option value="10">10 km</option><option value="12" selected>12 km</option><option value="14">14 km</option></select>
+          </div>
+        </div>
+        <div class="fgrid2">
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Ruck Load (kg)</label>
+            <select id="bRuck"><option value="15">15 kg</option><option value="20">20 kg</option><option value="25" selected>25 kg</option><option value="30">30 kg</option><option value="35">35 kg</option></select>
+          </div>
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Ruck Distance (km)</label>
+            <select id="bRuckkm"><option value="8">8 km</option><option value="10">10 km</option><option value="12" selected>12 km</option><option value="15">15 km</option><option value="20">20 km</option></select>
+          </div>
+        </div>
+
+        <div class="slabel">Strength Program Setup</div>
+        <div class="fgrid2">
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Strength Sessions/Week</label>
+            <select id="bSess"><option value="2">2/week</option><option value="3" selected>3/week</option><option value="4">4/week</option></select>
+          </div>
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Duration (weeks)</label>
+            <select id="bWeeks">
+              <option value="4">4 weeks</option>
+              <option value="6">6 weeks</option>
+              <option value="8" selected>8 weeks</option>
+              <option value="10">10 weeks</option>
+              <option value="12">12 weeks</option>
+              <option value="16">16 weeks</option>
+            </select>
+          </div>
+        </div>
+        <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Session Length</label>
+          <select id="bLen" style="width:100%;margin-bottom:.75rem;"><option value="45">45 min</option><option value="60" selected>60 min</option><option value="75">75 min</option></select>
+        </div>
+
+        <div class="slabel">Primary Strength Focus</div>
+        <div class="chip-grid">
+          <div class="chip sel" id="ch_military" onclick="selChip('military')"><div class="chip-name">Military S&C</div><div class="chip-desc">Functional strength for field tasks</div></div>
+          <div class="chip" id="ch_posterior" onclick="selChip('posterior')"><div class="chip-name">Posterior Chain</div><div class="chip-desc">Hip hinge, glute, hamstring focus</div></div>
+          <div class="chip" id="ch_upper" onclick="selChip('upper')"><div class="chip-name">Upper Body Push/Pull</div><div class="chip-desc">Press, heave, and carry strength</div></div>
+          <div class="chip" id="ch_power" onclick="selChip('power')"><div class="chip-name">Power & Explosiveness</div><div class="chip-desc">Jump, clean, sprint transfer</div></div>
+        </div>
+
+        <div class="slabel">Current 1RM Estimates (optional)</div>
+        <div class="fgrid2">
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Squat (kg)</label><input type="number" id="bSquat" placeholder="e.g. 100"></div>
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Deadlift (kg)</label><input type="number" id="bDL" placeholder="e.g. 130"></div>
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Bench (kg)</label><input type="number" id="bBench" placeholder="e.g. 80"></div>
+          <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">OHP (kg)</label><input type="number" id="bOHP" placeholder="e.g. 55"></div>
+        </div>
+
+        <div class="slabel">Weak Points / Focus Areas</div>
+        <div><textarea id="bNotes" placeholder="e.g. Limited grip strength, left hip tightness after long runs, want to improve loaded carry posture" style="width:100%;margin-bottom:.75rem;min-height:70px;"></textarea></div>
+
+        <button class="btn-gen" onclick="buildProgram()">Generate Strength Program</button>
+      </div>
+
+      <div class="output-panel">
+        <div class="empty-state" id="builderEmpty">
+          <div style="font-size:3rem;margin-bottom:1rem;">🏋️</div>
+          <h3>No Program Generated</h3>
+          <p>Fill in your details and press<br>Generate Strength Program</p>
+        </div>
+        <div id="builderOutput" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY PROGRAMS -->
+  <div class="page" id="page-programs">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+      <div>
+        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;">My Programs</h2>
+        <p style="font-size:13px;color:var(--muted);">Your saved strength programs</p>
+      </div>
+      <button class="btn-sec" onclick="showPage('builder')">+ New Program</button>
+    </div>
+    <div class="prog-list" id="progList">
+      <div class="no-programs"><h3>No Programs Yet</h3><p style="font-size:13px;color:var(--muted);margin-top:.5rem;">Build your first program in the Builder tab</p></div>
+    </div>
+  </div>
+
+  <!-- STANDARDS -->
+  <div class="page" id="page-standards">
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;margin-bottom:.25rem;">Sandhurst Standards</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">Physical benchmarks and competition task reference</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div class="section">
+        <div class="section-title">Physical Benchmarks — Competitive</div>
+        <div class="principle-list">
+          ${[
+            ['2.4 km Run','Sub 8:30 — aim for sub 8:00'],
+            ['Cadence Push-ups','65+ in 2 min'],
+            ['Cadence Heaves (Pull-ups)','12+'],
+            ['Sit-ups','70+ in 2 min'],
+            ['3.2 km Webbing Run (8 kg)','Sub 14:30'],
+            ['Pack March (25 kg, 12 km)','Under 2 hr 30 min'],
+            ['Max Pull-up Hang','2+ min'],
+            ['Farmer\'s Carry (2×32 kg)','100 m without rest'],
+          ].map(([n,v])=>`<div class="p-item"><strong>${n}:</strong> ${v}</div>`).join('')}
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Sandhurst Competition Tasks (Reference)</div>
+        <div class="principle-list">
+          ${[
+            ['Navigation','Day and night compass navigation under load'],
+            ['Obstacle Course','Military obstacles in full kit'],
+            ['Rope Crossing','Various water and gap crossing tasks'],
+            ['Casualty Carry','Buddy carry, stretcher carry over terrain'],
+            ['Log Carry','Team log carry over distance'],
+            ['Ammunition Resupply','Loaded carry and redistribution task'],
+            ['Weapon Handling','Speed and accuracy under fatigue'],
+            ['Leadership Tasks','Decision-making under physical stress'],
+          ].map(([n,v])=>`<div class="p-item"><strong>${n}:</strong> ${v}</div>`).join('')}
+        </div>
+      </div>
+      <div class="section" style="grid-column:span 2;">
+        <div class="section-title">Programming Principles for Sandhurst Athletes</div>
+        <div class="principle-list">
+          ${[
+            'Strength work must complement — not compete with — your existing run, ruck and WOD volume. Priority is always the PTI-scheduled sessions.',
+            'Schedule strength sessions on Tuesday and Thursday — away from Monday LSD, Wednesday VDOT, and Friday ruck.',
+            'Never do heavy lower body strength the day before a ruck or long run. Upper body and posterior chain work is lower-risk on those days.',
+            'Posterior chain strength (hinge, glute, hamstring) transfers directly to ruck performance. Prioritise this over quad-dominant work.',
+            'Grip strength is a Sandhurst-specific limiter — farmer\'s carries, dead hangs, and towel pull-ups should feature every cycle.',
+            'Core anti-rotation and anti-extension (plank variants, Pallof press, dead bug) build the stability needed for loaded tasks under fatigue.',
+            'Track your main lift numbers. Add load only when you complete all reps and sets with clean technique. Quality reps beat max effort ego lifts.',
+            'Deload every 4–6 weeks: drop to 60% load, focus on technique. This prevents accumulated fatigue from stacking on top of your run/ruck volume.',
+          ].map(p=>`<div class="p-item">${p}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── AUTH ──────────────────────────────────────────────────────
+let currentUser = null;
+
+function getUsers(){return JSON.parse(localStorage.getItem('sh_users')||'{}');}
+function saveUsers(u){localStorage.setItem('sh_users',JSON.stringify(u));}
+function getPrograms(username){return JSON.parse(localStorage.getItem('sh_progs_'+username)||'[]');}
+function savePrograms(username,progs){localStorage.setItem('sh_progs_'+username,JSON.stringify(progs));}
+
+function switchTab(t){
+  document.getElementById('tabLogin').classList.toggle('active',t==='login');
+  document.getElementById('tabRegister').classList.toggle('active',t==='register');
+  document.getElementById('loginForm').style.display=t==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=t==='register'?'block':'none';
+}
+
+function login(){
+  const u=document.getElementById('loginUser').value.trim().toLowerCase();
+  const p=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginError');
+  if(!u||!p){err.textContent='Please enter username and password.';err.style.display='block';return;}
+  const users=getUsers();
+  if(!users[u]||users[u].password!==btoa(p)){err.textContent='Incorrect username or password.';err.style.display='block';return;}
+  err.style.display='none';
+  currentUser=users[u];
+  currentUser.username=u;
+  initApp();
+}
+
+function register(){
+  const name=document.getElementById('regName').value.trim();
+  const u=document.getElementById('regUser').value.trim().toLowerCase();
+  const p=document.getElementById('regPass').value;
+  const team=document.getElementById('regTeam').value.trim();
+  const err=document.getElementById('registerError');
+  if(!name||!u||!p){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(u.length<3){err.textContent='Username must be at least 3 characters.';err.style.display='block';return;}
+  if(p.length<4){err.textContent='Password must be at least 4 characters.';err.style.display='block';return;}
+  const users=getUsers();
+  if(users[u]){err.textContent='Username already taken.';err.style.display='block';return;}
+  users[u]={name,password:btoa(p),team:team||'ADFA Sandhurst',created:new Date().toISOString()};
+  saveUsers(users);
+  err.style.display='none';
+  currentUser={...users[u],username:u};
+  initApp();
+}
+
+function logout(){
+  currentUser=null;
+  document.getElementById('authScreen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+}
+
+function initApp(){
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('userChip').textContent=currentUser.name;
+  document.getElementById('dashName').textContent=currentUser.name.split(',')[0]||currentUser.name;
+  document.getElementById('dashTeam').textContent=currentUser.team||'SANDHURST';
+  document.getElementById('bName').value=currentUser.name;
+  document.getElementById('bTeam').value=currentUser.team||'';
+  updateDashStats();
+  showPage('dashboard');
+}
+
+// ── NAV ──────────────────────────────────────────────────────
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const tabs=['dashboard','builder','programs','standards'];
+  const navTabs=document.querySelectorAll('.nav-tab');
+  navTabs[tabs.indexOf(id)].classList.add('active');
+  if(id==='programs') renderPrograms();
+  if(id==='dashboard') updateDashStats();
+}
+
+function updateDashStats(){
+  if(!currentUser) return;
+  const progs=getPrograms(currentUser.username);
+  document.getElementById('statProgs').textContent=progs.length;
+}
+
+// ── CHIP SELECT ──────────────────────────────────────────────
+let selectedFocus='military';
+function selChip(f){
+  selectedFocus=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('ch_'+f).classList.add('sel');
+}
+
+// ── PROGRAM BUILDER ──────────────────────────────────────────
+const EXERCISES = {
+  military: {
+    A: [
+      {name:'Trap Bar Deadlift',sets:4,reps:'5',load:'80% 1RM',rpe:'7–8',note:'Neutral spine, drive floor away. Sub: conventional DL or KB swing'},
+      {name:'Weighted Pull-Up',sets:4,reps:'4–6',load:'+5–10 kg or BW',rpe:'8',note:'Full dead hang start, chin over bar. Scale with band if needed'},
+      {name:'Bulgarian Split Squat',sets:3,reps:'8/leg',load:'2×DBs moderate',rpe:'7',note:'Rear foot elevated, upright torso. Trains unilateral stability for uneven terrain'},
+      {name:'Dumbbell Row',sets:3,reps:'10/side',load:'Moderate–heavy',rpe:'7',note:'Chest supported or single arm. Squeeze scapula at top'},
+      {name:'Farmer\'s Carry',sets:3,reps:'40 m',load:'Heavy (0.6–0.8× BW total)',rpe:'8',note:'Upright posture, controlled breathing. Direct ruck transfer'},
+      {name:'Dead Bug',sets:3,reps:'8/side',load:'BW / slow',rpe:'6',note:'Lower back must stay flat. Exhale on extension'},
+    ],
+    B: [
+      {name:'Romanian Deadlift',sets:4,reps:'8',load:'70% 1RM',rpe:'7',note:'Hip hinge, feel hamstring stretch, squeeze glutes at top'},
+      {name:'Bench Press',sets:4,reps:'6',load:'75–80% 1RM',rpe:'7–8',note:'Arch, leg drive, controlled 2s descent'},
+      {name:'Goblet Squat',sets:3,reps:'12',load:'KB or DB moderate',rpe:'6',note:'Heels up on plate if needed. Full depth, upright torso'},
+      {name:'Bent-Over Barbell Row',sets:3,reps:'8',load:'Moderate',rpe:'7',note:'Hinge position, pull elbows back. Not a deadlift — maintain position'},
+      {name:'Pallof Press',sets:3,reps:'12/side',load:'Light–moderate band/cable',rpe:'6',note:'Anti-rotation core. Stand tall, extend slowly, resist rotation'},
+      {name:'Dead Hang',sets:3,reps:'Max hold',load:'BW',rpe:'8',note:'Grip strength critical for Sandhurst tasks. Time each set'},
+    ],
+  },
+  posterior: {
+    A: [
+      {name:'Conventional Deadlift',sets:5,reps:'4',load:'82–87% 1RM',rpe:'8',note:'Lat tension, big breath, drive floor away. Reset each rep'},
+      {name:'Romanian Deadlift',sets:3,reps:'10',load:'65% 1RM',rpe:'7',note:'Hamstring emphasis. Feel the stretch, don\'t round at bottom'},
+      {name:'Glute-Ham Raise / Nordic Curl',sets:3,reps:'6',load:'BW / eccentric focus',rpe:'8',note:'Slow 4s descent. One of the best hamstring injury prevention exercises'},
+      {name:'Hip Thrust (barbell)',sets:4,reps:'10',load:'Moderate–heavy',rpe:'7',note:'Full glute contraction at top. 2s hold'},
+      {name:'Single-Leg RDL',sets:3,reps:'8/leg',load:'Light DB or KB',rpe:'7',note:'Balance and posterior chain combined. Key for uneven terrain'},
+      {name:'Farmer\'s Carry',sets:3,reps:'50 m',load:'Heavy',rpe:'8',note:'Posterior chain isometric challenge. Grip, upper back, hips'},
+    ],
+    B: [
+      {name:'Trap Bar Deadlift',sets:4,reps:'6',load:'78% 1RM',rpe:'7',note:'Slightly more quad than conventional — still posterior chain dominant'},
+      {name:'KB Swing (heavy)',sets:5,reps:'10',load:'Heavy KB',rpe:'7',note:'Explosive hip drive. Not a squat — hinge and snap hips'},
+      {name:'Back Extension',sets:3,reps:'15',load:'BW or plate',rpe:'7',note:'Full extension, squeeze glutes at top'},
+      {name:'Bulgarian Split Squat',sets:3,reps:'8/leg',load:'Moderate DBs',rpe:'7',note:'Posterior chain bias — lean slightly forward'},
+      {name:'Pull-Up',sets:3,reps:'Max',load:'BW',rpe:'8',note:'Upper body pulling to complement hinge pattern'},
+      {name:'Pallof Press',sets:3,reps:'12/side',load:'Band/cable',rpe:'6',note:'Core stability to protect the posterior chain under load'},
+    ],
+  },
+  upper: {
+    A: [
+      {name:'Weighted Pull-Up',sets:5,reps:'4',load:'+5–15 kg',rpe:'8',note:'Dead hang start. Most transferable upper body exercise for Sandhurst tasks'},
+      {name:'Bench Press',sets:4,reps:'6',load:'80% 1RM',rpe:'8',note:'Controlled tempo, full ROM'},
+      {name:'Barbell Row',sets:4,reps:'6',load:'75% 1RM',rpe:'8',note:'Aggressive pull, retract scapula'},
+      {name:'Overhead Press',sets:3,reps:'8',load:'70% 1RM',rpe:'7',note:'Strict — no leg drive. Builds overhead stability for carrying loads'},
+      {name:'Farmer\'s Carry',sets:3,reps:'40 m',load:'Heavy',rpe:'8',note:'Grip and upper back. Direct task transfer'},
+      {name:'Dead Hang',sets:3,reps:'Max hold',load:'BW',rpe:'8',note:'Grip development'},
+    ],
+    B: [
+      {name:'Chin-Up (supinated)',sets:4,reps:'Max',load:'BW',rpe:'8',note:'Supinated grip hits bicep more — good complement to pull-up'},
+      {name:'Incline Dumbbell Press',sets:3,reps:'10',load:'Moderate',rpe:'7',note:'Shoulder-friendly pressing variant'},
+      {name:'Cable / Band Face Pull',sets:3,reps:'15',load:'Light–moderate',rpe:'6',note:'Rotator cuff and rear delt health — critical for high pull-up volume'},
+      {name:'Single-Arm Dumbbell Row',sets:3,reps:'12/side',load:'Heavy',rpe:'8',note:'Full ROM, squeeze at top'},
+      {name:'Tricep Dip / Close-Grip Press',sets:3,reps:'10',load:'BW or +weight',rpe:'7',note:'Pushing strength endurance'},
+      {name:'Towel Pull-Up / Thick Bar',sets:2,reps:'Max',load:'BW',rpe:'8',note:'Grip-specific work. Simulate rope climbing and carry tasks'},
+    ],
+  },
+  power: {
+    A: [
+      {name:'Power Clean (or DB Hang Clean)',sets:5,reps:'3',load:'70–75% 1RM',rpe:'8',note:'Explosive triple extension. Reset each rep. If new to cleans, use DB hang clean'},
+      {name:'Box Jump',sets:4,reps:'4',load:'BW',rpe:'7',note:'Max height, stick landing. Focus on hip extension at takeoff'},
+      {name:'Back Squat',sets:4,reps:'4',load:'80% 1RM',rpe:'8',note:'Fast concentric intent. Bar speed matters'},
+      {name:'Weighted Pull-Up',sets:3,reps:'4',load:'+5–10 kg',rpe:'8',note:'Explosive pull phase'},
+      {name:'Farmer\'s Carry',sets:3,reps:'50 m',load:'Heavy',rpe:'8',note:'Loaded carry conditioning'},
+      {name:'Plyo Push-Up',sets:3,reps:'8',load:'BW',rpe:'7',note:'Explosive push, hands leave ground. Power endurance'},
+    ],
+    B: [
+      {name:'Trap Bar Deadlift',sets:4,reps:'4',load:'82% 1RM',rpe:'8',note:'Explosive concentric. Heavy and fast'},
+      {name:'Broad Jump',sets:4,reps:'4',load:'BW',rpe:'7',note:'Max horizontal distance, controlled landing'},
+      {name:'DB Thruster',sets:4,reps:'6',load:'Moderate',rpe:'7',note:'Squat to press — total body power endurance'},
+      {name:'Bench Press (compensatory acceleration)',sets:3,reps:'5',load:'70% 1RM',rpe:'7',note:'Light but maximum intent/speed'},
+      {name:'Med Ball Slam',sets:3,reps:'8',load:'8–12 kg',rpe:'7',note:'Total body explosive extension'},
+      {name:'Battle Ropes',sets:3,reps:'20s hard',load:'Max effort',rpe:'8',note:'Anaerobic conditioning. Short rest between sets'},
+    ],
+  },
+};
+
+function pct(oneRM, p){ return oneRM ? Math.round(oneRM*p/2.5)*2.5 : null; }
+
+function buildProgram(){
+  const name=document.getElementById('bName').value.trim()||'Athlete';
+  const age=document.getElementById('bAge').value||'20';
+  const bw=document.getElementById('bBW').value||'75';
+  const exp=document.getElementById('bExp').value;
+  const team=document.getElementById('bTeam').value.trim()||'SANDHURST';
+  const lsd=document.getElementById('bLSD').value;
+  const lsdKm=document.getElementById('bLSDkm').value;
+  const ruckKg=document.getElementById('bRuck').value;
+  const ruckKm=document.getElementById('bRuckkm').value;
+  const sessPerWeek=parseInt(document.getElementById('bSess').value)||2;
+  const weeks=parseInt(document.getElementById('bWeeks').value)||8;
+  const sesLen=document.getElementById('bLen').value;
+  const focus=selectedFocus;
+  const squat=parseInt(document.getElementById('bSquat').value)||0;
+  const dl=parseInt(document.getElementById('bDL').value)||0;
+  const bench=parseInt(document.getElementById('bBench').value)||0;
+  const ohp=parseInt(document.getElementById('bOHP').value)||0;
+  const notes=document.getElementById('bNotes').value.trim();
+
+  const focusLabels={military:'Military S&C',posterior:'Posterior Chain',upper:'Upper Body Push/Pull',power:'Power & Explosiveness'};
+  const exs=EXERCISES[focus];
+
+  // Phases
+  const phases=weeks<=4
+    ?[{name:'Foundation',end:weeks,intent:'Build movement quality and base strength under existing endurance load'}]
+    :weeks<=8
+    ?[{name:'Foundation',end:Math.floor(weeks*0.38),intent:'Movement quality, sub-maximal loading, adapt to combined load'},
+      {name:'Build',end:Math.floor(weeks*0.75),intent:'Progressive overload, increase intensity, maintain endurance quality'},
+      {name:'Peak / Taper',end:weeks,intent:'Reduce volume, maintain intensity, arrive at competition fresh'}]
+    :[{name:'Foundation',end:Math.floor(weeks*0.25),intent:'Aerobic + strength base, technique focus, low fatigue'},
+      {name:'Build 1',end:Math.floor(weeks*0.5),intent:'Progressive overload, increase load across main lifts'},
+      {name:'Build 2',end:Math.floor(weeks*0.75),intent:'Higher intensity, task-specific accessories, manage fatigue'},
+      {name:'Peak / Taper',end:weeks,intent:'Volume reduction, intensity maintained, competition prep'}];
+
+  function getPhase(w){for(const p of phases){if(w<=p.end)return p;}return phases[phases.length-1];}
+
+  // Load progression pct per week
+  const pctArr=exp==='beginner'
+    ?[65,68,72,60,70,73,77,65,72,75,78,65,75,78,82,68]
+    :exp==='advanced'
+    ?[72,77,82,65,77,82,87,70,80,85,90,72,82,87,92,75]
+    :[68,72,77,62,73,77,82,67,77,80,85,70,78,82,87,70];
+
+  function getLoadStr(baseRM, weekIdx, defaultStr){
+    if(!baseRM) return defaultStr;
+    const p=pctArr[Math.min(weekIdx, pctArr.length-1)]/100;
+    return Math.round(baseRM*p/2.5)*2.5+'kg';
+  }
+
+  const liftMap={
+    'Back Squat':squat,'Conventional Deadlift':dl,'Trap Bar Deadlift':dl,
+    'Bench Press':bench,'Overhead Press':ohp,'Romanian Deadlift':dl,
+    'Barbell Row':bench,'Bent-Over Barbell Row':bench,
+  };
+
+  // Build weeks
+  let weeksHTML='';
+  for(let w=1;w<=weeks;w++){
+    const ph=getPhase(w);
+    const isTaper=ph.name.includes('Taper')||ph.name.includes('Peak');
+    const isDeload=w%4===0&&w<weeks;
+    const sessAB=sessPerWeek===2?['A','B']:sessPerWeek===3?['A','B','A']:['A','B','A','B'];
+    const dayLabels=sessPerWeek===2?['Tuesday','Thursday']:sessPerWeek===3?['Monday','Wednesday','Friday']:['Monday','Tuesday','Thursday','Friday'];
+
+    const sessBlocks=sessAB.map((ab,si)=>{
+      const exList=exs[ab].map((ex,ei)=>{
+        const baseRM=liftMap[ex.name]||0;
+        const loadStr=getLoadStr(baseRM, w-1, ex.load);
+        const deloadLoad=isDeload?(baseRM?Math.round(baseRM*0.6/2.5)*2.5+'kg':'60% — technique focus'):null;
+        return `<div class="ex-row">
+          <div><div class="ex-name">${ex.name}</div><div class="ex-note">${ex.note}</div></div>
+          <div class="ex-sets" style="text-align:center;">${isDeload?Math.max(2,ex.sets-1):isTaper?Math.max(2,ex.sets-1):ex.sets}</div>
+          <div class="ex-load">${isDeload?'60%':isTaper&&ei<2?'85%+':loadStr}</div>
+          <div class="ex-rpe">${isDeload?'5–6':ex.rpe}</div>
+        </div>`;
+      }).join('');
+
+      return `<div class="sess-block">
+        <div class="sess-hdr">
+          <div class="sess-day">${dayLabels[si]}</div>
+          <div class="sess-type strength">Session ${ab}${isDeload?' — Deload':isTaper?' — Taper':''}</div>
+        </div>
+        <div class="ex-row-hdr"><div>Exercise</div><div>Sets</div><div>Load</div><div>RPE</div></div>
+        ${exList}
+      </div>`;
+    }).join('');
+
+    weeksHTML+=`<div class="week-block">
+      <div class="week-hdr">
+        <span>WEEK ${w}</span>
+        <span class="week-phase">${ph.name}${isDeload?' — DELOAD':''}</span>
+      </div>
+      <div style="background:var(--sand);border-radius:var(--radius);padding:8px 12px;margin-bottom:.75rem;font-size:12px;color:#555;">
+        <strong>Phase focus:</strong> ${ph.intent}
+      </div>
+      ${sessBlocks}
+    </div>`;
+  }
+
+  // Progression table
+  let progTable='';
+  if(squat||dl||bench||ohp){
+    const lifts=[['Squat',squat],['Deadlift',dl],['Bench',bench],['OHP',ohp]].filter(l=>l[1]>0);
+    progTable=`<div class="section"><div class="section-title">Loading Progression Table</div>
+      <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <tr style="background:var(--sand);">
+          <th style="padding:6px 10px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);">Lift</th>
+          ${Array.from({length:weeks},(_,i)=>`<th style="padding:6px 8px;text-align:center;font-size:10px;color:var(--muted);">W${i+1}${(i+1)%4===0&&(i+1)<weeks?'🔄':''}</th>`).join('')}
+        </tr>
+        ${lifts.map(([ln,rm])=>`<tr>
+          <td style="padding:6px 10px;font-weight:700;">${ln}</td>
+          ${Array.from({length:weeks},(_,i)=>{
+            const isD=(i+1)%4===0&&(i+1)<weeks;
+            const p=pctArr[Math.min(i,pctArr.length-1)]/100;
+            const kg=isD?Math.round(rm*0.6/2.5)*2.5:Math.round(rm*p/2.5)*2.5;
+            return `<td style="padding:6px 8px;text-align:center;background:${isD?'#fdf0ee':'var(--card)'};border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;">${kg}kg</td>`;
+          }).join('')}
+        </tr>`).join('')}
+      </table></div></div>`;
+  }
+
+  const now=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  const html=`
+    <div class="prog-header">
+      <div>
+        <div class="prog-title">Strength <span>Program</span></div>
+        <div class="prog-meta">${name} — ${team} — ${focusLabels[focus]} — ${weeks} wks — Generated ${now}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-sec" onclick="window.print()">Print</button>
+        <button class="btn-sec" onclick="document.getElementById('builderOutput').style.display='none';document.getElementById('builderEmpty').style.display='block';">Reset</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div><div class="sb-label">Athlete</div><div class="sb-val sm">${name}</div></div>
+      <div><div class="sb-label">Focus</div><div class="sb-val sm">${focusLabels[focus]}</div></div>
+      <div><div class="sb-label">Strength Sessions</div><div class="sb-val">${sessPerWeek}×/wk</div></div>
+      <div><div class="sb-label">Duration</div><div class="sb-val">${weeks} wks</div></div>
+      <div><div class="sb-label">Session Length</div><div class="sb-val sm">${sesLen} min</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Existing Training Load (Do Not Replace)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+        <div style="background:var(--sand);border-radius:var(--radius);padding:10px 12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">LSD Runs</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;">${lsd}×/week</div>
+          <div style="font-size:11px;color:var(--muted);">Up to ${lsdKm} km each</div>
+        </div>
+        <div style="background:var(--sand);border-radius:var(--radius);padding:10px 12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Pack March</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;">${ruckKm} km</div>
+          <div style="font-size:11px;color:var(--muted);">${ruckKg} kg load</div>
+        </div>
+        <div style="background:var(--sand);border-radius:var(--radius);padding:10px 12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">WOD / Battle</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;">1–2×/week</div>
+          <div style="font-size:11px;color:var(--muted);">PTI scheduled</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Week-by-Week Strength Program</div>
+      ${weeksHTML}
+    </div>
+
+    ${progTable}
+
+    ${notes?`<div class="section"><div class="section-title">Athlete Notes</div><p style="font-size:13px;color:#444;">${notes}</p></div>`:''}
+
+    <div class="section">
+      <div class="section-title">Key Rules</div>
+      <div class="principle-list">
+        ${['Never replace a PTI-scheduled run, ruck, or WOD with a strength session. Strength is supplementary.','If you feel heavily fatigued from runs, reduce strength volume by one set per exercise — do not skip entirely.','Deload weeks (🔄) are mandatory. Reduce load to 60%, focus on technique, let the body absorb the training.','Add weight only when all sets and reps are completed with solid form. Form breaks down under fatigue — stop before failure.','Posterior chain work (hinge, glute, carry) always takes priority over quad-dominant work given the ruck volume.','Track your numbers. A training log is the difference between progress and spinning wheels.'].map(r=>`<div class="p-item">${r}</div>`).join('')}
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <input type="text" id="saveName" placeholder="Program name (e.g. Week 1–8 Posterior Chain)" value="${name} — ${focusLabels[focus]} — ${weeks}wk">
+      <button class="btn-sec" onclick="saveProgram()">💾 Save Program</button>
+    </div>
+    <div class="disclaimer"><strong>Disclaimer:</strong> This program is a supplementary strength planning tool for ADFA Sandhurst athletes. It must be used in conjunction with, not instead of, your PTI-directed training schedule. Modify based on fatigue, injury, and unit requirements.</div>`;
+
+  document.getElementById('builderEmpty').style.display='none';
+  const out=document.getElementById('builderOutput');
+  out.style.display='block';
+  out.innerHTML=html;
+  out._programData={name,team,focus,weeks,sessPerWeek,focusLabel:focusLabels[focus],generated:now,html};
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── SAVE / LOAD PROGRAMS ──────────────────────────────────────
+function saveProgram(){
+  if(!currentUser) return;
+  const saveName=document.getElementById('saveName')?.value?.trim();
+  if(!saveName){alert('Please enter a program name.');return;}
+  const out=document.getElementById('builderOutput');
+  if(!out._programData){return;}
+  const progs=getPrograms(currentUser.username);
+  const prog={
+    id:Date.now(),
+    name:saveName,
+    ...out._programData,
+    savedAt:new Date().toISOString(),
+  };
+  progs.unshift(prog);
+  savePrograms(currentUser.username,progs);
+  updateDashStats();
+  alert('Program saved!');
+}
+
+function renderPrograms(){
+  if(!currentUser) return;
+  const progs=getPrograms(currentUser.username);
+  const list=document.getElementById('progList');
+  if(progs.length===0){
+    list.innerHTML='<div class="no-programs"><h3>No Programs Yet</h3><p style="font-size:13px;color:var(--muted);margin-top:.5rem;">Build your first program in the Builder tab</p></div>';
+    return;
+  }
+  list.innerHTML=progs.map((p,i)=>`
+    <div class="prog-card">
+      <div>
+        <div class="prog-card-title">${p.name}</div>
+        <div class="prog-card-meta">${p.focusLabel} — ${p.weeks} weeks — Saved ${new Date(p.savedAt).toLocaleDateString('en-AU')}</div>
+      </div>
+      <div class="prog-card-actions">
+        <button class="btn-view" onclick="viewProgram(${i})">View</button>
+        <button class="btn-del" onclick="deleteProgram(${i})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function viewProgram(idx){
+  const progs=getPrograms(currentUser.username);
+  const p=progs[idx];
+  showPage('builder');
+  document.getElementById('builderEmpty').style.display='none';
+  const out=document.getElementById('builderOutput');
+  out.style.display='block';
+  out.innerHTML=p.html;
+  out._programData=p;
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function deleteProgram(idx){
+  if(!confirm('Delete this program?')) return;
+  const progs=getPrograms(currentUser.username);
+  progs.splice(idx,1);
+  savePrograms(currentUser.username,progs);
+  updateDashStats();
+  renderPrograms();
+}
+
+// Auto-fill from logged in user
+window.onload=function(){
+  // Check for remembered session
+  const saved=sessionStorage.getItem('sh_session');
+  if(saved){
+    try{currentUser=JSON.parse(saved);initApp();}catch(e){sessionStorage.removeItem('sh_session');}
+  }
+};
+
+// Keep session alive during tab
+window.addEventListener('beforeunload',()=>{
+  if(currentUser) sessionStorage.setItem('sh_session',JSON.stringify(currentUser));
+});
+</script>
+</body>
+</html>
