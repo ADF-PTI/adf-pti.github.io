@@ -236,13 +236,13 @@ nav{background:var(--sand);border-bottom:1px solid var(--border);padding:0 2rem;
       <div class="day-grid">
         <div class="day-cell run"><div class="day-name">Mon</div><div class="day-icon">🏃</div><div class="day-type">LSD Run</div></div>
         <div class="day-cell strength"><div class="day-name">Tue</div><div class="day-icon">🏋️</div><div class="day-type">Strength A</div></div>
-        <div class="day-cell run"><div class="day-name">Wed</div><div class="day-icon">🏃</div><div class="day-type">VDOT / Intervals</div></div>
-        <div class="day-cell strength"><div class="day-name">Thu</div><div class="day-icon">🏋️</div><div class="day-type">Strength B</div></div>
-        <div class="day-cell ruck"><div class="day-name">Fri</div><div class="day-icon">🎒</div><div class="day-type">Pack March</div></div>
-        <div class="day-cell wod"><div class="day-name">Sat</div><div class="day-icon">⚡</div><div class="day-type">WOD / Battle</div></div>
+        <div class="day-cell run"><div class="day-name">Wed</div><div class="day-icon">🏃</div><div class="day-type">LSD Run</div></div>
+        <div class="day-cell strength"><div class="day-name">Thu</div><div class="day-icon">🏋️⚡</div><div class="day-type">Strength B + VDOT</div></div>
+        <div class="day-cell wod"><div class="day-name">Fri</div><div class="day-icon">⚡</div><div class="day-type">WOD / Battle PT</div></div>
+        <div class="day-cell ruck"><div class="day-name">Sat</div><div class="day-icon">🎒</div><div class="day-type">Pack March</div></div>
         <div class="day-cell rest"><div class="day-name">Sun</div><div class="day-icon">💤</div><div class="day-type">Rest</div></div>
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:.75rem;">Strength sessions placed Tuesday and Thursday — away from long runs and ruck. Adjust based on your PTI's schedule.</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:.75rem;">Strength A on Tuesday, Strength B on Thursday morning before VDOT intervals. Keep Thursday strength upper body or posterior chain — avoid heavy lower body before intervals and Saturday ruck.</p>
     </div>
   </div>
 
@@ -266,7 +266,7 @@ nav{background:var(--sand);border-bottom:1px solid var(--border);padding:0 2rem;
         <div class="slabel">Current Sandhurst Load</div>
         <div class="fgrid2">
           <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">LSD Runs/Week</label>
-            <select id="bLSD"><option value="2">2</option><option value="3" selected>3</option></select>
+            <select id="bLSD"><option value="2" selected>2</option><option value="3">3</option></select>
           </div>
           <div><label style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">LSD Distance (km)</label>
             <select id="bLSDkm"><option value="8">8 km</option><option value="10">10 km</option><option value="12" selected>12 km</option><option value="14">14 km</option></select>
@@ -383,8 +383,8 @@ nav{background:var(--sand);border-bottom:1px solid var(--border);padding:0 2rem;
         <div class="section-title">Programming Principles for Sandhurst Athletes</div>
         <div class="principle-list">
           <div class="p-item">Strength work must complement — not compete with — your existing run, ruck and WOD volume. Priority is always the PTI-scheduled sessions.</div>
-          <div class="p-item">Schedule strength sessions on Tuesday and Thursday — away from Monday LSD, Wednesday VDOT, and Friday ruck.</div>
-          <div class="p-item">Never do heavy lower body strength the day before a ruck or long run. Upper body and posterior chain work is lower-risk on those days.</div>
+          <div class="p-item">Schedule strength sessions Tuesday (Session A) and Thursday morning (Session B). Thursday strength must be completed before VDOT intervals — keep it upper body or posterior chain focused to avoid lower body fatigue before intervals.</div>
+          <div class="p-item">Never do heavy lower body strength (heavy squats, leg press) on Thursday — VDOT intervals follow. Saturday pack march means Friday should also avoid heavy lower body. Upper body and posterior chain are the safe choices mid-week.</div>
           <div class="p-item">Posterior chain strength (hinge, glute, hamstring) transfers directly to ruck performance. Prioritise this over quad-dominant work.</div>
           <div class="p-item">Grip strength is a Sandhurst-specific limiter — farmer's carries, dead hangs, and towel pull-ups should feature every cycle.</div>
           <div class="p-item">Core anti-rotation and anti-extension (plank variants, Pallof press, dead bug) build the stability needed for loaded tasks under fatigue.</div>
@@ -630,7 +630,7 @@ function buildProgram(){
     const isTaper=ph.name.includes('Taper')||ph.name.includes('Peak');
     const isDeload=w%4===0&&w<weeks;
     const sessAB=sessPerWeek===2?['A','B']:sessPerWeek===3?['A','B','A']:['A','B','A','B'];
-    const dayLabels=sessPerWeek===2?['Tuesday','Thursday']:sessPerWeek===3?['Monday','Wednesday','Friday']:['Monday','Tuesday','Thursday','Friday'];
+    const dayLabels=sessPerWeek===2?['Tuesday','Thursday']:sessPerWeek===3?['Tuesday','Thursday','Saturday']:['Monday','Tuesday','Thursday','Friday'];
 
     const sessBlocks=sessAB.map((ab,si)=>{
       const exList=exs[ab].map((ex,ei)=>{
