@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 30-Second Margin — MIDN A. Blent · 2.4km Program</title>
+<style>
+  :root{
+    --ink:#0a1626;--ink2:#0f2135;--panel:#132a42;--panel2:#183350;
+    --line:#24405f;--line2:#2f4d70;--fog:#8ea6c0;--paper:#eaf1f8;
+    --gold:#d9a441;--gold-dim:#a97f2e;--go:#4bbf78;--go-dim:#2f7d4f;--warn:#e06666;
+    --ni:#5aa9e0;--rec:#b58fd6;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--ink);color:var(--paper);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  strong,b{color:#fff}
+
+  .toolbar{display:none}
+  body.js .toolbar{display:block;position:sticky;top:0;z-index:20;background:rgba(10,22,38,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 0}
+  .toolbar .wrap{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .toolbar .ttl{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--fog)}
+  .btn{font-family:var(--mono);font-size:12px;color:var(--paper);background:var(--panel);border:1px solid var(--line2);border-radius:7px;padding:7px 12px;cursor:pointer}
+  .btn:hover{border-color:var(--gold)}
+
+  header{background:radial-gradient(1200px 420px at 82% -10%,rgba(217,164,65,.12),transparent 60%),linear-gradient(180deg,var(--ink2),var(--ink));border-bottom:1px solid var(--line);padding:50px 0 36px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+  h1{font-size:clamp(29px,6.2vw,50px);line-height:1.04;font-weight:800;letter-spacing:-.02em}
+  h1 .sub{display:block;color:var(--fog);font-weight:600;font-size:clamp(15px,3vw,20px);letter-spacing:0;margin-top:12px}
+  .thesis{margin-top:20px;font-size:clamp(16px,2.4vw,19px);max-width:62ch;color:#cfe0f0;border-left:2px solid var(--gold);padding-left:16px}
+  .metabar{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .chip{font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--paper);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:6px 13px}
+  .chip b{color:var(--gold)}
+
+  section{padding:40px 0;border-bottom:1px solid var(--line)}
+  .sechead{display:flex;align-items:baseline;gap:13px;margin-bottom:18px}
+  .sechead .n{font-family:var(--mono);color:var(--gold-dim);font-size:13px;font-weight:600;padding-top:4px}
+  h2{font-size:clamp(20px,3.4vw,27px);font-weight:800;letter-spacing:-.01em}
+  h3{font-size:14px;font-weight:700;color:var(--gold);margin:18px 0 8px;letter-spacing:.03em;text-transform:uppercase;font-family:var(--mono)}
+  p{color:#d5e2f0;margin-bottom:12px}
+  p.muted{color:var(--fog)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px 17px}
+  .stat .lab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fog)}
+  .stat .big{font-family:var(--mono);font-size:25px;font-weight:700;margin-top:6px}
+  .stat .note{font-size:13px;color:var(--fog);margin-top:4px}
+  .stat.miss .big{color:var(--warn)}.stat.good .big{color:var(--go)}
+
+  .callout{background:linear-gradient(180deg,rgba(217,164,65,.08),transparent);border:1px solid var(--gold-dim);border-radius:10px;padding:16px 19px;margin-top:16px}
+  .callout b{color:var(--gold)}
+  .callout.blue{background:linear-gradient(180deg,rgba(90,169,224,.08),transparent);border-color:#3f6f92}
+  .callout.blue b{color:var(--ni)}
+  .callout.green{background:linear-gradient(180deg,rgba(75,191,120,.08),transparent);border-color:var(--go-dim)}
+  .callout.green b{color:var(--go)}
+
+  /* pace board */
+  .board{background:var(--ink2);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:8px}
+  .board-top{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .board-top .t{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--fog)}
+  .board-top .goal{font-family:var(--mono);font-weight:700;color:var(--gold);font-size:15px}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono)}
+  th{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fog);font-weight:600;text-align:right;padding:11px 18px 7px}
+  th:first-child{text-align:left}
+  td{padding:10px 18px;border-top:1px solid var(--line);text-align:right;font-size:15px}
+  td:first-child{text-align:left;color:var(--fog)}
+  .lapno{color:var(--gold)!important;font-weight:700}.cum{color:var(--go)}
+  .board-foot{padding:12px 18px;font-size:12.5px;color:var(--fog);border-top:1px solid var(--line);font-family:var(--sans)}
+
+  .calc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:18px}
+  .calc label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fog);display:block;margin-bottom:8px}
+  .calc-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .calc input{background:var(--ink);border:1px solid var(--line);color:var(--paper);font-family:var(--mono);font-size:16px;padding:9px 13px;border-radius:8px;width:104px}
+  .calc input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+  .calc .out{font-family:var(--mono);color:var(--go);font-weight:700;font-size:16px}
+  .calc .hint{font-size:12px;color:var(--fog);margin-top:10px}
+
+  .chartcard{background:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:8px}
+  .chartcard svg{width:100%;height:auto;display:block}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--fog)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+
+  /* fits your week */
+  .weekgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin:6px 0 4px}
+  @media(max-width:680px){.weekgrid{grid-template-columns:repeat(2,1fr)}}
+  .wd{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 9px;min-height:118px}
+  .wd .wdn{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--fog);margin-bottom:6px}
+  .wd .item{font-size:11.5px;line-height:1.35;margin-bottom:4px;color:#cfe0f0}
+  .wd .fix{color:var(--fog)}
+  .wd .ours{color:var(--gold);font-weight:700}
+  .wd .cut{color:var(--warn);text-decoration:line-through;opacity:.7}
+  .wd .high{color:var(--rec)}
+
+  .change{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line)}
+  .change:first-child{border-top:none}
+  .change .cn{font-family:var(--mono);color:var(--ink);background:var(--gold);min-width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .change .ct{font-size:14px}
+
+  /* phase filter + weeks */
+  .phasetabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .ptab{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--fog);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 14px;cursor:pointer}
+  .ptab:hover{border-color:var(--gold-dim);color:var(--paper)}
+  .ptab.active{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+
+  .wkcard{background:var(--panel);border:1px solid var(--line);border-radius:11px;margin-bottom:12px;overflow:hidden}
+  .wkcard.p1{border-left:3px solid var(--ni)}.wkcard.p2{border-left:3px solid var(--gold)}.wkcard.p3{border-left:3px solid var(--go)}
+  .wkhead{display:flex;align-items:center;gap:14px;padding:15px 18px;cursor:pointer;user-select:none}
+  .wkhead:hover{background:var(--panel2)}
+  .wknum{font-family:var(--mono);font-weight:800;font-size:15px;color:var(--gold);min-width:56px}
+  .wkmeta{flex:1;min-width:0}
+  .wkmeta .ph{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--fog)}
+  .wkmeta .fo{font-weight:700;font-size:15px;margin-top:2px}
+  .ring{--pct:0;width:34px;height:34px;border-radius:50%;background:conic-gradient(var(--go) calc(var(--pct)*1%),var(--line) 0);display:grid;place-items:center;flex-shrink:0}
+  .ring::after{content:"";width:26px;height:26px;border-radius:50%;background:var(--panel)}
+  .chev{color:var(--fog);transition:transform .2s;font-size:13px;font-family:var(--mono);display:none}
+  body.js .chev{display:inline}
+  .wkcard.open .chev{transform:rotate(90deg)}
+
+  .wkbody{display:block;padding:2px 18px 16px;border-top:1px solid var(--line)}
+  body.js .wkbody{display:none}
+  body.js .wkcard.open .wkbody{display:block}
+  .wktarget{font-family:var(--mono);font-size:12px;color:var(--go);margin:14px 0 6px}
+  .wknote{background:var(--ink2);border-radius:8px;padding:12px 14px;font-size:13.5px;color:#cfe0f0;margin-bottom:14px}
+  .wknote b{color:var(--gold)}
+
+  /* session block inside week */
+  .ses2{border:1px solid var(--line);border-radius:9px;background:var(--ink2);padding:13px 15px;margin-bottom:10px}
+  .ses2head{display:flex;align-items:center;gap:11px}
+  .sday{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fog);min-width:34px}
+  .sttl{font-weight:800;font-size:15px;flex:1}
+  .chk{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:1.5px solid var(--line2);border-radius:5px;cursor:pointer;flex-shrink:0;position:relative;background:var(--ink)}
+  .chk:checked{background:var(--go);border-color:var(--go)}
+  .chk:checked::after{content:"\2713";position:absolute;inset:0;display:grid;place-items:center;color:var(--ink);font-size:13px;font-weight:800}
+  .chk.rest{visibility:hidden}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 2px}
+  .tg{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:3px 8px;border-radius:20px;border:1px solid var(--line2);color:var(--fog)}
+  .tg.sup{color:var(--gold);border-color:var(--gold-dim)}
+  .tg.tt{color:var(--go);border-color:var(--go-dim)}
+  .tg.ni{color:var(--ni);border-color:#3f6f92}
+  .tg.rec{color:var(--rec);border-color:#6f5a8c}
+  .tg.run{color:#f0c674;border-color:var(--gold-dim)}
+  .tg.opt{color:var(--fog)}
+  .tg.fresh{color:var(--go);border-color:var(--go-dim)}
+  .tg.rep{color:var(--warn);border-color:#8c4a4a}
+  .detail{margin-top:9px}
+  .dl{display:flex;gap:10px;font-size:13px;padding:4px 0;color:#d5e2f0}
+  .dl .dlab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--fog);min-width:74px;flex-shrink:0;padding-top:2px}
+  .dl.cue{color:var(--gold)}
+  .dl.cue .dlab{color:var(--gold-dim)}
+
+  /* non-impact how-to */
+  .mods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+  @media(max-width:620px){.mods{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:400px){.mods{grid-template-columns:1fr}}
+  .mod{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:12px 13px}
+  .mod .mn{font-weight:800;font-size:14px;color:var(--ni)}
+  .mod .md{font-size:12.5px;color:var(--fog);margin-top:4px;line-height:1.4}
+  .zones{margin-top:14px}
+  .zone{display:flex;gap:12px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line)}
+  .zone:first-child{border-top:none}
+  .zone .zn{font-family:var(--mono);font-weight:700;min-width:118px}
+  .zone .zn.z2{color:var(--go)}.zone .zn.thr{color:var(--gold)}.zone .zn.iv{color:var(--warn)}
+  .zone .zd{font-size:13.5px;color:#d5e2f0}
+
+  /* traffic light */
+  .lights{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:6px}
+  @media(max-width:620px){.lights{grid-template-columns:1fr}}
+  .lt{border-radius:10px;padding:14px 15px;border:1px solid}
+  .lt.g{background:rgba(75,191,120,.09);border-color:var(--go-dim)}
+  .lt.a{background:rgba(217,164,65,.09);border-color:var(--gold-dim)}
+  .lt.r{background:rgba(224,102,102,.09);border-color:#8c4a4a}
+  .lt .lh{font-weight:800;font-size:14px;margin-bottom:5px}
+  .lt.g .lh{color:var(--go)}.lt.a .lh{color:var(--gold)}.lt.r .lh{color:var(--warn)}
+  .lt p{font-size:13px;margin:0;color:#d5e2f0}
+
+  /* nutrition */
+  .plate{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);margin:6px 0 4px}
+  .pseg{padding:16px;min-height:92px}
+  .pseg .pl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+  .pseg .pv{font-weight:800;font-size:16px;margin-top:4px}
+  .pseg .pe{font-size:12px;margin-top:5px;opacity:.92;line-height:1.4}
+  .pveg{background:linear-gradient(180deg,#1d3f2c,#16321f);grid-row:span 2}
+  .ppro{background:linear-gradient(180deg,#3a2a16,#2b2011)}
+  .pcarb{background:linear-gradient(180deg,#16304a,#112438)}
+  @media(max-width:520px){.plate{grid-template-columns:1fr}.pveg{grid-row:auto}}
+  .fuelrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  @media(max-width:560px){.fuelrow{grid-template-columns:1fr}}
+  .fuel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .fuel .ft{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  .fuel p{font-size:13.5px;margin:0}
+  ul.clean{list-style:none;margin:8px 0 0}
+  ul.clean li{padding:7px 0 7px 22px;position:relative;font-size:14px;color:#d5e2f0;border-top:1px solid var(--line)}
+  ul.clean li:first-child{border-top:none}
+  ul.clean li::before{content:"\2192";position:absolute;left:0;color:var(--gold)}
+
+  .mind{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px 19px;margin-bottom:11px}
+  .mind .q{font-weight:700;color:var(--gold);margin-bottom:5px;font-size:15px}
+  .mind p{font-size:14px;margin-bottom:0}
+  .routine .r{display:flex;gap:13px;padding:10px 0;border-top:1px solid var(--line)}
+  .routine .r:first-child{border-top:none}
+  .routine .r .num{font-family:var(--mono);color:var(--ink);background:var(--gold);min-width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .routine .r .tx{font-size:14px;padding-top:2px}
+
+  .track table{font-family:var(--sans)}
+  .track th,.track td{text-align:left;font-size:13px;color:#d5e2f0}
+  .track th{color:var(--fog)}.track td{border-top:1px solid var(--line);height:42px}
+  .track .empty{color:var(--line2)}
+
+  footer{padding:30px 0 60px;color:var(--fog);font-size:13px}
+  footer .sig{font-family:var(--mono);color:var(--gold);margin-bottom:6px}
+
+  @media print{
+    .toolbar{display:none!important}
+    body{background:#fff;color:#111}
+    section{border-color:#ccc;padding:18px 0}header{background:#fff}
+    .thesis,td,p,.dl,.wknote,.wd .item{color:#222!important}
+    .board,.day,.ses2,.mind,.stat,.calc,.callout,.wkcard,.chartcard,.fuel,.wknote,.wd,.mod,.lt,.zone{background:#fff!important;border-color:#bbb!important}
+    .wkbody{display:block!important}.chev{display:none!important}.phasetabs{display:none}
+    .pveg,.ppro,.pcarb{background:#f3f3f3!important;color:#111!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar"><div class="wrap">
+  <span class="ttl">The 30-Second Margin · MIDN A. Blent</span>
+  <div><button class="btn" id="expandAll">Expand all weeks</button>
+  <button class="btn" onclick="window.print()">Print / PDF</button></div>
+</div></div>
+
+<header><div class="wrap">
+  <div class="eyebrow">Individual Remediation Program · RAN · Restricted use</div>
+  <h1>The 30-Second Margin<span class="sub">MIDN A. Blent — 2.4km run remediation · impact-reduced &amp; fatigue-managed</span></h1>
+  <p class="thesis">You are not unfit. On your first attempt you missed the pass by <strong>two seconds</strong> — then you got <em>slower</em>, training flat out seven days a week. So this version does the opposite of piling on: we <strong>take the impact off</strong>, clear the fatigue, keep one sharp run a week, and build a buffer big enough that a nervous day still passes. Train to 14:30, race the line at 15:00.</p>
+  <div class="metabar">
+    <span class="chip"><b>10</b> weeks</span>
+    <span class="chip">Run pass <b>&lt;15:00</b></span>
+    <span class="chip">Train to <b>14:30</b></span>
+    <span class="chip"><b>1</b> run/wk + non-impact</span>
+    <span class="chip">Sat run <b>cut</b></span>
+  </div>
+</div></header>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">01</span><h2>What the numbers — and your week — say</h2></div>
+  <div class="grid2">
+    <div class="stat miss"><div class="lab">Run · Attempt 1</div><div class="big">15:02</div><div class="note">Missed pass by 2 seconds</div></div>
+    <div class="stat miss"><div class="lab">Run · Attempt 2</div><div class="big">15:33</div><div class="note">31s slower than attempt 1</div></div>
+    <div class="stat good"><div class="lab">Plank · Attempt 1</div><div class="big">1:15</div><div class="note">Pass (standard 1:00)</div></div>
+    <div class="stat good"><div class="lab">Plank · Attempt 2</div><div class="big">1:45</div><div class="note">Pass — improving strongly</div></div>
+  </div>
+  <div class="callout">
+    <p><b>The plank isn't the problem.</b> Cleared comfortably and improving. We maintain it and worry about it never.</p>
+    <p style="margin-bottom:0"><b>The run went backwards — and now I know why.</b> Look at your week: PT twice, military four days, netball three times, a gym session, a full day of skiing, <em>and</em> three runs on top. That is a wall of impact with almost no recovery. A body that fatigued runs slower, not faster — which is exactly what your second attempt shows. The fix isn't more training. It's <strong>less pounding and real recovery</strong>, with the running that stays made to count.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">02</span><h2>The pace board</h2></div>
+  <p class="muted">Six laps of a 400m track. The pass line asks 2:30 a lap. We train and race to <strong style="color:var(--gold)">2:25</strong> — five seconds a lap quicker — so the finish arrives with 30 seconds still banked.</p>
+  <div class="board">
+    <div class="board-top"><span class="t">Race plan — 14:30 finish</span><span class="goal">2:25 / lap</span></div>
+    <table><thead><tr><th>Lap</th><th>Split</th><th>Elapsed</th><th>Pass line</th></tr></thead><tbody>
+      <tr><td class="lapno">1</td><td>2:28</td><td class="cum">2:28</td><td>2:30</td></tr>
+      <tr><td class="lapno">2</td><td>2:26</td><td class="cum">4:54</td><td>5:00</td></tr>
+      <tr><td class="lapno">3</td><td>2:25</td><td class="cum">7:19</td><td>7:30</td></tr>
+      <tr><td class="lapno">4</td><td>2:25</td><td class="cum">9:44</td><td>10:00</td></tr>
+      <tr><td class="lapno">5</td><td>2:24</td><td class="cum">12:08</td><td>12:30</td></tr>
+      <tr><td class="lapno">6</td><td>2:22</td><td class="cum">14:30</td><td>15:00</td></tr>
+    </tbody></table>
+    <div class="board-foot"><strong>Lap 1 is the slowest deliberate one.</strong> The classic fail is a hot first lap and a dead back half — most likely what turned 15:02 into 15:33. Start controlled, run even, finish emptying the tank.</div>
+  </div>
+  <div class="calc"><label for="goal">Goal time → lap splits</label>
+    <div class="calc-row"><input id="goal" type="text" value="14:30" inputmode="numeric" aria-label="Goal time mm:ss">
+      <span>→ even lap of</span><span class="out" id="lapOut">2:25</span><span>· per km</span><span class="out" id="kmOut">6:03</span></div>
+    <div class="hint">Type any goal as mm:ss. Useful for session targets and, later, pushing toward Tier 1/2.</div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">03</span><h2>The planned descent</h2></div>
+  <p class="muted">Where the time trials should land. Note the early dip — as the fatigue clears in the first few weeks, expect a step toward the line before we’ve done much "training" at all. Then we build margin.</p>
+  <div class="chartcard">
+    <svg id="chart" viewBox="0 0 760 320" role="img" aria-label="Planned time-trial trajectory descending below the 15:00 pass line"></svg>
+    <div class="legend">
+      <span><i style="background:var(--warn)"></i> 15:00 pass line</span>
+      <span><i style="background:var(--gold)"></i> Planned trajectory</span>
+      <span><i style="background:var(--go)"></i> 14:30 target</span>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">04</span><h2>How this fits your week</h2></div>
+  <p class="muted">Your timetable stays as-is — I’ve only touched the training <em>I</em> control, and I’ve cut, not added. Grey is your fixed load, <span style="color:var(--gold);font-weight:700">gold</span> is what I prescribe, <span style="color:var(--rec)">purple</span> is your high-impact external load to respect.</p>
+  <div class="weekgrid">
+    <div class="wd"><div class="wdn">Mon</div><div class="item fix">PT (am)</div><div class="item ours">▶ My session (1530)</div><div class="item fix">Classes</div></div>
+    <div class="wd"><div class="wdn">Tue</div><div class="item fix">Military</div><div class="item high">Netball (pm)</div><div class="item fix">Gym</div></div>
+    <div class="wd"><div class="wdn">Wed</div><div class="item fix">Military</div><div class="item high">Netball / Dance</div></div>
+    <div class="wd"><div class="wdn">Thu</div><div class="item fix">PT (am)</div><div class="item fix">Military</div><div class="item ours">▶ My session (1600)</div></div>
+    <div class="wd"><div class="wdn">Fri</div><div class="item fix">Military (am)</div><div class="item ours">▶ Time trials here</div><div class="item" style="color:var(--go)">Lightest day</div></div>
+    <div class="wd"><div class="wdn">Sat</div><div class="item cut">Run (cut)</div><div class="item high">Netball (3 hr)</div></div>
+    <div class="wd"><div class="wdn">Sun</div><div class="item high">Skiing (all day)</div></div>
+  </div>
+  <h3>What I changed, and why</h3>
+  <div class="change"><span class="cn">1</span><div class="ct"><strong>Saturday run — cut.</strong> You have three hours of netball that day. A run on top is just extra pounding for no gain.</div></div>
+  <div class="change"><span class="cn">2</span><div class="ct"><strong>Monday & Thursday runs — mostly non-impact now.</strong> Bike, row or cross-trainer builds the same aerobic engine without the joint load. Only your one weekly quality session stays on legs.</div></div>
+  <div class="change"><span class="cn">3</span><div class="ct"><strong>Time trials moved to Friday.</strong> Your lightest day. I want your benchmark run <em>fresh</em>, not dragged down by the day before — that’s how we get honest numbers.</div></div>
+  <div class="change"><span class="cn">4</span><div class="ct"><strong>Recovery is now part of the plan,</strong> not an afterthought. See the traffic-light guide below — if you’re wrecked, you back off. That’s the program working, not you failing.</div></div>
+  <div class="callout blue"><p style="margin-bottom:0"><b>One for your DS and me to talk through.</b> Your external load — three netball sessions, gym, skiing — is the real fatigue driver. I’m not going to cut things that matter to you, but if the tiredness doesn’t lift in the first few weeks, it’s worth reviewing together whether everything needs to run at full volume during this block.</p></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">05</span><h2>The program — week by week</h2></div>
+  <p class="muted">Tap any week to open it. Every session has the full detail — warm-up, main set, cool-down, and the cue to focus on — so you can run it on your own and tick it off. <strong style="color:var(--gold)">Gold-tagged</strong> sessions are supervised; <span style="color:var(--ni)">blue</span> is non-impact; <span style="color:var(--go)">green</span> is a time trial.</p>
+  <div class="phasetabs" id="phasetabs"></div>
+  <div id="weeks">
+<div class="wkcard p1" data-phase="1"><div class="wkhead"><span class="wknum">WK 1</span><div class="wkmeta"><div class="ph">Phase 1 · Reset & deload</div><div class="fo">Reset — take the load off</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — Baseline when fresh, not fried</div><div class="wknote">You told me you’re cooked, so week one is a genuine <b>deload</b>. We take the pounding off, keep things easy, and get a clean baseline on a day you’re actually fresh — not straight after netball. Nothing here should leave you sore.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="0" data-s="0" aria-label="mark done"><span class="sttl">Non-impact aerobic + Core</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg ni">Non-impact</span><span class="tg run">Replaces Run+Core</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Easy 5 min to spin the legs up.</div><div class="dl"><span class="dlab">Main</span>Bike, rower or cross-trainer — 25 min steady in Zone 2 (conversational, RPE 4–5). No hard efforts. Then Core A: front plank 3×45s, dead bug 3×10/side, side plank 2×30s/side, bird-dog 2×10/side.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy spin + calf/hip stretch.</div><div class="dl cue"><span class="dlab">Cue</span>This is recovery, not a workout. If you can’t hold a conversation, you’re going too hard.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="0" data-s="1" aria-label="mark done"><span class="sttl">Easy non-impact flush</span></div><div class="tags"><span class="tg ni">Non-impact</span><span class="tg run">Replaces Run</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min easy.</div><div class="dl"><span class="dlab">Main</span>Bike or rower, 20 min Zone 2. Flush the legs out after Tue/Wed netball. Keep it gentle.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>Legs should feel better leaving than arriving.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Fri</span><input type="checkbox" class="chk" data-w="0" data-s="2" aria-label="mark done"><span class="sttl">Diagnostic time trial — no stakes</span></div><div class="tags"><span class="tg tt">Time trial</span><span class="tg fresh">Fresh day</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Full warm-up: 8 min easy jog, then 4×100 m strides building to goal pace, mobility.</div><div class="dl"><span class="dlab">Main</span>2.4 km time trial on a measured track, best even effort. Record all six lap splits and your plank. This is a benchmark, not a test — there is nothing riding on it.</div><div class="dl"><span class="dlab">Cool-down</span>5–10 min easy walk/jog.</div><div class="dl cue"><span class="dlab">Cue</span>Run it on Friday because it’s your lightest day — I want a true number, not a tired one.</div></div></div></div></div>
+<div class="wkcard p1" data-phase="1"><div class="wkhead"><span class="wknum">WK 2</span><div class="wkmeta"><div class="ph">Phase 1 · Reset & deload</div><div class="fo">Keep it light, let it clear</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — Non-impact base + easy intervals</div><div class="wknote">Fatigue takes a couple of weeks to properly lift. We stay non-impact and introduce a little structured intensity on the bike — all the aerobic benefit, none of the pounding.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="1" data-s="0" aria-label="mark done"><span class="sttl">Non-impact intervals + Core</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>8 min easy build.</div><div class="dl"><span class="dlab">Main</span>Bike or rower: 6 × 2 min moderately hard (RPE 6–7) / 90 s easy between. Then Core B: hollow hold 3×20s, leg raises 3×12, Pallof press 3×10/side, back extension 2×12.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy spin.</div><div class="dl cue"><span class="dlab">Cue</span>Hard enough to breathe, easy enough to finish every rep at the same effort.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="1" data-s="1" aria-label="mark done"><span class="sttl">Easy non-impact</span></div><div class="tags"><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min easy.</div><div class="dl"><span class="dlab">Main</span>Cross-trainer or bike, 25 min Zone 2.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>Steady and boring is the goal.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Sat</span><input type="checkbox" class="chk" data-w="1" data-s="2" aria-label="mark done"><span class="sttl">Recovery / mobility only</span></div><div class="tags"><span class="tg rec">Recovery</span></div><div class="detail"><div class="dl"><span class="dlab">Main</span>You’ve got netball today — no session from me. 10–15 min of easy mobility (hips, calves, ankles, T-spine) whenever suits.</div><div class="dl cue"><span class="dlab">Cue</span>Netball is your training today. Don’t add to it.</div></div></div></div></div>
+<div class="wkcard p1" data-phase="1"><div class="wkhead"><span class="wknum">WK 3</span><div class="wkmeta"><div class="ph">Phase 1 · Reset & deload</div><div class="fo">Ease running back in</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — First short run back + checkpoint</div><div class="wknote">Legs should feel fresher now. We reintroduce <b>a little</b> running — short and easy — then a fresh checkpoint on Friday to see where the reset has landed us.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="2" data-s="0" aria-label="mark done"><span class="sttl">Easy run + strides</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg run">Run — low volume</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min brisk walk into easy jog.</div><div class="dl"><span class="dlab">Main</span>Easy run 15–20 min at a conversational pace (~7:20/km). Finish with 4 × 100 m strides at goal-pace feel, walk back between. Keep it relaxed and smooth.</div><div class="dl"><span class="dlab">Cool-down</span>5 min walk + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>First real run back — easy effort, good form. We’re waking the pattern up, not testing it.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="2" data-s="1" aria-label="mark done"><span class="sttl">Non-impact Zone 2</span></div><div class="tags"><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min easy.</div><div class="dl"><span class="dlab">Main</span>Bike or rower, 25–30 min steady Zone 2.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Conversational the whole way.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Fri</span><input type="checkbox" class="chk" data-w="2" data-s="2" aria-label="mark done"><span class="sttl">Checkpoint time trial</span></div><div class="tags"><span class="tg tt">Time trial</span><span class="tg fresh">Fresh day</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Full warm-up as per the diagnostic.</div><div class="dl"><span class="dlab">Main</span>2.4 km time trial, even effort. Expect a step toward the line just from clearing the fatigue. Record splits + plank.</div><div class="dl"><span class="dlab">Cool-down</span>5–10 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Whatever it reads, it’s information — not a verdict.</div></div></div></div></div>
+<div class="wkcard p2" data-phase="2"><div class="wkhead"><span class="wknum">WK 4</span><div class="wkmeta"><div class="ph">Phase 2 · Rebuild</div><div class="fo">Build the pacing engine</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — One quality run + non-impact intensity</div><div class="wknote">Now we build — carefully. <b>One</b> quality run a week for test specificity, everything else non-impact so the total impact stays low. This is the pattern for the whole rebuild.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="3" data-s="0" aria-label="mark done"><span class="sttl">Run intervals — goal pace</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg run">Run — quality</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>8–10 min easy jog + 3×100 m strides + leg swings.</div><div class="dl"><span class="dlab">Main</span>6 × 400 m at goal pace (2:25 / lap), 90 s walk recovery. Even splits — every rep the same. This is where 2:25 becomes a feel.</div><div class="dl"><span class="dlab">Cool-down</span>8 min easy jog + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>Don’t race the reps. Hit the pace exactly and hold it.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="3" data-s="1" aria-label="mark done"><span class="sttl">Non-impact intervals</span></div><div class="tags"><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>8 min easy build.</div><div class="dl"><span class="dlab">Main</span>Bike or rower: 5 × 3 min threshold (RPE 6–7) / 2 min easy. Aerobic power without pounding.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy spin.</div><div class="dl cue"><span class="dlab">Cue</span>Controlled and repeatable — same effort on rep 5 as rep 1.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Fri</span><input type="checkbox" class="chk" data-w="3" data-s="2" aria-label="mark done"><span class="sttl">Optional easy non-impact</span></div><div class="tags"><span class="tg ni">Non-impact</span><span class="tg opt">Optional</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min easy.</div><div class="dl"><span class="dlab">Main</span>ONLY if you’re feeling good: 20 min easy Zone 2 bike/row. If you’re flat, skip it and rest — no guilt.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Auto-regulate. Tired legs before a netball weekend? Rest wins.</div></div></div></div></div>
+<div class="wkcard p2" data-phase="2"><div class="wkhead"><span class="wknum">WK 5</span><div class="wkmeta"><div class="ph">Phase 2 · Rebuild</div><div class="fo">Sharpen the top end</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — Faster reps + first sub-15 checkpoint</div><div class="wknote">Slightly quicker running reps to lift the ceiling, then a fresh time trial where I expect you to cross <b>under 15:00</b> for the first time.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="4" data-s="0" aria-label="mark done"><span class="sttl">Run intervals — under pace</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg run">Run — quality</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>10 min easy + strides.</div><div class="dl"><span class="dlab">Main</span>6 × 400 m at 2:20 / lap (just under goal), 90 s walk recovery. A touch quicker to build the top end.</div><div class="dl"><span class="dlab">Cool-down</span>8 min easy jog + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>Slightly faster than race pace, still controlled — no sprinting.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="4" data-s="1" aria-label="mark done"><span class="sttl">Non-impact Zone 2</span></div><div class="tags"><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min easy.</div><div class="dl"><span class="dlab">Main</span>Cross-trainer or bike, 30 min steady Zone 2. Freshen the legs for Friday.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Easy day before the TT.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Fri</span><input type="checkbox" class="chk" data-w="4" data-s="2" aria-label="mark done"><span class="sttl">Checkpoint time trial</span></div><div class="tags"><span class="tg tt">Time trial</span><span class="tg fresh">Fresh day</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Full warm-up.</div><div class="dl"><span class="dlab">Main</span>2.4 km time trial, even effort, target <b>sub-15:00</b>. Record splits + plank.</div><div class="dl"><span class="dlab">Cool-down</span>5–10 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Run your splits — start controlled, the time takes care of itself.</div></div></div></div></div>
+<div class="wkcard p2" data-phase="2"><div class="wkhead"><span class="wknum">WK 6</span><div class="wkmeta"><div class="ph">Phase 2 · Rebuild</div><div class="fo">Longer reps at pace</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — Extend the quality, hold the impact low</div><div class="wknote">Reps get longer so goal pace feels repeatable over distance. Non-impact carries the rest of the load.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="5" data-s="0" aria-label="mark done"><span class="sttl">Run intervals — 600s</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg run">Run — quality</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>10 min easy + strides.</div><div class="dl"><span class="dlab">Main</span>5 × 600 m at goal pace (3:37 / rep), 2 min walk recovery. Longer reps, same even pacing.</div><div class="dl"><span class="dlab">Cool-down</span>8 min easy + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>Lock the rhythm and hold it across the whole rep.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="5" data-s="1" aria-label="mark done"><span class="sttl">Non-impact tempo</span></div><div class="tags"><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>8 min easy build.</div><div class="dl"><span class="dlab">Main</span>Rower or bike: 20 min continuous at threshold (RPE 6–7). Comfortably hard, unbroken.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>A sentence, not a paragraph — that’s the effort.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Sat</span><input type="checkbox" class="chk" data-w="5" data-s="2" aria-label="mark done"><span class="sttl">Recovery / mobility only</span></div><div class="tags"><span class="tg rec">Recovery</span></div><div class="detail"><div class="dl"><span class="dlab">Main</span>Netball day — no session. Easy mobility only.</div><div class="dl cue"><span class="dlab">Cue</span>Let the weekend be the weekend.</div></div></div></div></div>
+<div class="wkcard p2" data-phase="2"><div class="wkhead"><span class="wknum">WK 7</span><div class="wkmeta"><div class="ph">Phase 2 · Rebuild</div><div class="fo">Consolidate</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — Broken tempo + steady base</div><div class="wknote">Last rebuild week before we sharpen. You should feel the fitness is back — and the legs a lot fresher than when we started.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="6" data-s="0" aria-label="mark done"><span class="sttl">Broken tempo run</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg run">Run — quality</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>10 min easy + strides.</div><div class="dl"><span class="dlab">Main</span>2 × 1 km at goal pace (6:03 / km), 3 min easy walk/jog between. Race-pace over distance in two bites.</div><div class="dl"><span class="dlab">Cool-down</span>8 min easy + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>Even effort both reps — the second should match the first.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="6" data-s="1" aria-label="mark done"><span class="sttl">Non-impact Zone 2</span></div><div class="tags"><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min easy.</div><div class="dl"><span class="dlab">Main</span>Bike or cross-trainer, 30 min steady Zone 2.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Steady aerobic — keep it honest and easy.</div></div></div></div></div>
+<div class="wkcard p3" data-phase="3"><div class="wkhead"><span class="wknum">WK 8</span><div class="wkmeta"><div class="ph">Phase 3 · Sharpen</div><div class="fo">Race-specific + rehearse</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — Broken 2.4 km + full rehearsal</div><div class="wknote">Volume drops, intensity stays. Broken race-pace work, then the first full dress rehearsal under exact test conditions.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="7" data-s="0" aria-label="mark done"><span class="sttl">Broken 2.4 km at pace</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg run">Run — quality</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>10 min easy + strides.</div><div class="dl"><span class="dlab">Main</span>1.2 km + 1.2 km at goal pace (2:25 / lap), 3 min between. The whole test distance at pace, split in two.</div><div class="dl"><span class="dlab">Cool-down</span>8 min easy + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>This is a dress-rehearsal effort — controlled, even, repeatable.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="7" data-s="1" aria-label="mark done"><span class="sttl">Easy non-impact + Core</span></div><div class="tags"><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min easy.</div><div class="dl"><span class="dlab">Main</span>Bike or rower 20 min Zone 2 + Core A.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Keep it light — sharpening, not loading.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Fri</span><input type="checkbox" class="chk" data-w="7" data-s="2" aria-label="mark done"><span class="sttl">Dress rehearsal</span></div><div class="tags"><span class="tg tt">Time trial</span><span class="tg fresh">Fresh day</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Full test-day warm-up — exactly what you’ll do on the day.</div><div class="dl"><span class="dlab">Main</span>2.4 km under full test conditions. Target 14:30–14:45. Record splits + plank.</div><div class="dl"><span class="dlab">Cool-down</span>5–10 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Rehearse the whole routine, start to finish. Start slow. Lock 2:25.</div></div></div></div></div>
+<div class="wkcard p3" data-phase="3"><div class="wkhead"><span class="wknum">WK 9</span><div class="wkmeta"><div class="ph">Phase 3 · Sharpen</div><div class="fo">Sharpen</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — Rehearsal #2 (~10 days out)</div><div class="wknote">Legs coming fresh. Short, sharp running with the full test-day warm-up rehearsed, then the second dress rehearsal. By now you’ll have passed this exact effort more than once.</div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="8" data-s="0" aria-label="mark done"><span class="sttl">Run intervals + routine rehearsal</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg run">Run — quality</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Full test-day warm-up (the one you’ll use on the day).</div><div class="dl"><span class="dlab">Main</span>5 × 400 m at 2:20 / lap, 90 s walk recovery. Sharp but easy on the body. Rehearse your pre-run breathing and cue word before you start.</div><div class="dl"><span class="dlab">Cool-down</span>8 min easy + stretch.</div><div class="dl cue"><span class="dlab">Cue</span>Practise the routine, not just the running.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Thu</span><input type="checkbox" class="chk" data-w="8" data-s="1" aria-label="mark done"><span class="sttl">Easy non-impact</span></div><div class="tags"><span class="tg ni">Non-impact</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>5 min easy.</div><div class="dl"><span class="dlab">Main</span>Bike or rower 20 min Zone 2. Stay loose.</div><div class="dl"><span class="dlab">Cool-down</span>5 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Freshening only.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Fri</span><input type="checkbox" class="chk" data-w="8" data-s="2" aria-label="mark done"><span class="sttl">Dress rehearsal #2</span></div><div class="tags"><span class="tg tt">Time trial</span><span class="tg fresh">Fresh day</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Full test-day warm-up.</div><div class="dl"><span class="dlab">Main</span>2.4 km full mock (~10 days out). Target sub-14:45. Record splits + plank.</div><div class="dl"><span class="dlab">Cool-down</span>5–10 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Same plan, same routine. You’ve done this — just repeat it.</div></div></div></div></div>
+<div class="wkcard p3" data-phase="3"><div class="wkhead"><span class="wknum">WK 10</span><div class="wkmeta"><div class="ph">Phase 3 · Sharpen</div><div class="fo">Taper & retest</div></div><div class="ring" style="--pct:0"></div><span class="chev">▶</span></div><div class="wkbody"><div class="wktarget">◎ Week target — Fresh legs, familiar routine</div><div class="wknote">No new stimulus — the work is done. Freshen, hydrate, sleep, and run the plan you’ve rehearsed all block. <b>Start controlled.</b></div><div class="ses2"><div class="ses2head"><span class="sday">Mon</span><input type="checkbox" class="chk" data-w="9" data-s="0" aria-label="mark done"><span class="sttl">Primer — short & sharp</span></div><div class="tags"><span class="tg sup">Supervised</span><span class="tg run">Run — quality</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Full warm-up.</div><div class="dl"><span class="dlab">Main</span>3 × 400 m at goal pace (2:25), full recovery between. Sharp but easy — just enough to prime the legs and rehearse the routine one last time.</div><div class="dl"><span class="dlab">Cool-down</span>8 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>Wake the legs up, don’t tire them out.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Wed</span><input type="checkbox" class="chk" data-w="9" data-s="1" aria-label="mark done"><span class="sttl">Rest / light mobility</span></div><div class="tags"><span class="tg rec">Recovery</span></div><div class="detail"><div class="dl"><span class="dlab">Main</span>Full rest or 10 min easy mobility. Hydrate, eat well, sleep.</div><div class="dl cue"><span class="dlab">Cue</span>Nothing to gain from training now — everything to gain from recovering.</div></div></div><div class="ses2"><div class="ses2head"><span class="sday">Sat</span><input type="checkbox" class="chk" data-w="9" data-s="2" aria-label="mark done"><span class="sttl">RETEST</span></div><div class="tags"><span class="tg tt">Time trial</span><span class="tg tt">Assessment</span></div><div class="detail"><div class="dl"><span class="dlab">Warm-up</span>Warm up exactly as rehearsed. Box breathing × 4. Cue word: “controlled.”</div><div class="dl"><span class="dlab">Main</span>2.4 km assessment. Start slow (2:28 lap one). Lock 2:25. From lap 5, empty the tank. Pass line 15:00 — you’re trained to 14:30.</div><div class="dl"><span class="dlab">Cool-down</span>10 min easy.</div><div class="dl cue"><span class="dlab">Cue</span>You’ve passed this effort in training. Today is a repeat, not a gamble.</div></div></div></div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">06</span><h2>Non-impact cardio — how to run it</h2></div>
+  <p class="muted">Any of these work. Pick what’s available and what your body likes. The point is aerobic work with the joints protected — the same engine, none of the pounding.</p>
+  <div class="mods">
+    <div class="mod"><div class="mn">Stationary bike</div><div class="md">Easiest to control effort. Great for both steady and intervals.</div></div>
+    <div class="mod"><div class="mn">Rower</div><div class="md">Full-body aerobic. Keep the stroke smooth, drive with the legs.</div></div>
+    <div class="mod"><div class="mn">Cross-trainer</div><div class="md">Closest to a running feel with zero impact.</div></div>
+    <div class="mod"><div class="mn">Ski-erg</div><div class="md">Strong aerobic hit, easy on the legs after netball.</div></div>
+    <div class="mod"><div class="mn">Aqua jog</div><div class="md">Deep-water running — the best run-transfer of the lot, truly zero impact.</div></div>
+    <div class="mod"><div class="mn">Swim</div><div class="md">Total offload. Good on your most beaten-up days.</div></div>
+  </div>
+  <div class="zones">
+    <div class="zone"><span class="zn z2">Zone 2 · easy</span><span class="zd">Conversational, RPE 4–5. You could talk in full sentences. This is most of your non-impact work.</span></div>
+    <div class="zone"><span class="zn thr">Threshold</span><span class="zd">Comfortably hard, RPE 6–7. A sentence, not a paragraph. Used in the non-impact "tempo/interval" sessions.</span></div>
+    <div class="zone"><span class="zn iv">Intervals</span><span class="zd">Hard efforts with easy recovery. Every rep the <em>same</em> effort — controlled, not a sprint.</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">07</span><h2>Reading your fatigue — the traffic light</h2></div>
+  <p class="muted">Check in with yourself before each of my sessions. How you feel decides how you train that day. This is a skill, not a weakness — the best athletes auto-regulate.</p>
+  <div class="lights">
+    <div class="lt g"><div class="lh">Green — good to go</div><p>Slept well, legs feel fine, keen. Run the session as written, including the optional Friday.</p></div>
+    <div class="lt a"><div class="lh">Amber — a bit flat</div><p>Tired but functional. Do the session, drop the last rep or two, skip anything optional. Don’t chase times.</p></div>
+    <div class="lt r"><div class="lh">Red — wrecked</div><p>Sore, drained, poor sleep, or netball has hammered you. Swap for easy non-impact or rest. Tell me — backing off here <em>protects</em> the retest.</p></div>
+  </div>
+  <div class="callout green"><p style="margin-bottom:0"><b>Sleep is the multiplier.</b> 7–9 hours does more for a fatigued athlete than any extra session. If something has to give on a big week, make it a workout — never the sleep.</p></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">08</span><h2>Fuelling — to run faster</h2></div>
+  <p class="muted">Read this first: the goal is to <strong>fuel to perform and recover</strong>, not to diet. Training this much on too little food makes you slower and keeps you fatigued — the opposite of what we want. A leaner, more efficient runner is the <strong>by-product</strong> of good training plus eating well, never of restriction. This is principles, not calorie targets.</p>
+  <h3>The plate — most meals</h3>
+  <div class="plate">
+    <div class="pseg pveg"><div class="pl">Half the plate</div><div class="pv">Veg &amp; salad</div><div class="pe">Volume, fibre, micronutrients. Fills you up without weighing you down.</div></div>
+    <div class="pseg ppro"><div class="pl">A quarter</div><div class="pv">Lean protein</div><div class="pe">Palm-sized. Eggs, chicken, fish, yoghurt, legumes, tofu. Every meal — it drives recovery, which is the whole game right now.</div></div>
+    <div class="pseg pcarb"><div class="pl">A quarter</div><div class="pv">Quality carbs</div><div class="pe">Rice, oats, potato, wholegrain, fruit. Your fuel — with this much training, under-eating carbs is why legs feel dead.</div></div>
+  </div>
+  <div class="fuelrow">
+    <div class="fuel"><div class="ft">Before training</div><p>A light carb source 1–2 hrs out — banana, toast, oats. Never hit the quality run or netball on empty.</p></div>
+    <div class="fuel"><div class="ft">After training</div><p>Protein + carbs within the hour — yoghurt &amp; fruit, eggs on toast, a proper meal. This is where you actually recover.</p></div>
+    <div class="fuel"><div class="ft">Hydration</div><p>Steady water across the day. Even mild dehydration slows the run and deepens fatigue. Pale straw, not dark.</p></div>
+    <div class="fuel"><div class="ft">On heavy days</div><p>Netball + skiing days burn a lot — eat <em>more</em>, not less, or you’ll pay for it with a flat week.</p></div>
+  </div>
+  <div class="callout"><p style="margin-bottom:0"><b>Stay in lane.</b> This is general fuelling to support training — not a prescribed diet. If you want specific body-composition targets or an intake plan, that’s a <strong>dietitian’s</strong> call and Defence Health can refer. If food ever starts feeling stressful, tell me — that’s a health conversation, not a harder push.</p></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">09</span><h2>The head game</h2></div>
+  <p class="muted">That 31-second regression is where the nerves — and the fatigue — showed up. Fix the head and the recovery, and part of the gap closes on its own.</p>
+  <div class="mind"><div class="q">Race the process, not the outcome</div><p>You can’t control "pass." You can control hitting 2:28 on lap one. Run your splits, and the result follows — the pressure lifts off the finish line.</p></div>
+  <div class="mind"><div class="q">The buffer is the safety net</div><p>Every session at 14:30 pace is proof banked. On the day you’re not chasing a number you’ve never hit — you’re repeating something you’ve done all block, with 30 seconds to spare.</p></div>
+  <div class="mind"><div class="q">Reframe the record</div><p>You’re not "someone who failed." You’re someone who missed by two seconds while overtrained — and is now doing it properly. Same facts, a completely different story to walk to the line with.</p></div>
+  <h3>Pre-run routine — same every time</h3>
+  <div class="routine">
+    <div class="r"><span class="num">1</span><span class="tx">Identical warm-up you’ve rehearsed all block — the body recognises it and settles.</span></div>
+    <div class="r"><span class="num">2</span><span class="tx">Four rounds of box breathing (in 4, hold 4, out 4, hold 4) to bring the nerves down.</span></div>
+    <div class="r"><span class="num">3</span><span class="tx">One cue word for lap one: "controlled." Say it, run to it.</span></div>
+    <div class="r"><span class="num">4</span><span class="tx">Lock onto lap splits, not the total. One lap at a time, breathing to cadence.</span></div>
+    <div class="r"><span class="num">5</span><span class="tx">From lap 5, one permission: spend everything that’s left.</span></div>
+  </div>
+  <div class="callout"><p style="margin-bottom:0"><b>Outside PT scope.</b> If the anxiety runs deeper than test nerves, this sits alongside — not instead of — Psych or Chaplain support. Worth making sure you’re linked in. I’ve got the running; that side has people who are better placed than me.</p></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sechead"><span class="n">10</span><h2>The retest, executed</h2></div>
+  <div class="grid2">
+    <div class="stat"><div class="lab">The instruction</div><div class="big" style="font-size:19px;color:var(--gold)">Start slow</div><div class="note">Lap 1 at 2:28. Slower than it feels you should. This is the whole discipline.</div></div>
+    <div class="stat"><div class="lab">The middle</div><div class="big" style="font-size:19px;color:var(--gold)">Lock 2:25</div><div class="note">Laps 2–4 even and rhythmic. Breathe to cadence. Don’t chase, don’t drift.</div></div>
+    <div class="stat"><div class="lab">The finish</div><div class="big" style="font-size:19px;color:var(--gold)">Empty it</div><div class="note">Laps 5–6, spend everything. Anything left at the line was time given away.</div></div>
+    <div class="stat good"><div class="lab">The margin</div><div class="big">+0:30</div><div class="note">14:30 plan against a 15:00 line. A nervous day still passes.</div></div>
+  </div>
+</div></section>
+
+<section class="track"><div class="wrap">
+  <div class="sechead"><span class="n">11</span><h2>Progress log</h2></div>
+  <p class="muted">Fill at each time trial — a clean line for your DS to see, and a record of the margin growing.</p>
+  <table><thead><tr><th>Date</th><th>Session</th><th>Run</th><th>vs 15:00</th><th>Plank</th><th>Feel (G/A/R)</th></tr></thead><tbody>
+    <tr><td>&nbsp;</td><td>Wk 1 — diagnostic</td><td class="empty">— —</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td></tr>
+    <tr><td>&nbsp;</td><td>Wk 3 — checkpoint</td><td class="empty">— —</td><td class="empty">—</td><td class="empty">—</td><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td><td>Wk 5 — checkpoint</td><td class="empty">— —</td><td class="empty">—</td><td class="empty">—</td><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td><td>Wk 8 — rehearsal</td><td class="empty">— —</td><td class="empty">—</td><td class="empty">—</td><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td><td>Wk 9 — rehearsal</td><td class="empty">— —</td><td class="empty">—</td><td class="empty">—</td><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td><td>RETEST</td><td class="empty">— —</td><td class="empty">—</td><td class="empty">—</td><td>&nbsp;</td></tr>
+  </tbody></table>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="sig">CPL B. Meredith · Alpha Squadron PTI Cell · ADFA</div>
+  <p style="margin:0">The calendar locks to the confirmed retest date — the taper and both rehearsals set to it. Paces assume a 400m track (6 laps); adjust for a measured course. Fuelling guidance is general and supports training only; specific dietary or body-composition plans sit with a dietitian. Individual plan — not for wider distribution.</p>
+</div></footer>
+
+<script>
+(function(){
+  var NS='ab_v1_';           /* namespaced so Blent's ticks don't collide with other cadets on the domain */
+  var mem={};
+  var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return mem[k]||null}},
+             set:function(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}};
+
+  var goal=document.getElementById('goal'),lapOut=document.getElementById('lapOut'),kmOut=document.getElementById('kmOut');
+  function toSec(s){var p=String(s).trim().split(':');if(p.length!==2)return NaN;var m=parseInt(p[0],10),x=parseInt(p[1],10);if(isNaN(m)||isNaN(x))return NaN;return m*60+x;}
+  function fmt(sec){sec=Math.round(sec);var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0':'')+s;}
+  function upd(){var t=toSec(goal.value);if(isNaN(t)||t<=0){lapOut.textContent='—';kmOut.textContent='—';return;}lapOut.textContent=fmt(t/6);kmOut.textContent=fmt(t/2.4);}
+  if(goal){goal.addEventListener('input',upd);upd();}
+
+  (function(){
+    var svg=document.getElementById('chart');if(!svg)return;
+    var W=760,H=320,L=64,R=24,T=24,B=44;
+    var pts=[[1,922,'W1'],[3,903,'W3'],[5,892,'W5'],[8,880,'W8'],[9,874,'W9'],[10,870,'Test']];
+    var yMin=855,yMax=945;
+    function x(i){return L+(W-L-R)*(i/(pts.length-1));}
+    function Y(v){return T+(H-T-B)*((v-yMin)/(yMax-yMin));}
+    var ns='http://www.w3.org/2000/svg';
+    function el(n,a){var e=document.createElementNS(ns,n);for(var k in a)e.setAttribute(k,a[k]);return e;}
+    [870,900,930].forEach(function(v){svg.appendChild(el('line',{x1:L,y1:Y(v),x2:W-R,y2:Y(v),stroke:'#24405f','stroke-width':1}));
+      var tl=el('text',{x:L-10,y:Y(v)+4,fill:'#8ea6c0','font-size':11,'text-anchor':'end','font-family':'monospace'});tl.textContent=fmt(v);svg.appendChild(tl);});
+    svg.appendChild(el('line',{x1:L,y1:Y(900),x2:W-R,y2:Y(900),stroke:'#e06666','stroke-width':2,'stroke-dasharray':'6 5'}));
+    var pl=el('text',{x:W-R,y:Y(900)-8,fill:'#e06666','font-size':11,'text-anchor':'end','font-family':'monospace'});pl.textContent='PASS 15:00';svg.appendChild(pl);
+    svg.appendChild(el('line',{x1:L,y1:Y(870),x2:W-R,y2:Y(870),stroke:'#4bbf78','stroke-width':1.5,'stroke-dasharray':'3 5'}));
+    var tg=el('text',{x:W-R,y:Y(870)+16,fill:'#4bbf78','font-size':11,'text-anchor':'end','font-family':'monospace'});tg.textContent='TARGET 14:30';svg.appendChild(tg);
+    var d='';pts.forEach(function(p,i){d+=(i?'L':'M')+x(i)+' '+Y(p[1])+' ';});
+    svg.appendChild(el('path',{d:d,fill:'none',stroke:'#d9a441','stroke-width':3,'stroke-linejoin':'round'}));
+    pts.forEach(function(p,i){var below=p[1]<900;
+      svg.appendChild(el('circle',{cx:x(i),cy:Y(p[1]),r:5,fill:below?'#4bbf78':'#d9a441',stroke:'#0f2135','stroke-width':2}));
+      var xl=el('text',{x:x(i),y:H-16,fill:'#8ea6c0','font-size':11,'text-anchor':'middle','font-family':'monospace'});xl.textContent=p[2];svg.appendChild(xl);
+      var vl=el('text',{x:x(i),y:Y(p[1])-12,fill:'#cfe0f0','font-size':10,'text-anchor':'middle','font-family':'monospace'});vl.textContent=fmt(p[1]);svg.appendChild(vl);});
+  })();
+
+  document.body.classList.add('js');
+  var weeksEl=document.getElementById('weeks');
+  var cards=weeksEl?[].slice.call(weeksEl.querySelectorAll('.wkcard')):[];
+  function ringPct(card){var b=card.querySelectorAll('.chk:not(.rest)');if(!b.length)return 0;var d=0;[].forEach.call(b,function(x){if(x.checked)d++;});return Math.round(d/b.length*100);}
+  cards.forEach(function(card,wi){
+    [].forEach.call(card.querySelectorAll('.chk:not(.rest)'),function(b){if(store.get(NS+'chk_'+b.dataset.w+'_'+b.dataset.s)==='1')b.checked=true;});
+    card.querySelector('.ring').style.setProperty('--pct',ringPct(card));
+    card.classList.remove('open');
+    card.querySelector('.wkhead').addEventListener('click',function(){card.classList.toggle('open');});
+    [].forEach.call(card.querySelectorAll('.chk:not(.rest)'),function(b){
+      b.addEventListener('click',function(e){e.stopPropagation();});
+      b.addEventListener('change',function(){store.set(NS+'chk_'+b.dataset.w+'_'+b.dataset.s,b.checked?'1':'0');card.querySelector('.ring').style.setProperty('--pct',ringPct(card));});
+    });
+  });
+  if(cards.length)cards[0].classList.add('open');
+
+  var tabs=[['all','All 10 weeks'],['1','Phase 1'],['2','Phase 2'],['3','Phase 3']];
+  var tb=document.getElementById('phasetabs');
+  if(tb){tabs.forEach(function(t,i){var b=document.createElement('button');b.className='ptab'+(i===0?' active':'');b.textContent=t[1];b.dataset.f=t[0];
+    b.addEventListener('click',function(){[].forEach.call(tb.querySelectorAll('.ptab'),function(x){x.classList.remove('active')});b.classList.add('active');
+      cards.forEach(function(card){card.style.display=(t[0]==='all'||card.dataset.phase===t[0])?'':'none';});});
+    tb.appendChild(b);});}
+
+  var exp=document.getElementById('expandAll'),allOpen=false;
+  if(exp)exp.addEventListener('click',function(){allOpen=!allOpen;cards.forEach(function(c){c.classList.toggle('open',allOpen);});exp.textContent=allOpen?'Collapse all weeks':'Expand all weeks';});
+})();
+</script>
+</body>
+</html>
