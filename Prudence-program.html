@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upper-Body Strength Program — Prudence | Alpha Squadron PTI Cell</title>
+<style>
+  :root{
+    --bg:#0c0e0f;
+    --panel:#14181a;
+    --panel-2:#191e21;
+    --line:#2a3236;
+    --line-soft:#20262a;
+    --ink:#eceae4;
+    --muted:#939a9d;
+    --brass:#c8a24c;
+    --brass-dim:rgba(200,162,76,.14);
+    --amber:#e0954a;
+    --amber-dim:rgba(224,149,74,.12);
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  a{color:var(--brass);text-decoration:none}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+  /* ---- Header / briefing block ---- */
+  header{
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgba(200,162,76,.07), transparent 60%),
+      var(--bg);
+  }
+  .brief{padding:34px 0 30px}
+  .service{
+    display:flex;align-items:center;gap:10px;
+    font-size:12.5px;letter-spacing:.14em;color:var(--muted);
+    text-transform:uppercase;font-weight:600;margin-bottom:20px;
+  }
+  .service .bar{width:26px;height:2px;background:var(--brass)}
+  h1{
+    font-size:clamp(28px,6vw,44px);line-height:1.04;margin:0 0 6px;
+    font-weight:800;letter-spacing:-.02em;
+  }
+  h1 .sub{display:block;font-size:clamp(15px,2.6vw,19px);font-weight:500;color:var(--muted);letter-spacing:0;margin-top:10px}
+  .mission{
+    font-size:clamp(17px,3.2vw,21px);font-weight:700;color:var(--brass);
+    margin:22px 0 0;letter-spacing:-.01em;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chip{
+    border:1px solid var(--line);border-radius:2px;
+    padding:6px 11px;font-size:13px;color:var(--muted);
+    background:var(--panel);
+  }
+  .chip b{color:var(--ink);font-weight:700}
+
+  /* ---- Sticky nav ---- */
+  nav{
+    position:sticky;top:0;z-index:20;
+    background:rgba(12,14,15,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .navrow{display:flex;gap:4px;overflow-x:auto;padding:9px 20px;max-width:860px;margin:0 auto;scrollbar-width:none}
+  .navrow::-webkit-scrollbar{display:none}
+  .navrow a{
+    white-space:nowrap;color:var(--muted);font-size:13.5px;font-weight:600;
+    padding:6px 12px;border-radius:2px;border:1px solid transparent;
+  }
+  .navrow a:hover{color:var(--ink)}
+  .navrow a.active{color:var(--brass);border-color:var(--line);background:var(--panel)}
+
+  /* ---- Sections ---- */
+  section{padding:44px 0;border-bottom:1px solid var(--line-soft)}
+  .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);font-weight:700;margin:0 0 10px}
+  h2{font-size:clamp(21px,4vw,27px);margin:0 0 16px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:16px;margin:26px 0 10px;font-weight:700;color:var(--ink)}
+  p{margin:0 0 14px;max-width:68ch;color:#d6d4cd}
+  .lead{color:var(--ink)}
+
+  .goals{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+  .goals li{background:var(--panel);padding:14px 16px;display:flex;gap:13px;align-items:baseline}
+  .goals .n{color:var(--brass);font-weight:800;font-size:14px;min-width:20px}
+  .goals span.t{color:#d6d4cd}
+  .goals b{color:var(--ink)}
+
+  /* ---- Constraint callout ---- */
+  .callout{
+    border:1px solid var(--amber);border-left-width:3px;border-radius:2px;
+    background:var(--amber-dim);padding:16px 18px;margin:22px 0 0;
+  }
+  .callout h3{margin:0 0 6px;color:var(--amber)}
+  .callout p{margin:0;color:#e4dccf}
+
+  /* ---- Why block ---- */
+  .why{display:grid;gap:14px;margin-top:6px}
+  @media(min-width:660px){.why{grid-template-columns:1fr 1fr}}
+  .why .card{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:18px}
+  .why .card h3{margin:0 0 8px;color:var(--brass)}
+  .why .card p{margin:0;font-size:14.5px}
+
+  /* ---- Ladder ---- */
+  .ladder{margin:8px 0 0;position:relative;padding-left:8px}
+  .rung{
+    position:relative;display:flex;gap:16px;align-items:flex-start;
+    padding:0 0 22px 34px;
+  }
+  .rung:before{
+    content:"";position:absolute;left:11px;top:6px;bottom:-6px;width:2px;background:var(--line);
+  }
+  .rung:last-child:before{display:none}
+  .rung .dot{
+    position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;
+    border:2px solid var(--brass);background:var(--bg);color:var(--brass);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;
+  }
+  .rung.top .dot{background:var(--brass);color:#0c0e0f}
+  .rung .body h3{margin:0 0 3px;font-size:15.5px}
+  .rung .body p{margin:0;font-size:14px;color:var(--muted);max-width:60ch}
+
+  /* ---- Session cards ---- */
+  .sesshead{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+  .badge{
+    width:44px;height:44px;flex:none;border:1.5px solid var(--brass);border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:22px;color:var(--brass);background:var(--brass-dim);
+  }
+  .sesshead .t h2{margin:0;font-size:clamp(19px,3.4vw,23px)}
+  .sesshead .t .warm{font-size:13px;color:var(--muted);margin:2px 0 0}
+
+  .exlist{margin:20px 0 0;border-top:1px solid var(--line)}
+  .ex{
+    display:flex;gap:14px;align-items:baseline;
+    padding:13px 4px;border-bottom:1px solid var(--line-soft);
+  }
+  .ex .idx{color:var(--muted);font-size:12.5px;min-width:16px;font-weight:600}
+  .ex .m{flex:1;min-width:0}
+  .ex .name{font-weight:700;font-size:15px}
+  .ex .note{color:var(--muted);font-size:13.5px;margin-top:2px}
+  .ex .dose{
+    color:var(--brass);font-weight:700;font-size:14px;white-space:nowrap;
+    text-align:right;min-width:74px;
+  }
+  .ex.hot .name{color:var(--brass)}
+  .ex.done .name,.ex.done .note{opacity:.4;text-decoration:line-through}
+  .ex.done{cursor:pointer}
+  .ex .m{cursor:pointer}
+  .tip{font-size:12.5px;color:var(--muted);margin-top:14px}
+
+  /* ---- Phases ---- */
+  .phase{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:18px 18px 6px;margin-top:14px}
+  .phase .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--brass);border:1px solid var(--line);border-radius:2px;padding:3px 8px;margin-bottom:10px}
+  .phase h3{margin:0 0 6px}
+  .retest{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+  .retest li{background:var(--panel);padding:13px 16px;font-size:14.5px}
+  .retest b{color:var(--brass)}
+
+  .use{list-style:none;padding:0;margin:6px 0 0}
+  .use li{padding:11px 0 11px 26px;position:relative;border-bottom:1px solid var(--line-soft);font-size:14.5px;color:#d6d4cd}
+  .use li:before{content:"";position:absolute;left:2px;top:18px;width:9px;height:9px;border:1.5px solid var(--brass);border-radius:1px;transform:rotate(45deg)}
+  .use b{color:var(--ink)}
+
+  footer{padding:34px 0 60px;color:var(--muted);font-size:13px}
+  footer .rule{height:1px;background:var(--line);margin-bottom:20px}
+  footer p{color:var(--muted);max-width:70ch;font-size:13px}
+
+  /* ---- Print ---- */
+  @media print{
+    :root{--bg:#fff;--ink:#111;--muted:#555;--panel:#fff;--panel-2:#fff;--line:#bbb;--line-soft:#ddd;--brass:#8a6d1f;--amber:#9a5a12}
+    body{color:#111}
+    nav,.chips,.tip{display:none}
+    section{padding:20px 0;break-inside:avoid}
+    .ex.done .name,.ex.done .note{opacity:1;text-decoration:none}
+    header{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap brief">
+    <div class="service"><span class="bar"></span>Alpha Squadron PTI Cell — ADFA</div>
+    <h1>Upper-Body Strength &amp; Pull-up / Push-up Development
+      <span class="sub">Prepared for OCDT Prudence by CPL Meredith</span>
+    </h1>
+    <p class="mission">Build a strict pull-up. Own your push-ups. Keep it off the shins.</p>
+    <div class="chips">
+      <span class="chip"><b>8</b> weeks</span>
+      <span class="chip"><b>4</b> sessions / week</span>
+      <span class="chip">Re-test <b>fortnightly</b></span>
+      <span class="chip">Version <b>pr.v1</b></span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="navrow" id="nav">
+    <a href="#overview">Overview</a>
+    <a href="#ladder">Pull-up ladder</a>
+    <a href="#sa">Session A</a>
+    <a href="#sb">Session B</a>
+    <a href="#sc">Session C</a>
+    <a href="#sd">Session D</a>
+    <a href="#progression">Progression</a>
+    <a href="#use">How to run it</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <section id="overview">
+    <p class="kicker">The brief</p>
+    <h2>What we're building</h2>
+    <p class="lead">Heavy upper-body emphasis, the rest of the body maintained, and everything worked around a shin-splint history that's still settling. Two-thirds of the weekly volume is upper body; the pull-up and the push-up are the headline jobs.</p>
+
+    <ul class="goals">
+      <li><span class="n">1</span><span class="t"><b>First strict pull-up</b>, then reps — from a start of not reaching halfway.</span></li>
+      <li><span class="n">2</span><span class="t"><b>Push-ups at full depth</b> with form held across the whole set — no fade, no shallow reps.</span></li>
+      <li><span class="n">3</span><span class="t"><b>Full-body strength maintained</b>, upper body driven hard.</span></li>
+      <li><span class="n">4</span><span class="t">A durable base for <b>RMC</b>, built without aggravating the shins.</span></li>
+    </ul>
+
+    <div class="callout">
+      <h3>The shins set the rules</h3>
+      <p>No jumping, no plyometrics, no high-impact work anywhere in this program. Running stays with your separate return-to-run program; any extra conditioning here is bike, row or incline walk only. This complements your return-to-run and physio guidance — it doesn't replace them. Pain at rest, or symptoms getting worse: back off impact and review.</p>
+    </div>
+
+    <h3>Why the two movements aren't working yet</h3>
+    <div class="why">
+      <div class="card">
+        <h3>Pull-up — stuck below halfway</h3>
+        <p>Not a strength ceiling — a missing bottom end. You don't yet own the scapular pull and the dead-hang-to-mid range. We build it from the hang upward, one rung at a time, and you should move up a rung every fortnight.</p>
+      </div>
+      <div class="card">
+        <h3>Push-up — depth and fade</h3>
+        <p>Two separate problems. Shallow depth is strength and range, fixed with tempo and pause-at-the-bottom reps. Form falling apart late in a set is trunk endurance — the hips sag when the core tires — so we train anti-extension core hard.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ladder">
+    <p class="kicker">The centrepiece</p>
+    <h2>Pull-up ladder</h2>
+    <p>Work at your current rung. Re-test every two weeks and move up as soon as you can. Slot the rung you're on into Session B, and touch it lightly in Session D.</p>
+    <div class="ladder">
+      <div class="rung"><span class="dot">1</span><div class="body"><h3>Dead hang</h3><p>Accumulate 60s total across sets. Builds grip and shoulder tolerance.</p></div></div>
+      <div class="rung"><span class="dot">2</span><div class="body"><h3>Scapular pull-ups</h3><p>Hang, pull the shoulder blades down and back without bending the arms. This is the piece you're missing.</p></div></div>
+      <div class="rung"><span class="dot">3</span><div class="body"><h3>Inverted rows</h3><p>Horizontal pulling base. Lower the bar to make it harder as you get stronger.</p></div></div>
+      <div class="rung"><span class="dot">4</span><div class="body"><h3>Band-assisted pull-ups</h3><p>Full range every rep. Thick band early, thinner band over the weeks.</p></div></div>
+      <div class="rung"><span class="dot">5</span><div class="body"><h3>Negative (eccentric) pull-ups</h3><p>Step or jump to the top, lower under control for 5 seconds. Your biggest strength builder — prioritise it in Phase 2.</p></div></div>
+      <div class="rung"><span class="dot">6</span><div class="body"><h3>Top isometric holds</h3><p>Chin over the bar, hold 5–10s. Owns the hardest position.</p></div></div>
+      <div class="rung top"><span class="dot">7</span><div class="body"><h3>First strict rep — then build</h3><p>One clean rep, then add reps week on week.</p></div></div>
+    </div>
+  </section>
+
+  <section id="sa">
+    <div class="sesshead">
+      <div class="badge">A</div>
+      <div class="t"><h2>Push strength &amp; push-up development</h2>
+      <p class="warm">Warm-up: band pull-aparts 2×15 · shoulder dislocates/CARs · scap push-ups 2×10 · wrist prep · 10 slow push-ups</p></div>
+    </div>
+    <div class="exlist">
+      <div class="ex hot"><span class="idx">1</span><div class="m"><div class="name">Tempo push-ups</div><div class="note">3s down, 1s pause at the bottom, 1s up. Elevate hands only enough to keep strict full range; lower the surface as you improve.</div></div><div class="dose">4 × 6–8</div></div>
+      <div class="ex"><span class="idx">2</span><div class="m"><div class="name">DB or barbell bench press</div><div class="note">Main pressing strength builder.</div></div><div class="dose">4 × 6–8</div></div>
+      <div class="ex"><span class="idx">3</span><div class="m"><div class="name">Overhead press (DB / barbell)</div></div><div class="dose">3 × 8–10</div></div>
+      <div class="ex"><span class="idx">4</span><div class="m"><div class="name">Close-grip push-ups or assisted dips</div><div class="note">Triceps — the lockout driver.</div></div><div class="dose">3 × 8–12</div></div>
+      <div class="ex"><span class="idx">5</span><div class="m"><div class="name">Tricep pushdown / overhead extension</div></div><div class="dose">3 × 12–15</div></div>
+      <div class="ex"><span class="idx">6</span><div class="m"><div class="name">DB lateral raise</div><div class="note">Shoulder health and press support.</div></div><div class="dose">3 × 12–15</div></div>
+      <div class="ex"><span class="idx">7</span><div class="m"><div class="name">Front plank</div><div class="note">Anti-sag — glutes squeezed, ribs down.</div></div><div class="dose">3 × max</div></div>
+      <div class="ex"><span class="idx">8</span><div class="m"><div class="name">Deadbug</div><div class="note">Slow, low back pinned to the floor.</div></div><div class="dose">3 × 8/side</div></div>
+    </div>
+    <p class="tip">Tap a row to mark it done for the session.</p>
+  </section>
+
+  <section id="sb">
+    <div class="sesshead">
+      <div class="badge">B</div>
+      <div class="t"><h2>Pull strength &amp; pull-up development</h2>
+      <p class="warm">Warm-up: band pull-aparts 2×15 · scap prep · dead hang 2×20–30s</p></div>
+    </div>
+    <div class="exlist">
+      <div class="ex hot"><span class="idx">1</span><div class="m"><div class="name">Scapular pull-ups</div><div class="note">The initiation you're missing — arms stay straight.</div></div><div class="dose">3 × 6–8</div></div>
+      <div class="ex hot"><span class="idx">2</span><div class="m"><div class="name">Pull-up ladder work</div><div class="note">Your current rung. Band-assist early, negatives as you progress.</div></div><div class="dose">4 × 3–6</div></div>
+      <div class="ex"><span class="idx">3</span><div class="m"><div class="name">Lat pulldown</div><div class="note">Straight pulling strength — go heavier across the block.</div></div><div class="dose">4 × 8–10</div></div>
+      <div class="ex"><span class="idx">4</span><div class="m"><div class="name">Chest-supported DB row / seated row</div></div><div class="dose">4 × 8–10</div></div>
+      <div class="ex"><span class="idx">5</span><div class="m"><div class="name">Inverted / ring row</div><div class="note">Lower the bar or rings to make it harder.</div></div><div class="dose">3 × 8–12</div></div>
+      <div class="ex"><span class="idx">6</span><div class="m"><div class="name">Face pulls</div><div class="note">Rear delt and scap health.</div></div><div class="dose">3 × 15</div></div>
+      <div class="ex"><span class="idx">7</span><div class="m"><div class="name">DB hammer curl</div></div><div class="dose">3 × 10–12</div></div>
+      <div class="ex"><span class="idx">8</span><div class="m"><div class="name">Farmer carry</div><div class="note">Grip — buys you hang time directly.</div></div><div class="dose">3 × 30–40m</div></div>
+      <div class="ex"><span class="idx">9</span><div class="m"><div class="name">Hollow hold + side plank</div></div><div class="dose">3 × 20–30s</div></div>
+    </div>
+    <p class="tip">Tap a row to mark it done for the session.</p>
+  </section>
+
+  <section id="sc">
+    <div class="sesshead">
+      <div class="badge">C</div>
+      <div class="t"><h2>Lower body (low-impact) &amp; shin resilience</h2>
+      <p class="warm">Warm-up: bike 5 min easy · hip openers · ankle mobility. No jumping or impact anywhere in this session.</p></div>
+    </div>
+    <div class="exlist">
+      <div class="ex"><span class="idx">1</span><div class="m"><div class="name">Goblet squat or leg press</div><div class="note">Controlled throughout.</div></div><div class="dose">4 × 8–10</div></div>
+      <div class="ex"><span class="idx">2</span><div class="m"><div class="name">DB Romanian deadlift</div><div class="note">Hamstrings and posterior chain.</div></div><div class="dose">3 × 8–10</div></div>
+      <div class="ex"><span class="idx">3</span><div class="m"><div class="name">Rear-foot-elevated split squat (supported)</div><div class="note">Slow — no bounce out of the bottom.</div></div><div class="dose">3 × 8/leg</div></div>
+      <div class="ex"><span class="idx">4</span><div class="m"><div class="name">Lying / seated hamstring curl</div></div><div class="dose">3 × 12</div></div>
+      <div class="ex"><span class="idx">5</span><div class="m"><div class="name">Glute bridge / hip thrust</div></div><div class="dose">3 × 12</div></div>
+      <div class="ex hot"><span class="idx">6</span><div class="m"><div class="name">Tibialis raises</div><div class="note">Shin-protective — strengthens the front of the shin. Pain-free range.</div></div><div class="dose">3 × 15–20</div></div>
+      <div class="ex hot"><span class="idx">7</span><div class="m"><div class="name">Eccentric calf raises</div><div class="note">3s lower. Both straight- and bent-knee. Supports the return-to-run.</div></div><div class="dose">3 × 12</div></div>
+      <div class="ex"><span class="idx">8</span><div class="m"><div class="name">Pallof press</div><div class="note">Anti-rotation core.</div></div><div class="dose">3 × 10/side</div></div>
+    </div>
+    <p class="tip">Tap a row to mark it done for the session.</p>
+  </section>
+
+  <section id="sd">
+    <div class="sesshead">
+      <div class="badge">D</div>
+      <div class="t"><h2>Upper volume / mixed</h2>
+      <p class="warm">Lighter than A and B — leave 2–3 reps in the tank on every set. Groove work, not a grind. 3–4 rounds.</p></div>
+    </div>
+    <div class="exlist">
+      <div class="ex"><span class="idx">1</span><div class="m"><div class="name">Push-ups (best full-range variation)</div><div class="note">Submax set.</div></div><div class="dose">submax</div></div>
+      <div class="ex"><span class="idx">2</span><div class="m"><div class="name">Band-assisted pull-ups or lat pulldown</div><div class="note">Submax set.</div></div><div class="dose">submax</div></div>
+      <div class="ex"><span class="idx">3</span><div class="m"><div class="name">Incline DB press</div></div><div class="dose">3 × 10–12</div></div>
+      <div class="ex"><span class="idx">4</span><div class="m"><div class="name">Single-arm DB row</div></div><div class="dose">3 × 10/side</div></div>
+      <div class="ex"><span class="idx">5</span><div class="m"><div class="name">Push-up-position shoulder taps</div><div class="note">Anti-rotation and pushing endurance.</div></div><div class="dose">3 × 10/side</div></div>
+      <div class="ex"><span class="idx">6</span><div class="m"><div class="name">Band pull-aparts</div></div><div class="dose">3 × 20</div></div>
+      <div class="ex"><span class="idx">7</span><div class="m"><div class="name">RKC plank + deadbug</div></div><div class="dose">3 rounds</div></div>
+    </div>
+    <p class="tip">Optional finisher: 8–10 min low-impact cardio (row or bike). Tap a row to mark it done.</p>
+  </section>
+
+  <section id="progression">
+    <p class="kicker">Across the block</p>
+    <h2>Progression &amp; re-test</h2>
+
+    <div class="phase">
+      <span class="tag">Weeks 1–4 · Build the base</span>
+      <h3>Groove technique, bank volume</h3>
+      <p>Push-ups: tempo and full range come before rep count. Pull-ups: scap work plus band-assist, start bringing in negatives. Effort around RPE 7–8. Each week, add a rep or shave the band assistance slightly. End of Week 4: re-test, then a light deload (sets cut ~40%) if you're run down, or roll straight into Phase 2.</p>
+    </div>
+
+    <div class="phase">
+      <span class="tag">Weeks 5–8 · Turn up intensity</span>
+      <h3>Load and hold the hard positions</h3>
+      <p>Push-ups: floor tempo, then deficit push-ups (hands on plates for extra depth), add a little load if strong. Pull-ups: negatives at 5s, then top holds, then attempt your first assisted-to-unassisted rep; drop to a thinner band. Lat pulldown heavier. Effort around RPE 8.</p>
+    </div>
+
+    <h3>Re-test — end of Week 4 and Week 8</h3>
+    <ul class="retest">
+      <li><b>Max strict push-ups</b> to a set form standard (full depth, straight body, no sag). Record the count.</li>
+      <li><b>Pull-up milestone</b> — dead-hang time plus your current ladder rung.</li>
+      <li><b>Plank max hold</b> — trunk-endurance marker; it should climb as push-up form holds longer.</li>
+    </ul>
+  </section>
+
+  <section id="use">
+    <p class="kicker">Running it in</p>
+    <h2>How to run it</h2>
+    <ul class="use">
+      <li><b>Four days a week.</b> Keep the heavy upper days (A and B) off the back of heavy scheduled PT where you can.</li>
+      <li><b>Protect the shins around running.</b> Don't stack Session C or any impact next to a run day — flank run days with upper sessions instead.</li>
+      <li><b>Warm up shoulders and wrists every upper day.</b> Non-negotiable given the pressing volume.</li>
+      <li><b>Grease the groove (optional, high value).</b> On off-days, scatter a few easy sub-max sets of push-ups and scap or negative pull-ups through the day. Frequent easy practice builds skill-strength fast.</li>
+      <li><b>Only three days some weeks?</b> Run A, B and C, and fold Session D's key sets in as a finisher on A and B. Keep the fortnightly re-test.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <div class="rule"></div>
+    <p>Complements — does not replace — the return-to-run program and physio guidance. No jumping, plyometrics or high-impact until cleared. Quality over numbers, especially in Phase 1: full range, controlled tempo.</p>
+    <p style="margin-top:14px;color:#6f7679">Alpha Squadron PTI Cell — ADFA · pr.v1</p>
+  </footer>
+</div>
+
+<script>
+  // Scrollspy for the sticky nav
+  (function(){
+    var links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+    var map = {};
+    links.forEach(function(l){ map[l.getAttribute('href').slice(1)] = l; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(l){ l.classList.remove('active'); });
+          if(map[e.target.id]) map[e.target.id].classList.add('active');
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px', threshold:0});
+    document.querySelectorAll('section').forEach(function(s){ obs.observe(s); });
+  })();
+
+  // Tap an exercise to mark it done for the session (in-session only, no storage)
+  document.querySelectorAll('.ex .m').forEach(function(m){
+    m.addEventListener('click', function(){ m.parentElement.classList.toggle('done'); });
+  });
+</script>
+</body>
+</html>
