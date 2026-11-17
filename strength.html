@@ -363,9 +363,14 @@
       <div class="field">
         <label>Program Duration</label>
         <select id="duration">
+          <option value="4">4 Weeks</option>
+          <option value="6">6 Weeks</option>
           <option value="8">8 Weeks</option>
+          <option value="10">10 Weeks</option>
           <option value="12" selected>12 Weeks</option>
           <option value="16">16 Weeks</option>
+          <option value="20">20 Weeks</option>
+          <option value="24">24 Weeks</option>
         </select>
       </div>
     </div>
@@ -380,6 +385,50 @@
       <label><input type="checkbox" value="shoulders"> Shoulders</label>
       <label><input type="checkbox" value="arms"> Arms</label>
       <label><input type="checkbox" value="cardio"> Cardio Base</label>
+      <label><input type="checkbox" value="quads"> Quads</label>
+      <label><input type="checkbox" value="hamstrings"> Hamstrings</label>
+      <label><input type="checkbox" value="posterior_chain"> Posterior Chain</label>
+      <label><input type="checkbox" value="chest"> Chest</label>
+      <label><input type="checkbox" value="pullups"> Pull-ups / Vertical Pull</label>
+      <label><input type="checkbox" value="grip"> Grip &amp; Forearms</label>
+      <label><input type="checkbox" value="calves"> Calves</label>
+      <label><input type="checkbox" value="power"> Power / Plyometrics</label>
+      <label><input type="checkbox" value="prehab"> Mobility &amp; Prehab</label>
+    </div>
+
+    <div class="section-label">Training Detail</div>
+    <div class="grid-3">
+      <div class="field"><label>Training Style</label><select id="tStyle"><option>Let the AI decide</option><option>Powerlifting (squat / bench / deadlift)</option><option>Bodybuilding / hypertrophy</option><option>Military strength-endurance</option><option>Athletic / power (Olympic derivatives)</option><option>Hybrid strength + running</option><option>Calisthenics / bodyweight</option></select></div>
+      <div class="field"><label>Weekly Split</label><select id="tSplit"><option>Let the AI decide</option><option>Full body</option><option>Upper / Lower</option><option>Push / Pull / Legs</option><option>Body-part split</option><option>Strength A / B alternating</option><option>Heavy / Light days</option></select></div>
+      <div class="field"><label>Session Length</label><select id="tLen"><option>30 min</option><option>45 min</option><option selected>60 min</option><option>75 min</option><option>90 min</option><option>120 min</option></select></div>
+      <div class="field"><label>Rep Emphasis</label><select id="tRep"><option>Mixed by phase</option><option>Heavy (1-5 reps)</option><option>Moderate (6-10 reps)</option><option>Higher (10-15 reps)</option><option>Strength-endurance (15-30 reps)</option></select></div>
+      <div class="field"><label>Intensity Method</label><select id="tInt"><option>Mixed %1RM and RPE</option><option>%1RM based</option><option>RPE / RIR based</option><option>Close to failure</option></select></div>
+      <div class="field"><label>Progression Model</label><select id="tProg"><option>Let the AI decide</option><option>Linear progression</option><option>Double progression</option><option>Weekly undulating</option><option>Block periodisation</option><option>Wave loading</option></select></div>
+      <div class="field"><label>Deload Frequency</label><select id="tDeload"><option>Every 4th week</option><option>Every 3rd week</option><option>Every 5th-6th week</option><option>None</option></select></div>
+      <div class="field"><label>Conditioning Alongside Lifting</label><select id="tCond"><option>None</option><option>Light (1-2 easy sessions a week)</option><option>Moderate (3 sessions a week)</option><option>High volume running + ruck (e.g. SANCOM)</option><option>Sport training 5+ sessions a week</option></select></div>
+      <div class="field"><label>Target Event / Date</label><input type="text" id="tEvent" placeholder="e.g. PFA 14 Feb, selection in May"></div>
+    </div>
+    <div class="section-label" style="margin-top:20px">Current Strength (leave blank if unknown)</div>
+    <div class="grid-3">
+      <div class="field"><label>Back Squat 1RM (kg)</label><input type="number" id="t1rmSq" placeholder="e.g. 100"></div>
+      <div class="field"><label>Bench Press 1RM (kg)</label><input type="number" id="t1rmBp" placeholder="e.g. 70"></div>
+      <div class="field"><label>Deadlift 1RM (kg)</label><input type="number" id="t1rmDl" placeholder="e.g. 120"></div>
+      <div class="field"><label>Overhead Press 1RM (kg)</label><input type="number" id="t1rmOh" placeholder="e.g. 45"></div>
+      <div class="field"><label>Max Strict Pull-ups</label><input type="number" id="tPull" placeholder="e.g. 8"></div>
+    </div>
+    <div class="section-label" style="margin-top:20px">Priority Lifts</div>
+    <div class="check-group" id="liftPrio">
+      <label><input type="checkbox" value="back_squat"> Back Squat</label>
+      <label><input type="checkbox" value="front_squat"> Front Squat</label>
+      <label><input type="checkbox" value="bench_press"> Bench Press</label>
+      <label><input type="checkbox" value="deadlift"> Deadlift</label>
+      <label><input type="checkbox" value="overhead_press"> Overhead Press</label>
+      <label><input type="checkbox" value="pull-ups"> Pull-ups</label>
+      <label><input type="checkbox" value="barbell_row"> Barbell Row</label>
+      <label><input type="checkbox" value="hip_thrust"> Hip Thrust</label>
+      <label><input type="checkbox" value="power_clean"> Power Clean</label>
+      <label><input type="checkbox" value="split_squat_lunge"> Split Squat / Lunge</label>
+      <label><input type="checkbox" value="farmers_rack_carries"> Farmers / Rack Carries</label>
     </div>
 
     <div class="section-label">Nutrition Context</div>
@@ -758,6 +807,16 @@ function generateProgram() {
       { weeks: "1–5", name: phases[0].name, desc: phases[0].desc },
       { weeks: "6–11", name: phases[1].name, desc: phases[1].desc },
       { weeks: "12–16", name: phases[2].name, desc: phases[2].desc }
+    ];
+  }
+
+  if (!['8','12','16'].includes(duration)) {
+    const n = parseInt(duration), a = Math.max(1, Math.round(n / 3)), b = Math.max(a + 1, Math.round(2 * n / 3));
+    const lab = (x, y) => x === y ? String(x) : x + "\u2013" + y;
+    phases = [
+      { weeks: lab(1, a), name: phases[0].name, desc: phases[0].desc },
+      { weeks: lab(a + 1, b), name: phases[1].name, desc: phases[1].desc },
+      { weeks: lab(b + 1, n), name: phases[2].name, desc: phases[2].desc }
     ];
   }
 
