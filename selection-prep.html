@@ -213,6 +213,7 @@ td:first-child{color:var(--text);font-weight:500;}
   .gap-row{grid-template-columns:1fr;gap:4px;}
 }
 </style>
+<style>#ai-fab{display:none}</style>
 </head>
 <body>
 
@@ -306,6 +307,7 @@ td:first-child{color:var(--text);font-weight:500;}
     <div class="slabel">Step 5 of 5</div>
     <div class="panel-title">Program Setup</div>
     <div class="panel-sub">Configure your training program parameters.</div>
+    <div class="fgroup" style="margin-bottom:1rem;"><label>Selection, Scores &amp; Weaknesses (sent to the AI)</label><textarea id="aiSummary" rows="5" readonly style="background:#f3f0e8;"></textarea></div>
     <div class="form-grid cols3">
       <div class="fgroup"><label>Total Program Duration</label>
         <select id="pDuration">
@@ -702,6 +704,22 @@ let weaknesses = [];
 // ═══════════════════════════════════════════════════════════════
 // STEP NAVIGATION
 // ═══════════════════════════════════════════════════════════════
+function aiSummary() {
+  const el = document.getElementById('aiSummary'); if (!el) return;
+  const L = [];
+  if (selectedTest && TESTS[selectedTest]) {
+    const t = TESTS[selectedTest];
+    L.push('Target selection: ' + t.name + ' (' + t.tag + ')');
+    t.components.forEach(c => {
+      const i = document.getElementById('sc_' + c.id);
+      const cur = i && i.value.trim() ? i.value.trim() : 'not tested';
+      L.push(c.label + ' - current: ' + cur + ' | standard: ' + c.standard + ' (' + c.unit + ')');
+    });
+    if (t.focus) L.push('Selection focus: ' + t.focus.join('; '));
+    if (weaknesses.length) L.push('Self-identified weaknesses: ' + weaknesses.join(', '));
+  } else { L.push('No target selection chosen yet - go back to step 1.'); }
+  el.value = L.join('\n');
+}
 function goStep(n) {
   if (n === 2 && !selectedTest) { alert('Please select a target test first.'); return; }
   if (n === 3) populateBenchmarks();
@@ -714,6 +732,8 @@ function goStep(n) {
   });
   document.getElementById('step'+n).classList.add('active');
   currentStep = n;
+  var _f = document.getElementById('ai-fab'); if (_f) _f.style.display = (n === 5) ? 'block' : 'none';
+  if (n === 5) aiSummary();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
